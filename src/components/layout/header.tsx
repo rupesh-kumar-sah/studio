@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -28,8 +29,8 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Mock authentication status
-  const isAuthenticated = true; 
+  // Mock authentication status. True for owner, false for customer.
+  const isOwnerLoggedIn = true; 
 
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');
@@ -75,7 +76,7 @@ export function Header() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           </form>
 
-          {isAuthenticated ? (
+          {isOwnerLoggedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
@@ -126,13 +127,17 @@ export function Header() {
                     <Link href="/products?category=Shoes" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Shoes</Link>
                     <Link href="/products?category=Accessories" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Accessories</Link>
                 </nav>
-                 <div className="mt-8 flex flex-col space-y-2">
-                    <Button asChild variant="ghost">
-                        <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
-                    </Button>
-                    <Button asChild>
-                        <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
-                    </Button>
+                <div className="mt-8 border-t pt-6">
+                 {!isOwnerLoggedIn && (
+                   <div className="flex flex-col space-y-2">
+                      <Button asChild variant="ghost">
+                          <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+                      </Button>
+                      <Button asChild>
+                          <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
+                      </Button>
+                  </div>
+                 )}
                 </div>
             </SheetContent>
           </Sheet>
