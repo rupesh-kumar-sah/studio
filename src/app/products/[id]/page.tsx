@@ -13,8 +13,8 @@ export async function generateStaticParams() {
     }));
 }
 
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = getProductById(params.id);
+export default async function ProductDetailPage({ params: {id} }: { params: { id: string } }) {
+  const product = getProductById(id);
 
   if (!product) {
     notFound();
