@@ -23,7 +23,17 @@ const shippingSchema = z.object({
   paymentMethod: z.enum(["card", "esewa", "khalti"], {
     required_error: "You need to select a payment method.",
   }),
+  walletId: z.string().optional(),
+}).refine(data => {
+  if ((data.paymentMethod === 'esewa' || data.paymentMethod === 'khalti') && !data.walletId) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Wallet ID is required for this payment method.",
+  path: ["walletId"],
 });
+
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart } = useCart();
@@ -40,6 +50,8 @@ export default function CheckoutPage() {
       postalCode: "",
     },
   });
+
+  const paymentMethod = form.watch("paymentMethod");
 
   function onSubmit(data: z.infer<typeof shippingSchema>) {
     console.log("Order placed:", data);
@@ -124,7 +136,7 @@ export default function CheckoutPage() {
                 <CardHeader>
                   <CardTitle>Payment Method</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   <FormField control={form.control} name="paymentMethod" render={({ field }) => (
                     <FormItem className="space-y-3">
                       <FormControl>
@@ -146,6 +158,15 @@ export default function CheckoutPage() {
                       <FormMessage />
                     </FormItem>
                   )} />
+                  {(paymentMethod === 'esewa' || paymentMethod === 'khalti') && (
+                     <FormField control={form.control} name="walletId" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{paymentMethod === 'esewa' ? 'eSewa' : 'Khalti'} ID</FormLabel>
+                          <FormControl><Input placeholder="Your Wallet Phone Number" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                  )}
                 </CardContent>
               </Card>
               <Button type="submit" size="lg" className="w-full">Place Order</Button>
