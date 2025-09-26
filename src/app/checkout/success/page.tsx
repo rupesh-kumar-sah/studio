@@ -33,7 +33,7 @@ export default function OrderSuccessPage() {
                 <p className="text-muted-foreground">
                     To confirm your order or for any inquiries, please call us at:
                 </p>
-                <a href="tel:9824812753" className="text-2xl font-semibold text-primary hover:underline mt-2 block text-center">
+                <a href="tel:9824812753" className="text-2xl font-semibold text-primary hover:underline mt-2 block">
                     9824812753
                 </a>
             </CardContent>

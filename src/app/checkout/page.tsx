@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Banknote, CreditCard, ShieldCheck } from "lucide-react";
 
 const shippingSchema = z.object({
   email: z.string().email(),
@@ -20,17 +21,17 @@ const shippingSchema = z.object({
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   postalCode: z.string().min(1, "Postal code is required"),
-  paymentMethod: z.enum(["card", "esewa", "khalti"], {
+  paymentMethod: z.enum(["card", "esewa", "khalti", "cod"], {
     required_error: "You need to select a payment method.",
   }),
   walletId: z.string().optional(),
 }).refine(data => {
-  if ((data.paymentMethod === 'esewa' || data.paymentMethod === 'khalti') && !data.walletId) {
+  if ((data.paymentMethod === 'esewa' || data.paymentMethod === 'khalti') && (!data.walletId || data.walletId.length < 10)) {
     return false;
   }
   return true;
 }, {
-  message: "Wallet ID is required for this payment method.",
+  message: "A valid wallet ID (phone number) is required.",
   path: ["walletId"],
 });
 
@@ -140,18 +141,34 @@ export default function CheckoutPage() {
                   <FormField control={form.control} name="paymentMethod" render={({ field }) => (
                     <FormItem className="space-y-3">
                       <FormControl>
-                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
-                          <FormItem className="flex items-center space-x-3 space-y-0 rounded-md border p-4">
-                            <FormControl><RadioGroupItem value="card" /></FormControl>
-                            <FormLabel className="font-normal flex-1">Credit/Debit Card</FormLabel>
+                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
+                           <FormItem className="rounded-md border p-4 data-[state=checked]:border-primary">
+                             <FormControl><RadioGroupItem value="cod" id="cod" className="sr-only"/></FormControl>
+                             <FormLabel htmlFor="cod" className="font-normal flex items-center space-x-3 cursor-pointer">
+                                <Banknote />
+                                <span>Cash on Delivery (COD)</span>
+                             </FormLabel>
                           </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0 rounded-md border p-4">
-                            <FormControl><RadioGroupItem value="esewa" /></FormControl>
-                            <FormLabel className="font-normal flex-1">eSewa</FormLabel>
+                          <FormItem className="rounded-md border p-4 data-[state=checked]:border-primary">
+                             <FormControl><RadioGroupItem value="esewa" id="esewa" className="sr-only"/></FormControl>
+                             <FormLabel htmlFor="esewa" className="font-normal flex items-center space-x-3 cursor-pointer">
+                                <Image src="https://blog.esewa.com.np/wp-content/uploads/2022/11/eSewa-Logo.png" alt="eSewa" width={60} height={24} />
+                                <span>eSewa</span>
+                             </FormLabel>
                           </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0 rounded-md border p-4">
-                            <FormControl><RadioGroupItem value="khalti" /></FormControl>
-                            <FormLabel className="font-normal flex-1">Khalti</FormLabel>
+                           <FormItem className="rounded-md border p-4 data-[state=checked]:border-primary">
+                             <FormControl><RadioGroupItem value="khalti" id="khalti" className="sr-only"/></FormControl>
+                             <FormLabel htmlFor="khalti" className="font-normal flex items-center space-x-3 cursor-pointer">
+                                <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Khalti_Digital_Wallet_Logo.png.600px-Khalti_Digital_Wallet_Logo.png" alt="Khalti" width={60} height={24} />
+                                <span>Khalti</span>
+                             </FormLabel>
+                          </FormItem>
+                           <FormItem className="rounded-md border p-4 data-[state=checked]:border-primary">
+                            <FormControl><RadioGroupItem value="card" id="card" className="sr-only" /></FormControl>
+                            <FormLabel htmlFor="card" className="font-normal flex items-center space-x-3 cursor-pointer">
+                                <CreditCard />
+                                <span>Credit/Debit Card</span>
+                            </FormLabel>
                           </FormItem>
                         </RadioGroup>
                       </FormControl>
@@ -161,15 +178,26 @@ export default function CheckoutPage() {
                   {(paymentMethod === 'esewa' || paymentMethod === 'khalti') && (
                      <FormField control={form.control} name="walletId" render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{paymentMethod === 'esewa' ? 'eSewa' : 'Khalti'} ID</FormLabel>
-                          <FormControl><Input placeholder="Your Wallet Phone Number" {...field} /></FormControl>
+                          <FormLabel>Enter your Registered {paymentMethod === 'esewa' ? 'eSewa' : 'Khalti'} Number:</FormLabel>
+                          <FormControl><Input type="tel" placeholder="+977-98XXXXXXXX" {...field} /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
                   )}
+                  {paymentMethod === 'card' && (
+                     <div className="text-sm text-muted-foreground p-4 border rounded-md">
+                         You will be redirected to a secure payment gateway to complete your purchase.
+                     </div>
+                  )}
                 </CardContent>
               </Card>
-              <Button type="submit" size="lg" className="w-full">Place Order</Button>
+              <Button type="submit" size="lg" className="w-full">
+                {paymentMethod === 'esewa' || paymentMethod === 'khalti' ? `Pay with ${paymentMethod}` : 'Place Order'}
+              </Button>
+               <div className="text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                    <ShieldCheck className="h-4 w-4" />
+                    <span>Your financial information is securely processed and is never stored on our servers.</span>
+                </div>
             </form>
           </Form>
         </div>
@@ -181,7 +209,7 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {items.map(item => (
-                <div key={item.product.id} className="flex items-center justify-between">
+                <div key={`${item.product.id}-${item.size}-${item.color}`} className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="relative h-16 w-16 rounded-md overflow-hidden">
                        <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
@@ -210,6 +238,9 @@ export default function CheckoutPage() {
                 </div>
             </CardFooter>
           </Card>
+           <div className="mt-6 text-center text-sm text-muted-foreground">
+                <p>Need help? Call us at <a href="tel:9824812753" className="font-medium text-primary hover:underline">9824812753</a></p>
+            </div>
         </div>
       </div>
     </div>
