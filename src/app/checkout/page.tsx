@@ -10,11 +10,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Banknote, CreditCard, ShieldCheck, Loader2 } from "lucide-react";
+import { Banknote, CreditCard, ShieldCheck, Loader2, CheckCircle2 } from "lucide-react";
 import type { CartItem } from "@/lib/types";
 
 const shippingSchema = z.object({
@@ -64,6 +64,59 @@ type EsewaFormData = {
   signature: string;
 };
 
+function CheckoutSuccessContent() {
+    const { clearCart } = useCart();
+    const searchParams = useSearchParams();
+    const [verificationStatus, setVerificationStatus] = useState<'verifying' | 'verified' | 'idle'>('idle');
+    
+    // This effect simulates the server-side verification of the transaction
+    useEffect(() => {
+        const oid = searchParams.get('oid'); // eSewa passes back the order ID as 'oid'
+        const refId = searchParams.get('refId'); // eSewa passes back a reference ID
+
+        if (oid && refId) {
+            setVerificationStatus('verifying');
+            // Simulate an API call to our backend to verify the transaction with eSewa
+            setTimeout(() => {
+                console.log(`Verifying eSewa transaction: Order ID - ${oid}, Ref ID - ${refId}`);
+                // In a real app, the backend would call eSewa's verification API.
+                // If successful, we update the order status in our database.
+                setVerificationStatus('verified');
+            }, 2000); // Simulate network delay
+        } else {
+            setVerificationStatus('verified'); // No verification needed for non-eSewa payments
+        }
+    }, [searchParams]);
+
+
+    useEffect(() => {
+        if(verificationStatus === 'verified'){
+            clearCart();
+        }
+    }, [verificationStatus, clearCart]);
+
+
+    if (verificationStatus === 'verifying') {
+        return (
+            <div className="text-center">
+                <Loader2 className="h-12 w-12 text-primary animate-spin mx-auto" />
+                <h1 className="mt-4 text-2xl font-bold">Verifying Payment...</h1>
+                <p className="text-muted-foreground">Please wait while we confirm your transaction with the payment provider.</p>
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <div className="mx-auto bg-green-100 rounded-full p-3 w-fit">
+                <CheckCircle2 className="h-12 w-12 text-green-600" />
+            </div>
+            <CardTitle className="mt-4 text-2xl">Order Successful!</CardTitle>
+            <CardDescription>Thank you for your purchase.</CardDescription>
+        </>
+    )
+}
+
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart } = useCart();
@@ -106,7 +159,8 @@ export default function CheckoutPage() {
         items,
         total: totalPrice,
         paymentMethod: data.paymentMethod,
-        paymentStatus: (data.paymentMethod === 'esewa' || data.paymentMethod === 'khalti') ? 'Paid' : 'Pending',
+        // For COD/Card, status is Pending until confirmed. eSewa will be pending until verification.
+        paymentStatus: 'Pending',
         walletId: data.walletId,
         date: new Date().toISOString(),
     };
@@ -143,7 +197,9 @@ export default function CheckoutPage() {
         return; // Stop further execution, let the form submit
     }
 
-    // For COD or Card, we place the order and clear the cart immediately
+    // For other methods, we save the order and clear the cart, then redirect.
+    // The paymentStatus remains 'Pending'. For a real app, card payments would also
+    // involve a redirect and verification.
     console.log("Order placed:", newOrder);
     clearCart();
     router.push("/checkout/success");
