@@ -1,3 +1,82 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Hero image of a beautiful Nepali landscape",
+      "imageUrl": "https://images.unsplash.com/photo-1667999164091-af4b99bdde32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuZXBhbCUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3NTg4MjUzNTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "nepal landscape"
+    },
+    {
+      "id": "clothing-1",
+      "description": "Modern jacket",
+      "imageUrl": "https://images.unsplash.com/photo-1688981533900-20bef00e353b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxqYWNrZXQlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwOTQ5OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "jacket fashion"
+    },
+    {
+      "id": "clothing-2",
+      "description": "Stylish t-shirt",
+      "imageUrl": "https://images.unsplash.com/photo-1700177421832-9815a92029be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0LXNoaXJ0JTIwbW9kZWx8ZW58MHx8fHwxNzU4OTI3NTY4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "t-shirt model"
+    },
+    {
+      "id": "clothing-3",
+      "description": "Comfortable hoodie",
+      "imageUrl": "https://images.unsplash.com/photo-1732475530118-0db47f851736?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxob29kaWUlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwNDU2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hoodie fashion"
+    },
+    {
+      "id": "clothing-4",
+      "description": "Traditional Kurta",
+      "imageUrl": "https://images.unsplash.com/photo-1675388436299-6a6b272a83a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0cmFkaXRpb25hbCUyMGNsb3RoaW5nfGVufDB8fHx8MTc1ODkyNzU2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "traditional clothing"
+    },
+    {
+      "id": "shoe-1",
+      "description": "Running sneakers",
+      "imageUrl": "https://images.unsplash.com/photo-1562183241-b937e95585b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxydW5uaW5nJTIwc2hvZXN8ZW58MHx8fHwxNzU4OTE5MjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "running shoes"
+    },
+    {
+      "id": "shoe-2",
+      "description": "Leather boots",
+      "imageUrl": "https://images.unsplash.com/photo-1639270602419-6392f0723174?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsZWF0aGVyJTIwYm9vdHN8ZW58MHx8fHwxNzU4OTE3OTk5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leather boots"
+    },
+    {
+      "id": "shoe-3",
+      "description": "Casual loafers",
+      "imageUrl": "https://images.unsplash.com/photo-1659724526263-703be37cd1d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXN1YWwlMjBzaG9lc3xlbnwwfHx8fDE3NTg5Mjc1Njh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "casual shoes"
+    },
+    {
+      "id": "shoe-4",
+      "description": "Trekking boots",
+      "imageUrl": "https://images.unsplash.com/photo-1663000126027-489944d0086b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0cmVra2luZyUyMGJvb3RzfGVufDB8fHx8MTc1ODkyNzU2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "trekking boots"
+    },
+    {
+      "id": "accessory-1",
+      "description": "Leather backpack",
+      "imageUrl": "https://images.unsplash.com/photo-1617179918913-f4e099813fb5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsZWF0aGVyJTIwYmFja3BhY2t8ZW58MHx8fHwxNzU4ODQ1NDE0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leather backpack"
+    },
+    {
+      "id": "accessory-2",
+      "description": "Stylish sunglasses",
+      "imageUrl": "https://images.unsplash.com/photo-1662091131946-338d213f4a39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdW5nbGFzc2VzJTIwZmFzaGlvbnxlbnwwfHx8fDE3NTg4NDc3OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sunglasses fashion"
+    },
+    {
+      "id": "accessory-3",
+      "description": "Woven scarf",
+      "imageUrl": "https://images.unsplash.com/photo-1672330202782-94b93d2ba6fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b3ZlbiUyMHNjYXJmfGVufDB8fHx8MTc1ODg5MTQyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woven scarf"
+    },
+    {
+      "id": "accessory-4",
+      "description": "Smart watch",
+      "imageUrl": "https://images.unsplash.com/photo-1551816230-ef5deaed4a26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c21hcnQlMjB3YXRjaHxlbnwwfHx8fDE3NTg4MjIzOTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smart watch"
+    }
+  ]
 }
