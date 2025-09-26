@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -26,7 +27,6 @@ export function CartSheet() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
 
   if (!isMounted) {
     return (
@@ -80,9 +80,11 @@ export function CartSheet() {
           <div className="flex flex-1 flex-col items-center justify-center gap-4">
             <ShoppingCart className="h-24 w-24 text-muted-foreground" />
             <p className="text-muted-foreground">Your cart is empty.</p>
-            <Button asChild>
-              <Link href="/products">Start Shopping</Link>
-            </Button>
+            <SheetTrigger asChild>
+                <Button asChild>
+                <Link href="/products">Start Shopping</Link>
+                </Button>
+            </SheetTrigger>
           </div>
         )}
       </SheetContent>
@@ -106,9 +108,11 @@ function CartEntry({ item }: { item: CartItem }) {
         />
       </div>
       <div className="flex-1">
-        <Link href={`/products/${item.product.id}`} className="font-semibold hover:underline">
-          {item.product.name}
-        </Link>
+        <SheetTrigger asChild>
+            <Link href={`/products/${item.product.id}`} className="font-semibold hover:underline">
+            {item.product.name}
+            </Link>
+        </SheetTrigger>
         <p className="text-sm text-muted-foreground">
           {item.size} / {item.color !== 'Natural' ? item.color : ''}
         </p>
