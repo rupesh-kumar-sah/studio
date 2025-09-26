@@ -1,3 +1,4 @@
+
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
 
@@ -31,6 +32,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
+              <li><Link href="/orders" className="text-sm text-muted-foreground hover:text-foreground">Orders</Link></li>
               <li><Link href="#" className="text-sm text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
               <li><Link href="#" className="text-sm text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
             </ul>
@@ -43,3 +45,5 @@ export function Footer() {
     </footer>
   );
 }
+
+    

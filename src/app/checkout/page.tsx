@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Banknote, CreditCard, ShieldCheck } from "lucide-react";
+import type { CartItem } from "@/lib/types";
 
 const shippingSchema = z.object({
   email: z.string().email(),
@@ -36,6 +37,16 @@ const shippingSchema = z.object({
   path: ["walletId"],
 });
 
+export type Order = {
+  id: string;
+  customer: Omit<z.infer<typeof shippingSchema>, 'paymentMethod' | 'walletId'>;
+  items: CartItem[];
+  total: number;
+  paymentMethod: string;
+  walletId?: string;
+  date: string;
+};
+
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart } = useCart();
@@ -57,7 +68,27 @@ export default function CheckoutPage() {
   const paymentMethod = form.watch("paymentMethod");
 
   function onSubmit(data: z.infer<typeof shippingSchema>) {
-    console.log("Order placed:", data);
+    const newOrder: Order = {
+        id: new Date().getTime().toString(),
+        customer: {
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            address: data.address,
+            city: data.city,
+            postalCode: data.postalCode,
+        },
+        items,
+        total: totalPrice,
+        paymentMethod: data.paymentMethod,
+        walletId: data.walletId,
+        date: new Date().toISOString(),
+    };
+    
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+    localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
+
+    console.log("Order placed:", newOrder);
     clearCart();
     router.push("/checkout/success");
   }
