@@ -56,8 +56,8 @@ export default function ForgotPasswordPage() {
           )}
            <div className="mt-6 text-center text-sm">
             Remembered your password?{" "}
-            <Link href="/login" passHref legacyBehavior>
-                <a className="font-medium text-primary hover:underline">Log in</a>
+            <Link href="/login" className="font-medium text-primary hover:underline">
+                Log in
             </Link>
           </div>
         </CardContent>

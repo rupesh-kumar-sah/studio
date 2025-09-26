@@ -46,8 +46,8 @@ export default function LoginPage() {
                 <FormItem>
                     <div className="flex justify-between items-center">
                         <FormLabel>Password</FormLabel>
-                        <Link href="/forgot-password" passHref legacyBehavior>
-                            <a className="text-sm font-medium text-primary hover:underline">Forgot?</a>
+                        <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline">
+                            Forgot?
                         </Link>
                     </div>
                   <FormControl><Input type="password" {...field} /></FormControl>
@@ -59,8 +59,8 @@ export default function LoginPage() {
           </Form>
           <div className="mt-6 text-center text-sm">
             Don't have an account?{" "}
-            <Link href="/signup" passHref legacyBehavior>
-                <a className="font-medium text-primary hover:underline">Sign up</a>
+            <Link href="/signup" className="font-medium text-primary hover:underline">
+                Sign up
             </Link>
           </div>
         </CardContent>
