@@ -31,11 +31,8 @@ export default function OrderSuccessPage() {
             </CardHeader>
             <CardContent>
                 <p className="text-muted-foreground">
-                    To confirm your order or for any inquiries, please call us at:
+                    To confirm your order or for any inquiries, please contact our support team.
                 </p>
-                <a href="tel:9824812753" className="text-2xl font-semibold text-primary hover:underline mt-2 block">
-                    9824812753
-                </a>
             </CardContent>
         </Card>
       </div>

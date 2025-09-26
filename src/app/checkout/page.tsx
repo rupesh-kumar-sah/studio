@@ -241,7 +241,7 @@ export default function CheckoutPage() {
             </CardFooter>
           </Card>
            <div className="mt-6 text-center text-sm text-muted-foreground">
-                <p>Need help? Call us at <a href="tel:9824812753" className="font-medium text-primary hover:underline">9824812753</a></p>
+                <p>Need help? Contact our support team.</p>
             </div>
         </div>
       </div>
