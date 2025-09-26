@@ -28,9 +28,7 @@ export function Header() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Mock authentication status. True for owner, false for customer.
-  const isOwnerLoggedIn = true; 
+  const [isOwnerLoggedIn, setIsOwnerLoggedIn] = useState(true);
 
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');
@@ -43,6 +41,12 @@ export function Header() {
     } else {
       router.push('/products');
     }
+  };
+
+  const handleLogout = () => {
+    setIsOwnerLoggedIn(false);
+    // In a real app, you'd also clear any auth tokens here
+    router.push('/'); // Redirect to home page after logout
   };
 
   return (
@@ -94,7 +98,7 @@ export function Header() {
                   <Link href="/orders">Orders</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
