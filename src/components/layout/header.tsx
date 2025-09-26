@@ -29,7 +29,7 @@ export function Header() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Mock authentication status
-  const isAuthenticated = false; 
+  const isAuthenticated = true; 
 
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');
@@ -86,8 +86,12 @@ export function Header() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Orders</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="#">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/orders">Orders</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Log out</DropdownMenuItem>
               </DropdownMenuContent>
