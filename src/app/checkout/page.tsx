@@ -3,7 +3,7 @@
 
 import { useCart } from "@/components/cart/cart-provider";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -197,11 +197,9 @@ export default function CheckoutPage() {
         return; // Stop further execution, let the form submit
     }
 
-    // For other methods, we save the order and clear the cart, then redirect.
-    // The paymentStatus remains 'Pending'. For a real app, card payments would also
-    // involve a redirect and verification.
-    console.log("Order placed:", newOrder);
-    clearCart();
+    // For other methods (COD, Card), we just redirect to success.
+    // The payment status remains 'Pending' and can be accepted by the owner.
+    // The cart is cleared on the success page for these methods.
     router.push("/checkout/success");
   }
 
@@ -348,7 +346,7 @@ export default function CheckoutPage() {
                        <FormField control={form.control} name="walletId" render={({ field }) => (
                           <FormItem>
                             <FormLabel>Enter your Registered {paymentMethod === 'esewa' ? 'eSewa' : 'Khalti'} Number:</FormLabel>
-                            <FormControl><Input type="tel" placeholder="+977-98XXXXXXXX" {...field} /></FormControl>
+                            <FormControl><Input type="tel" placeholder="98XXXXXXXX" {...field} /></FormControl>
                             <FormMessage />
                           </FormItem>
                         )} />
@@ -417,5 +415,3 @@ export default function CheckoutPage() {
     </>
   );
 }
-
-    

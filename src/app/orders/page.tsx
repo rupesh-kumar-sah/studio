@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -16,11 +17,26 @@ export default function OrdersPage() {
 
   useEffect(() => {
     setIsMounted(true);
+    loadOrders();
+  }, []);
+
+  const loadOrders = () => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     // Sort orders from newest to oldest
     storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setOrders(storedOrders);
-  }, []);
+  };
+  
+  const acceptOrder = (orderId: string) => {
+    const updatedOrders = orders.map(order => {
+      if (order.id === orderId) {
+        return { ...order, paymentStatus: 'Paid' as const };
+      }
+      return order;
+    });
+    localStorage.setItem('orders', JSON.stringify(updatedOrders));
+    setOrders(updatedOrders);
+  };
 
   if (!isMounted) {
     return (
@@ -103,6 +119,11 @@ export default function OrdersPage() {
                             </div>
                         </div>
                     </div>
+                    {order.paymentStatus === 'Pending' && (
+                        <CardFooter className="pt-6">
+                            <Button onClick={() => acceptOrder(order.id)}>Accept Order</Button>
+                        </CardFooter>
+                    )}
                 </AccordionContent>
              </Card>
           </AccordionItem>
@@ -111,5 +132,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-
-    
