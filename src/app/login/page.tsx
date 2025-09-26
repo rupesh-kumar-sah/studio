@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -6,8 +7,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -44,14 +47,29 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   }
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
   function onSubmit(data: z.infer<typeof loginSchema>) {
-    console.log("Login attempt:", data);
-    // Here you would typically call your authentication provider
+    // Check for owner credentials
+    if (data.email === "rsah0123456@gmail.com" && data.password === "rsah@0123456") {
+      console.log("Owner login successful");
+      // In a real app, you'd set some auth state here
+      // For this prototype, we'll just redirect.
+      toast({ title: "Owner Login Successful", description: "Welcome back, Rupesh!" });
+      router.push("/profile");
+      // We need to simulate the header state change. A full page reload will do this for the prototype.
+      setTimeout(() => window.location.assign('/profile'), 500);
+      return;
+    }
+
+    console.log("Customer login attempt:", data);
+    // Here you would typically call your authentication provider for customers
+    toast({ variant: 'destructive', title: "Login Failed", description: "Invalid credentials for customer account." });
   }
 
   function handleGoogleSignIn() {
