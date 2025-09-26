@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -60,7 +62,12 @@ export default function OrdersPage() {
                         <p className="font-bold text-lg">Order #{order.id.slice(-6)}</p>
                         <p className="text-sm text-muted-foreground">{order.customer.firstName} {order.customer.lastName} &bull; {format(new Date(order.date), "PPP p")}</p>
                     </div>
-                     <p className="font-bold text-lg text-right">Rs.{order.total.toFixed(2)}</p>
+                     <div className="flex items-center gap-4">
+                        <Badge variant={order.paymentStatus === 'Paid' ? 'default' : 'secondary'} className={cn(order.paymentStatus === 'Paid' ? 'bg-green-600' : 'bg-orange-500', 'text-white')}>
+                            {order.paymentStatus}
+                        </Badge>
+                        <p className="font-bold text-lg text-right">Rs.{order.total.toFixed(2)}</p>
+                    </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
                     <div className="grid md:grid-cols-2 gap-6">
@@ -75,6 +82,7 @@ export default function OrdersPage() {
                             <h3 className="font-semibold mt-4 mb-2">Payment</h3>
                              <div className="text-sm text-muted-foreground">
                                 <p>Method: <span className="font-medium uppercase">{order.paymentMethod}</span></p>
+                                <p>Status: <span className="font-medium">{order.paymentStatus}</span></p>
                                 {order.walletId && <p>Wallet ID: {order.walletId}</p>}
                             </div>
                         </div>
@@ -103,5 +111,7 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+    
 
     
