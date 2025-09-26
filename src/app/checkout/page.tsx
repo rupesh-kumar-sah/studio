@@ -106,7 +106,7 @@ export default function CheckoutPage() {
         items,
         total: totalPrice,
         paymentMethod: data.paymentMethod,
-        paymentStatus: (data.paymentMethod === 'cod' || data.paymentMethod === 'card') ? 'Pending' : 'Paid',
+        paymentStatus: (data.paymentMethod === 'esewa' || data.paymentMethod === 'khalti') ? 'Paid' : 'Pending',
         walletId: data.walletId,
         date: new Date().toISOString(),
     };
@@ -143,6 +143,7 @@ export default function CheckoutPage() {
         return; // Stop further execution, let the form submit
     }
 
+    // For COD or Card, we place the order and clear the cart immediately
     console.log("Order placed:", newOrder);
     clearCart();
     router.push("/checkout/success");
@@ -360,3 +361,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    

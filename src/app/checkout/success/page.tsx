@@ -1,9 +1,22 @@
+
+'use client';
+
+import { useCart } from '@/components/cart/cart-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, Phone } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function OrderSuccessPage() {
+  const { clearCart } = useCart();
+
+  // Clear the cart when the user lands on the success page.
+  // This is especially important for redirect-based payment methods like eSewa.
+  useEffect(() => {
+    clearCart();
+  }, [clearCart]);
+
   return (
     <div className="container flex items-center justify-center py-20">
       <div className="w-full max-w-lg">
@@ -39,3 +52,5 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
+
+    
