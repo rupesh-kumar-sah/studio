@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
         <CardHeader className="text-center">
           <CardTitle>Forgot Password</CardTitle>
           <CardDescription>
-            {submitted ? "Check your inbox for reset instructions." : "Enter your email to reset your password."}
+            {submitted ? "Check your email inbox" : "Enter your email to reset your password."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
             </Form>
           ) : (
              <div className="text-center">
-                <p className="text-muted-foreground">If an account with that email exists, we've sent a link to reset your password.</p>
+                <p className="text-muted-foreground">If an account with that email exists, we've sent a password reset link to your inbox. Please check your spam folder if you don't see it.</p>
             </div>
           )}
            <div className="mt-6 text-center text-sm">
