@@ -30,12 +30,13 @@ export function CartSheet() {
 
   if (!isMounted) {
     return (
-       <Button variant="outline" size="icon" className="relative" disabled>
-          <ShoppingCart className="h-5 w-5" />
-          <span className="sr-only">Open cart</span>
-        </Button>
+      <Button variant="outline" size="icon" className="relative" disabled>
+        <ShoppingCart className="h-5 w-5" />
+        <span className="sr-only">Open cart</span>
+      </Button>
     );
   }
+
 
   return (
     <Sheet>
