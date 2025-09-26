@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,9 @@ export default function ForgotPasswordPage() {
 
   function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
     console.log("Forgot password request:", data);
+    // In a real application, you would call a service like Firebase Auth
+    // to send a password reset email.
+    // e.g., await sendPasswordResetEmail(auth, data.email);
     setSubmitted(true);
   }
 
