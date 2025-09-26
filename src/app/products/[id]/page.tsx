@@ -1,7 +1,7 @@
 import { getProductById, products } from '@/lib/products';
 import { notFound } from 'next/navigation';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
-import { Star } from 'lucide-radix';
+import { Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { ProductRecommendations } from '@/components/products/product-recommendations';
