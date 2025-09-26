@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCart } from "@/components/cart/cart-provider";
@@ -49,6 +50,7 @@ export default function CheckoutPage() {
       address: "",
       city: "",
       postalCode: "",
+      walletId: "",
     },
   });
 
@@ -246,3 +248,5 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+    
