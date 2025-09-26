@@ -68,7 +68,7 @@ export function CartSheet() {
               <div className="w-full space-y-4">
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Subtotal</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>Rs.{totalPrice.toFixed(2)}</span>
                 </div>
                 <Button asChild size="lg" className="w-full">
                   <Link href="/checkout">Proceed to Checkout</Link>
@@ -112,7 +112,7 @@ function CartEntry({ item }: { item: CartItem }) {
         <p className="text-sm text-muted-foreground">
           {item.size} / {item.color !== 'Natural' ? item.color : ''}
         </p>
-        <p className="font-medium">${item.product.price.toFixed(2)}</p>
+        <p className="font-medium">Rs.{item.product.price.toFixed(2)}</p>
         <div className="mt-2 flex items-center justify-between">
           <Input
             type="number"

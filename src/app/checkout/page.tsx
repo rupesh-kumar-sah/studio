@@ -170,14 +170,14 @@ export default function CheckoutPage() {
                         <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
                   </div>
-                  <p className="font-medium">${(item.product.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-medium">Rs.{(item.product.price * item.quantity).toFixed(2)}</p>
                 </div>
               ))}
             </CardContent>
             <CardFooter className="flex-col items-stretch space-y-2 border-t pt-4">
                 <div className="flex justify-between">
                     <p>Subtotal</p>
-                    <p>${totalPrice.toFixed(2)}</p>
+                    <p>Rs.{totalPrice.toFixed(2)}</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Shipping</p>
@@ -185,7 +185,7 @@ export default function CheckoutPage() {
                 </div>
                  <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
                     <p>Total</p>
-                    <p>${totalPrice.toFixed(2)}</p>
+                    <p>Rs.{totalPrice.toFixed(2)}</p>
                 </div>
             </CardFooter>
           </Card>
