@@ -174,8 +174,8 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                 {errors.sizes && <p className="text-sm text-destructive">{errors.sizes.message}</p>}
             </div>
              <div className="space-y-2">
-                <Label>Images</Label>
-                <Input id="images" type="file" disabled />
+                <Label htmlFor="images">Images</Label>
+                <Input id="images" type="file" />
                 <p className="text-sm text-muted-foreground">Image uploading is not functional. This is a UI placeholder.</p>
              </div>
           </div>
