@@ -34,7 +34,7 @@ function CheckoutSuccessContent() {
                         Order Placed Successfully!
                     </CardTitle>
                     <CardDescription>
-                        Thank you for your purchase.
+                        Thank you for your purchase. We are now verifying your payment.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -43,8 +43,9 @@ function CheckoutSuccessContent() {
                             <p className='font-semibold mb-2'>Order Summary:</p>
                             <p><strong>Order ID:</strong> {order.id}</p>
                             <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
+                            <p><strong>Transaction ID:</strong> {order.transactionId}</p>
                              <p className='mt-2 text-muted-foreground'>
-                                A confirmation email has been sent. You can view your order status on the orders page.
+                                You will be notified once payment is confirmed. You can view your order status on the orders page.
                             </p>
                         </div>
                     ) : (
@@ -82,3 +83,5 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
+
+    

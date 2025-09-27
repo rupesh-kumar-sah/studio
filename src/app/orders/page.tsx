@@ -149,22 +149,31 @@ export default function OrdersPage() {
                         </div>
                     </div>
                     <div>
-                         <h3 className="font-semibold mb-2">Items ({order.items.length})</h3>
-                          <div className="space-y-3">
-                            {order.items.map(item => (
-                                <div key={`${item.product.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
-                                     <div className="relative h-16 w-16 rounded-md overflow-hidden border">
-                                       <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="font-medium">{item.product.name}</p>
-                                        <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                                        <p className="text-sm text-muted-foreground">Size: {item.size}, Color: {item.color}</p>
-                                    </div>
-                                    <p className="text-sm font-medium">Rs.{(item.product.price * item.quantity).toFixed(2)}</p>
-                                </div>
-                            ))}
+                         <h3 className="font-semibold mb-2">Payment Details</h3>
+                        <div className="text-sm text-muted-foreground">
+                            <p><strong>Method:</strong> eSewa (Manual)</p>
+                            <p><strong>Transaction ID:</strong> {order.transactionId}</p>
+                            <p><strong>Status:</strong> <span className="text-amber-600 font-medium">Pending Verification</span></p>
                         </div>
+                    </div>
+                </div>
+                 <Separator />
+                <div>
+                    <h3 className="font-semibold mb-4">Items ({order.items.length})</h3>
+                    <div className="space-y-3">
+                    {order.items.map(item => (
+                        <div key={`${item.product.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
+                            <div className="relative h-16 w-16 rounded-md overflow-hidden border">
+                            <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-medium">{item.product.name}</p>
+                                <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                                <p className="text-sm text-muted-foreground">Size: {item.size}, Color: {item.color}</p>
+                            </div>
+                            <p className="text-sm font-medium">Rs.{(item.product.price * item.quantity).toFixed(2)}</p>
+                        </div>
+                    ))}
                     </div>
                 </div>
             </CardContent>
@@ -174,3 +183,5 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+    

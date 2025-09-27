@@ -27,6 +27,7 @@ export type Order = {
   items: CartItem[];
   total: number;
   customer: z.infer<typeof customerInfoSchema>;
+  transactionId: string;
   message?: string;
 };
 
@@ -41,6 +42,7 @@ const customerInfoSchema = z.object({
 
 const checkoutSchema = z.object({
   customer: customerInfoSchema,
+  transactionId: z.string().min(1, 'Transaction ID is required'),
   message: z.string().optional(),
 });
 
@@ -63,6 +65,7 @@ export default function CheckoutPage() {
         city: '',
         postalCode: '',
       },
+      transactionId: '',
       message: '',
     },
   });
@@ -93,6 +96,7 @@ export default function CheckoutPage() {
             items: items,
             total: totalPrice,
             customer: data.customer,
+            transactionId: data.transactionId,
             message: data.message,
         };
         
@@ -183,6 +187,33 @@ export default function CheckoutPage() {
                         </CardContent>
                     </Card>
 
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Payment</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="p-4 bg-secondary rounded-lg text-sm">
+                                <h3 className="font-semibold text-base mb-2">Pay with eSewa</h3>
+                                <p>Wallet Number: <strong>9824812753</strong></p>
+                                <p>Account Name: <strong>Nepal E-Mart</strong></p>
+                                <p className="mt-2 text-muted-foreground">After completing the payment on your eSewa app, please enter the Transaction ID below to confirm.</p>
+                            </div>
+                            <FormField
+                                control={form.control}
+                                name="transactionId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>eSewa Transaction ID</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter your transaction ID" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </CardContent>
+                    </Card>
+
                     <Card>
                         <CardHeader>
                             <CardTitle>Additional Information</CardTitle>
@@ -258,7 +289,7 @@ export default function CheckoutPage() {
                                         Processing...
                                     </>
                                 ) : (
-                                    'Place Order'
+                                    'Confirm Payment & Place Order'
                                 )}
                             </Button>
                         </CardFooter>
@@ -272,3 +303,5 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+    
