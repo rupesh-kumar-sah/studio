@@ -2,19 +2,20 @@
 
 import { useState } from "react"
 import { getProductRecommendations, ProductRecommendationsInput } from "@/ai/flows/product-recommendations-flow"
-import { products, getProductById } from "@/lib/products"
 import { ProductCard } from "@/components/products/product-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Loader2 } from "lucide-react"
+import { useProducts } from "./product-provider"
 
 interface ProductRecommendationsProps {
   currentProductId: string
 }
 
 export function ProductRecommendations({ currentProductId }: ProductRecommendationsProps) {
+  const { products, getProductById } = useProducts();
   const [recommendations, setRecommendations] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [boostPopularity, setBoostPopularity] = useState(1)

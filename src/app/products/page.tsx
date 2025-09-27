@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { products as allProducts } from '@/lib/products';
 import type { Product } from '@/lib/types';
 import { ProductCard } from '@/components/products/product-card';
 import { ProductFilters } from '@/components/products/product-filters';
@@ -13,12 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
+import { useProducts } from '@/components/products/product-provider';
 
 export default function ProductsPage() {
+  const { products: allProducts } = useProducts();
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
@@ -70,10 +70,10 @@ export default function ProductsPage() {
     }
     
     return filtered;
-  }, [filters, sort]);
+  }, [allProducts, filters, sort]);
   
-  const uniqueColors = useMemo(() => [...new Set(allProducts.flatMap(p => p.colors))], []);
-  const uniqueSizes = useMemo(() => [...new Set(allProducts.flatMap(p => p.sizes))], []);
+  const uniqueColors = useMemo(() => [...new Set(allProducts.flatMap(p => p.colors))], [allProducts]);
+  const uniqueSizes = useMemo(() => [...new Set(allProducts.flatMap(p => p.sizes))], [allProducts]);
 
   return (
     <div className="container py-8">

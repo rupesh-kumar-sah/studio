@@ -1,13 +1,17 @@
+
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { products } from '@/lib/products';
+import { useProducts } from '@/components/products/product-provider';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/products/product-card';
 
 export default function Home() {
+  const { products } = useProducts();
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
   const featuredProducts = products.slice(0, 4);
   const categories = [

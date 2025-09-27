@@ -22,25 +22,15 @@ import {
 } from "@/components/ui/sheet";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/components/auth/auth-provider';
 
 export function Header() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isOwnerLoggedIn, setIsOwnerLoggedIn] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-
-  useEffect(() => {
-    setIsMounted(true);
-    // In a real app, this would be determined by an auth context.
-    // For this prototype, we simulate checking if the owner is logged in,
-    // perhaps by checking a value in localStorage.
-    const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
-    setIsOwnerLoggedIn(ownerLoggedIn);
-  }, []);
-
+  const { isOwner, isMounted, logout } = useAuth();
+  
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');
   }, [searchParams]);
@@ -55,33 +45,9 @@ export function Header() {
   };
 
   const handleLogout = () => {
-    setIsOwnerLoggedIn(false);
-    localStorage.removeItem('isOwnerLoggedIn');
-    // In a real app, you'd also clear any auth tokens here
-    router.push('/'); // Redirect to home page after logout
-    window.location.assign('/'); // force reload to update header state
+    logout();
+    router.push('/');
   };
-  
-  const handleLoginSuccess = () => {
-    setIsOwnerLoggedIn(true);
-    localStorage.setItem('isOwnerLoggedIn', 'true');
-  };
-
-  // This is a bit of a hack for the prototype. In a real app,
-  // we would use a global state management or context to handle this.
-  useEffect(() => {
-      const handleOwnerLogin = () => handleLoginSuccess();
-      window.addEventListener('owner-login', handleOwnerLogin);
-
-      // Check on mount if we're on the profile page, which implies owner is logged in
-      if (window.location.pathname === '/profile' && !isOwnerLoggedIn) {
-          handleLoginSuccess();
-      }
-
-      return () => {
-          window.removeEventListener('owner-login', handleOwnerLogin);
-      }
-  }, [isOwnerLoggedIn]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -116,7 +82,7 @@ export function Header() {
 
           {isMounted && (
             <>
-              {isOwnerLoggedIn ? (
+              {isOwner ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="secondary" size="icon" className="rounded-full">
@@ -170,7 +136,7 @@ export function Header() {
                     <Link href="/products?category=Accessories" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Accessories</Link>
                 </nav>
                 <div className="mt-8 border-t pt-6">
-                 {isMounted && !isOwnerLoggedIn && (
+                 {isMounted && !isOwner && (
                    <div className="flex flex-col space-y-2">
                       <Button asChild variant="ghost">
                           <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
