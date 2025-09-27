@@ -8,6 +8,7 @@ import {
   SheetTitle,
   SheetDescription,
   SheetFooter,
+  SheetTrigger
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,14 +41,14 @@ const productSchema = z.object({
 
 interface EditProductSheetProps {
   product: Product;
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
+  children: React.ReactNode;
 }
 
-export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductSheetProps) {
+export function EditProductSheet({ product, children }: EditProductSheetProps) {
   const { updateProduct, deleteProduct } = useProducts();
   const { categories } = useCategories();
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const [imagePreview1, setImagePreview1] = useState<string | null>(null);
   const [imagePreview2, setImagePreview2] = useState<string | null>(null);
   const [imagePreview3, setImagePreview3] = useState<string | null>(null);
@@ -110,7 +111,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
     };
     
     updateProduct(updatedProduct);
-    onOpenChange(false);
+    setIsOpen(false);
   };
   
   const createImageChangeHandler = (setter: React.Dispatch<React.SetStateAction<string | null>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,14 +133,15 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
 
   const handleDelete = () => {
     deleteProduct(product.id);
-    onOpenChange(false);
+    setIsOpen(false);
     router.push('/products');
   };
 
   const hasImagePreviews = imagePreview1 || imagePreview2 || imagePreview3;
 
   return (
-    <Sheet open={isOpen} onOpenChange={onOpenChange}>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="sm:max-w-lg">
         <form onSubmit={handleSubmit(onSubmit)}>
           <SheetHeader>
@@ -332,7 +334,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
               </AlertDialogContent>
             </AlertDialog>
             <div className="flex sm:justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
               <Button type="submit" disabled={!isDirty && !hasImagePreviews}>Save Changes</Button>
             </div>
           </SheetFooter>

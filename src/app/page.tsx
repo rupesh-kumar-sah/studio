@@ -1,22 +1,19 @@
 
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Star, Award, Truck, Shield, ShoppingBag } from 'lucide-react';
-import { useProducts } from '@/components/products/product-provider';
+import { getProducts } from '@/lib/products-db';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ProductCard } from '@/components/products/product-card';
-import { useCategories } from '@/components/categories/category-provider';
+import { ProductCard } from '@/components/products/product-card-server';
+import { getCategories } from '@/lib/categories-db';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export default function Home() {
-  const { products } = useProducts();
-  const { categories } = useCategories();
-  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
+export default async function Home() {
+  const products = await getProducts();
+  const categories = await getCategories();
   const featuredProducts = products.slice(0, 4);
   const categoryImages = {
     'Men': PlaceHolderImages.find(p => p.id === 'clothing-1'),

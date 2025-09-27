@@ -1,20 +1,18 @@
 
-'use client';
-
-import { useState, useMemo } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { useProducts } from '@/components/products/product-provider';
+import { getProductById } from '@/lib/products-db';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Star, Edit, BadgePercent } from 'lucide-react';
-import { useAuth } from '@/components/auth/auth-provider';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getIsOwner } from '@/lib/auth-db';
 
-const ProductReviews = dynamic(() => import('@/components/products/product-reviews').then(mod => mod.ProductReviews), {
+const ProductReviews = dynamic(() => import('@/components/products/product-reviews-server').then(mod => mod.ProductReviewsServer), {
   loading: () => <Skeleton className="h-48 w-full" />,
 });
 const ProductRecommendations = dynamic(() => import('@/components/products/product-recommendations').then(mod => mod.ProductRecommendations), {
@@ -22,20 +20,15 @@ const ProductRecommendations = dynamic(() => import('@/components/products/produ
 });
 
 
-export default function ProductDetailPage() {
-  const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  const { getProductById } = useProducts();
-  const { isOwner } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-
-  const product = useMemo(() => getProductById(id), [id, getProductById]);
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const product = await getProductById(id);
+  const isOwner = await getIsOwner();
 
   if (!product) {
     notFound();
   }
   
-  // Recalculate average rating and review count based on detailedReviews
   const rating = product.detailedReviews && product.detailedReviews.length > 0 
     ? product.detailedReviews.reduce((acc, review) => acc + review.rating, 0) / product.detailedReviews.length
     : 0;
@@ -43,7 +36,6 @@ export default function ProductDetailPage() {
   const reviews = product.detailedReviews?.length || 0;
 
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
-
 
   return (
     <div className="container py-12">
@@ -54,10 +46,12 @@ export default function ProductDetailPage() {
             <div className="flex justify-between items-start">
               <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
               {isOwner && (
-                <Button variant="outline" size="icon" onClick={() => setIsEditing(true)}>
-                  <Edit className="h-5 w-5" />
-                  <span className="sr-only">Edit Product</span>
-                </Button>
+                <EditProductSheet product={product}>
+                  <Button variant="outline" size="icon">
+                    <Edit className="h-5 w-5" />
+                    <span className="sr-only">Edit Product</span>
+                  </Button>
+                </EditProductSheet>
               )}
             </div>
             <div className="flex items-baseline gap-3 mt-2">
@@ -94,20 +88,14 @@ export default function ProductDetailPage() {
       </div>
       
       <div className="mt-16">
-        <ProductReviews product={product} />
+        <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <ProductReviews productId={product.id} />
+        </Suspense>
       </div>
 
       <div className="mt-16">
         <ProductRecommendations currentProductId={product.id} />
       </div>
-
-      {isOwner && (
-        <EditProductSheet
-          product={product}
-          isOpen={isEditing}
-          onOpenChange={setIsEditing}
-        />
-      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 
-"use client";
+'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Product } from '@/lib/types';
 import { ProductCard } from '@/components/products/product-card';
@@ -20,7 +20,7 @@ import { useProducts } from '@/components/products/product-provider';
 import { useAuth } from '@/components/auth/auth-provider';
 import { AddProductSheet } from '@/components/products/add-product-sheet';
 
-export default function ProductsPage() {
+function ProductsPageContent() {
   const { products: allProducts } = useProducts();
   const searchParams = useSearchParams();
   const { isOwner } = useAuth();
@@ -67,7 +67,6 @@ export default function ProductsPage() {
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        // Sort by rating, then by number of reviews as a tie-breaker
         filtered.sort((a, b) => {
             if (b.rating === a.rating) {
                 return b.reviews - a.reviews;
@@ -76,14 +75,12 @@ export default function ProductsPage() {
         });
         break;
       case 'newest':
-        // Correctly sort by date of creation (using id as a proxy for timestamp)
         filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
       case 'popularity':
-        // Popularity based on number of reviews
         filtered.sort((a, b) => b.reviews - a.reviews);
         break;
-      default: // featured (can be same as popularity or a custom logic)
+      default:
         filtered.sort((a, b) => b.reviews - a.reviews);
         break;
     }
@@ -174,4 +171,12 @@ export default function ProductsPage() {
     {isOwner && <AddProductSheet isOpen={isAddSheetOpen} onOpenChange={setAddSheetOpen} />}
     </>
   );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductsPageContent />
+    </Suspense>
+  )
 }
