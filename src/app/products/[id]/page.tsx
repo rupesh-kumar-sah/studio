@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { useProducts } from '@/components/products/product-provider';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
@@ -14,8 +14,9 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
 import { ProductRecommendations } from '@/components/products/product-recommendations';
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function ProductDetailPage() {
+  const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { getProductById } = useProducts();
   const { isOwner } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
