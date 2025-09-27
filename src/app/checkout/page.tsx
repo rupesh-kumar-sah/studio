@@ -26,6 +26,8 @@ import { isToday } from 'date-fns';
 import { EsewaQrCode } from '@/components/checkout/esewa-qr-code';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { KhaltiQrCode } from '@/components/checkout/khalti-qr-code';
 
 export type Order = {
   id: string;
@@ -36,6 +38,7 @@ export type Order = {
   transactionId: string;
   message?: string;
   status: OrderStatus;
+  paymentMethod: 'eSewa' | 'Khalti';
 };
 
 const customerInfoSchema = z.object({
@@ -51,6 +54,7 @@ const checkoutSchema = z.object({
   customer: customerInfoSchema,
   transactionId: z.string().min(1, 'Transaction ID is required'),
   message: z.string().optional(),
+  paymentMethod: z.enum(['eSewa', 'Khalti']),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -75,6 +79,7 @@ export default function CheckoutPage() {
       },
       transactionId: '',
       message: '',
+      paymentMethod: 'eSewa',
     },
   });
 
@@ -88,7 +93,7 @@ export default function CheckoutPage() {
   
    useEffect(() => {
     if (isCartMounted && totalItems === 0 && !isProcessing) {
-      router.replace('/');
+      router.replace('/cart');
     }
   }, [isCartMounted, totalItems, isProcessing, router]);
 
@@ -126,20 +131,22 @@ export default function CheckoutPage() {
             transactionId: data.transactionId,
             message: data.message,
             status: 'pending',
+            paymentMethod: data.paymentMethod,
         };
         
         // Save order to localStorage
         localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
 
-        // Dispatch a custom event to notify other components
+        // Dispatch a custom event to notify other components (like admin pages)
         window.dispatchEvent(new CustomEvent('orders-updated'));
+        window.dispatchEvent(new CustomEvent('new-order-alert', { detail: { orderId } }));
 
         clearCart();
         router.push(`/checkout/success?orderId=${orderId}`);
     }, 1500);
   };
   
-  if (!isCartMounted || (isCartMounted && totalItems === 0)) {
+  if (!isCartMounted || (isCartMounted && totalItems === 0 && !isProcessing)) {
       return (
           <div className="container flex items-center justify-center py-20 text-center">
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -216,18 +223,55 @@ export default function CheckoutPage() {
                         </CardContent>
                     </Card>
 
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Payment</CardTitle>
+                    <Controller
+                        control={form.control}
+                        name="paymentMethod"
+                        render={({ field }) => (
+                        <Tabs
+                            defaultValue={field.value}
+                            onValueChange={(value) => field.onChange(value as 'eSewa' | 'Khalti')}
+                            className="w-full"
+                        >
+                            <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="eSewa">eSewa</TabsTrigger>
+                            <TabsTrigger value="Khalti">Khalti</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="eSewa">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Pay with eSewa</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <EsewaQrCode />
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+                            <TabsContent value="Khalti">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Pay with Khalti</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <KhaltiQrCode />
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+                        </Tabs>
+                        )}
+                    />
+
+
+                    <Card>
+                         <CardHeader>
+                            <CardTitle>Confirm Payment</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <EsewaQrCode />
+                        <CardContent>
                             <FormField
                                 control={form.control}
                                 name="transactionId"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>eSewa Transaction ID</FormLabel>
+                                        <FormLabel>Transaction ID</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter your transaction ID" {...field} />
                                         </FormControl>
@@ -329,3 +373,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    

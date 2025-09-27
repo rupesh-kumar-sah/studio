@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -8,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes, Palette, FileText } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout({
   children,
@@ -16,12 +18,28 @@ export default function AdminLayout({
 }) {
   const { isOwner, isMounted, owner, logout } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (isMounted && !isOwner) {
       router.push('/login');
     }
   }, [isMounted, isOwner, router]);
+
+  useEffect(() => {
+    const handleNewOrder = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      toast({
+        title: "New Order Received!",
+        description: `Order #${customEvent.detail.orderId} has been placed.`,
+      });
+    };
+
+    window.addEventListener('new-order-alert', handleNewOrder);
+    return () => {
+      window.removeEventListener('new-order-alert', handleNewOrder);
+    };
+  }, [toast]);
 
   if (!isMounted || !isOwner) {
     return (
@@ -145,3 +163,5 @@ export default function AdminLayout({
     </SidebarProvider>
   );
 }
+
+    
