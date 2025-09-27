@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/components/auth/auth-provider';
 import { CategoryProvider } from '@/components/categories/category-provider';
 import { CartProvider } from '@/components/cart/cart-provider';
-import { ProductProvider } from '@/components/products/product-provider';
+import { ThemeProvider } from '@/components/theme/theme-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -69,14 +69,14 @@ export default function RootLayout({
       <body className="font-body antialiased flex flex-col min-h-screen">
         <AuthProvider>
           <CategoryProvider>
-            <ProductProvider>
-              <CartProvider>
+            <CartProvider>
+              <ThemeProvider>
                 <main className="flex-1 flex flex-col">
                   {children}
                 </main>
                 <Toaster />
-              </CartProvider>
-            </ProductProvider>
+              </ThemeProvider>
+            </CartProvider>
           </CategoryProvider>
         </AuthProvider>
       </body>

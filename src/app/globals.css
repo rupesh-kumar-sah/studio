@@ -66,3 +66,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .color-picker {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--border));
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 0;
+    background-color: transparent;
+  }
+  .color-picker::-webkit-color-swatch {
+    border-radius: 50%;
+    border: none;
+  }
+  .color-picker::-moz-color-swatch {
+    border-radius: 50%;
+    border: none;
+  }
+}

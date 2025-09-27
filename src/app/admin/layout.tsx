@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes, Palette } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
 
@@ -82,6 +82,14 @@ export default function AdminLayout({
                         <Link href="/admin/customers">
                             <Users />
                             Customers
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton href="/admin/theme" asChild>
+                        <Link href="/admin/theme">
+                            <Palette />
+                            Theme
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
