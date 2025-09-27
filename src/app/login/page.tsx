@@ -56,7 +56,7 @@ export default function LoginPage() {
 
   function onSubmit(data: z.infer<typeof loginSchema>) {
     // Check for owner credentials
-    if (data.email === "rsah0123456@gmail.com" && data.password === "rsah@0123456") {
+    if (data.email === "rsah0123456@gmail.com" && data.password === "rupesh@0123456") {
       console.log("Owner login successful");
       // In a real app, you'd set some auth state here
       // For this prototype, we'll just redirect.
