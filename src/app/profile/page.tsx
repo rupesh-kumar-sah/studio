@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Mail, ShoppingBag, LogIn, Users, Edit, Phone, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -122,6 +122,7 @@ export default function ProfilePage() {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Update Profile Photo</DialogTitle>
+                                <DialogDescription>Select a new image to use as your avatar.</DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4">
                                 <div>

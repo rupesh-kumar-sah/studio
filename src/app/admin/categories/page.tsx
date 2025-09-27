@@ -76,6 +76,7 @@ export default function AdminCategoriesPage() {
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Add New Category</DialogTitle>
+                     <DialogDescription>Enter a name for the new product category.</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(handleAddSubmit)}>
                     <div className="py-4">
@@ -106,40 +107,23 @@ export default function AdminCategoriesPage() {
                 categories.map((category) => (
                   <TableRow key={category}>
                     <TableCell className="font-medium">{category}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right space-x-1">
                        <Dialog open={editingCategory === category} onOpenChange={(isOpen) => !isOpen && setEditingCategory(null)}>
                             <DialogTrigger asChild>
                                 <Button variant="ghost" size="icon" onClick={() => openEditDialog(category)}>
                                     <Edit className="h-4 w-4" />
+                                    <span className="sr-only">Edit {category}</span>
                                 </Button>
                             </DialogTrigger>
-                             <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                     <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This will permanently delete the "{category}" category. This action cannot be undone.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => handleDelete(category)}>Delete</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
                             <DialogContent>
                                 <DialogHeader>
                                     <DialogTitle>Edit Category</DialogTitle>
+                                    <DialogDescription>Rename the "{category}" category.</DialogDescription>
                                 </DialogHeader>
                                 <form onSubmit={handleSubmit(handleEditSubmit)}>
                                     <div className="py-4">
-                                        <Label htmlFor="name">Category Name</Label>
-                                        <Input id="name" {...register('name')} />
+                                        <Label htmlFor="edit-name">Category Name</Label>
+                                        <Input id="edit-name" {...register('name')} />
                                         {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
                                     </div>
                                     <DialogFooter>
@@ -149,6 +133,27 @@ export default function AdminCategoriesPage() {
                                 </form>
                             </DialogContent>
                         </Dialog>
+
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                    <Trash2 className="h-4 w-4" />
+                                     <span className="sr-only">Delete {category}</span>
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This will permanently delete the "{category}" category. This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(category)}>Delete</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))
