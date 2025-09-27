@@ -6,25 +6,19 @@ import type { Order } from '@/app/checkout/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { LogIn, ShoppingBag, CheckCircle, Clock, Trash2, ArrowRight } from 'lucide-react';
+import { LogIn, ShoppingBag, CheckCircle, Clock, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+
 
 export default function OrdersPage() {
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
-  const { isOwner, currentUser, isMounted: authIsMounted } = useAuth();
-  const { toast } = useToast();
-  
-  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deletePassword, setDeletePassword] = useState('');
-  const [deleteError, setDeleteError] = useState('');
+  const { currentUser, isMounted: authIsMounted } = useAuth();
+
 
   const loadAndFilterOrders = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -32,15 +26,13 @@ export default function OrdersPage() {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    if (isOwner) {
-        setDisplayOrders(storedOrders);
-    } else if (currentUser) {
+    if (currentUser) {
         const customerOrders = storedOrders.filter(order => order.customer.email === currentUser.email);
         setDisplayOrders(customerOrders);
     } else {
         setDisplayOrders([]);
     }
-  }, [isOwner, currentUser]);
+  }, [currentUser]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -69,45 +61,6 @@ export default function OrdersPage() {
     };
   }, [loadAndFilterOrders]); 
 
-  const acceptOrder = (orderId: string) => {
-    const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-    const updatedOrders = storedOrders.map(order => 
-        order.id === orderId ? { ...order, status: 'confirmed' as const } : order
-    );
-    localStorage.setItem('orders', JSON.stringify(updatedOrders));
-    window.dispatchEvent(new CustomEvent('orders-updated'));
-    toast({
-        title: "Order Confirmed",
-        description: `Order #${orderId} has been marked as confirmed.`
-    });
-  };
-
-  const openDeleteDialog = (orderId: string) => {
-    setOrderToDelete(orderId);
-    setDeletePassword('');
-    setDeleteError('');
-    setIsDeleteDialogOpen(true);
-  };
-  
-  const handleDeleteConfirm = () => {
-    if (deletePassword === 'rupesh@0123456') {
-        if (orderToDelete) {
-            const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-            const updatedOrders = storedOrders.filter(o => o.id !== orderToDelete);
-            localStorage.setItem('orders', JSON.stringify(updatedOrders));
-            window.dispatchEvent(new CustomEvent('orders-updated'));
-            toast({
-                variant: 'destructive',
-                title: "Order Deleted",
-                description: `Order #${orderToDelete} has been successfully deleted.`
-            });
-            setIsDeleteDialogOpen(false);
-            setOrderToDelete(null);
-        }
-    } else {
-        setDeleteError('Incorrect password. Please try again.');
-    }
-  };
   
   if (!isMounted || !authIsMounted) {
     return (
@@ -117,8 +70,10 @@ export default function OrdersPage() {
     );
   }
 
-  if (!isOwner && !currentUser) {
+  if (!currentUser) {
      return (
+        <>
+        <Header />
         <div className="container flex flex-col items-center justify-center text-center py-20">
             <Card className="w-full max-w-md p-8">
                  <LogIn className="h-12 w-12 mx-auto text-muted-foreground" />
@@ -129,11 +84,15 @@ export default function OrdersPage() {
                 </Button>
             </Card>
         </div>
+        <Footer />
+        </>
     )
   }
 
   if (displayOrders.length === 0) {
     return (
+      <>
+      <Header />
       <div className="container py-12 text-center">
         <Card className="max-w-md mx-auto">
             <CardHeader>
@@ -141,24 +100,26 @@ export default function OrdersPage() {
                 <CardTitle className="mt-4">No Orders Found</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-muted-foreground">{currentUser ? "You haven't placed any orders yet." : "There are currently no orders to display."}</p>
-                {currentUser && (
-                    <Button asChild className="mt-6">
-                        <Link href="/products">Start Shopping</Link>
-                    </Button>
-                )}
+                <p className="text-muted-foreground">You haven't placed any orders yet.</p>
+                <Button asChild className="mt-6">
+                    <Link href="/products">Start Shopping</Link>
+                </Button>
             </CardContent>
         </Card>
       </div>
+      <Footer />
+      </>
     );
   }
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">{isOwner ? "Customer Orders" : "My Orders"}</h1>
+        <h1 className="text-4xl font-bold tracking-tight">My Orders</h1>
         <p className="mt-2 text-lg text-muted-foreground">
-          {isOwner ? "A list of all submitted orders." : "A list of your past orders."}
+          A list of your past orders.
         </p>
       </div>
       <div className="space-y-6">
@@ -172,7 +133,6 @@ export default function OrdersPage() {
                       </Link>
                     </CardTitle>
                     <CardDescription>
-                        {isOwner && `${order.customer.firstName} ${order.customer.lastName} • `}
                         {format(new Date(order.date), "PPP p")}
                     </CardDescription>
                 </div>
@@ -197,49 +157,11 @@ export default function OrdersPage() {
                 </Link>
               </Button>
             </CardContent>
-            {isOwner && (
-                <CardFooter className="gap-2 bg-secondary p-4 rounded-b-lg">
-                    {order.status === 'pending' && (
-                        <Button onClick={() => acceptOrder(order.id)} size="sm">
-                            <CheckCircle className="mr-2 h-4 w-4" />
-                            Accept Order
-                        </Button>
-                    )}
-                    <Button variant="destructive" onClick={() => openDeleteDialog(order.id)} size="sm">
-                       <Trash2 className="mr-2 h-4 w-4" />
-                       Delete Order
-                    </Button>
-                </CardFooter>
-            )}
           </Card>
         ))}
       </div>
-
-       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Deletion</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. To permanently delete this order, please enter the admin password.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-2">
-                <Label htmlFor="delete-password">Password</Label>
-                <Input
-                    id="delete-password"
-                    type="password"
-                    value={deletePassword}
-                    onChange={(e) => setDeletePassword(e.target.value)}
-                    placeholder="Enter password..."
-                />
-                {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-              <Button type="button" variant="destructive" onClick={handleDeleteConfirm}>Delete Order</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
     </div>
+    <Footer />
+    </>
   );
 }

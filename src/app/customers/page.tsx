@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { User } from "@/lib/types";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 export default function CustomersPage() {
   const { isOwner, allUsers, isMounted, reloadAllUsers } = useAuth();
@@ -41,6 +43,8 @@ export default function CustomersPage() {
   const customerUsers = allUsers.filter(user => user.email !== "rsah0123456@gmail.com");
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">Registered Customers</h1>
@@ -67,7 +71,7 @@ export default function CustomersPage() {
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center text-muted-foreground">
+                            <TableCell colSpan={3} className="text-center text-muted-foreground py-10">
                                 No customers have signed up yet.
                             </TableCell>
                         </TableRow>
@@ -77,5 +81,7 @@ export default function CustomersPage() {
         </CardContent>
       </Card>
     </div>
+    <Footer />
+    </>
   );
 }

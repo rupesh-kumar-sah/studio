@@ -4,11 +4,13 @@
 import { useCart } from '@/components/cart/cart-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, Clock, Phone } from 'lucide-react';
+import { CheckCircle2, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import type { Order } from '@/app/checkout/page';
 import { useSearchParams } from 'next/navigation';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 
 function CheckoutSuccessContent() {
@@ -126,10 +128,14 @@ function CheckoutSuccessContent() {
 
 export default function OrderSuccessPage() {
   return (
+    <>
+    <Header />
     <div className="container flex items-center justify-center py-20">
        <Suspense fallback={<div>Loading...</div>}>
             <CheckoutSuccessContent />
        </Suspense>
     </div>
+    <Footer />
+    </>
   );
 }

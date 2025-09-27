@@ -12,6 +12,8 @@ import { z } from "zod";
 import { useAuth } from "@/components/auth/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -78,6 +80,8 @@ export default function SignupPage() {
   }
 
   return (
+    <>
+    <Header />
     <div className="container flex items-center justify-center py-20">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -144,5 +148,7 @@ export default function SignupPage() {
         </CardContent>
       </Card>
     </div>
+    <Footer />
+    </>
   );
 }

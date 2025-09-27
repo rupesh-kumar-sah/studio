@@ -12,6 +12,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/auth/auth-provider";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -61,7 +63,7 @@ export default function LoginPage() {
     // Try owner login first
     if (ownerLogin(data.email, data.password)) {
       toast({ title: "Owner Login Successful", description: "Welcome back, Rupesh!" });
-      router.push("/profile");
+      router.push("/admin");
       return;
     }
     
@@ -80,6 +82,8 @@ export default function LoginPage() {
   }
 
   return (
+    <>
+    <Header />
     <div className="container flex items-center justify-center py-20">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -137,5 +141,7 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
+    <Footer />
+    </>
   );
 }

@@ -4,6 +4,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import { usePageContent } from "@/hooks/use-page-content";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 export default function PrivacyPolicyPage() {
   const { content, loading } = usePageContent('privacy-policy');
@@ -31,6 +33,8 @@ export default function PrivacyPolicyPage() {
   const { title, description, content: { sections, lastUpdated } } = content;
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">{title}</h1>
@@ -46,7 +50,7 @@ export default function PrivacyPolicyPage() {
             <CardTitle className="text-2xl">How We Protect Your Data</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 text-muted-foreground">
-            {sections.map((section: {title: string, content: string}, index: number) => (
+            {(sections || []).map((section: {title: string, content: string}, index: number) => (
                <div key={index} className="space-y-2">
                 <h3 className="font-semibold text-foreground text-lg">{section.title}</h3>
                 <p>{section.content}</p>
@@ -59,5 +63,7 @@ export default function PrivacyPolicyPage() {
         </Card>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }

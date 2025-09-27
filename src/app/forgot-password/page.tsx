@@ -11,7 +11,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
-import { useToast } from "@/hooks/use-toast";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -20,7 +21,6 @@ const forgotPasswordSchema = z.object({
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
   const { findUserByEmail } = useAuth();
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: { email: "" },
@@ -38,6 +38,8 @@ export default function ForgotPasswordPage() {
   }
 
   return (
+    <>
+    <Header />
     <div className="container flex items-center justify-center py-20">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -74,5 +76,7 @@ export default function ForgotPasswordPage() {
         </CardContent>
       </Card>
     </div>
+    <Footer />
+    </>
   );
 }

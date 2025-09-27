@@ -2,10 +2,11 @@
 'use client';
 
 import { useAuth } from "@/components/auth/auth-provider";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useEffect } from "react";
 import type { User } from "@/lib/types";
+import { Users } from "lucide-react";
 
 export default function AdminCustomersPage() {
   const { allUsers, reloadAllUsers } = useAuth();
@@ -51,9 +52,11 @@ export default function AdminCustomersPage() {
                             </TableRow>
                         ))
                     ) : (
-                        <TableRow>
-                            <TableCell colSpan={3} className="text-center text-muted-foreground py-10">
-                                No customers have signed up yet.
+                         <TableRow>
+                            <TableCell colSpan={3} className="h-48 text-center">
+                                <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                                <h3 className="mt-4 text-lg font-semibold">No Customers Yet</h3>
+                                <p className="mt-1 text-muted-foreground">When customers sign up, they will appear here.</p>
                             </TableCell>
                         </TableRow>
                     )}

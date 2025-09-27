@@ -10,6 +10,8 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { HelpCircle, Loader2 } from "lucide-react"
 import { usePageContent } from "@/hooks/use-page-content"
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 export default function FaqPage() {
   const { content, loading } = usePageContent('faq');
@@ -37,6 +39,8 @@ export default function FaqPage() {
   const { title, description, content: { faqs } } = content;
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">{title}</h1>
@@ -53,7 +57,7 @@ export default function FaqPage() {
           </CardHeader>
           <CardContent>
             <Accordion type="single" collapsible className="w-full">
-              {faqs.map((faq: {question: string, answer: string}, index: number) => (
+              {(faqs || []).map((faq: {question: string, answer: string}, index: number) => (
                 <AccordionItem key={index} value={`item-${index}`}>
                   <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
                   <AccordionContent className="text-base text-muted-foreground">
@@ -66,5 +70,7 @@ export default function FaqPage() {
         </Card>
       </div>
     </div>
+    <Footer />
+    </>
   )
 }

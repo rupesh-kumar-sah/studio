@@ -63,7 +63,7 @@ export default function AdminPagesPage() {
         setPages(currentPages =>
             currentPages.map(page => {
                 if (page.slug === slug) {
-                    const newSections = [...page.content.sections];
+                    const newSections = [...(page.content.sections || [])];
                     newSections[index] = { ...newSections[index], [field]: value };
                     return { ...page, content: { ...page.content, sections: newSections } };
                 }
@@ -88,7 +88,7 @@ export default function AdminPagesPage() {
         setPages(currentPages =>
             currentPages.map(page => {
                 if (page.slug === slug) {
-                    const newSections = page.content.sections.filter((_: any, i: number) => i !== index);
+                    const newSections = (page.content.sections || []).filter((_: any, i: number) => i !== index);
                     return { ...page, content: { ...page.content, sections: newSections } };
                 }
                 return page;
@@ -100,7 +100,7 @@ export default function AdminPagesPage() {
         setPages(currentPages =>
             currentPages.map(page => {
                 if (page.slug === slug) {
-                    const newFaqs = [...page.content.faqs];
+                    const newFaqs = [...(page.content.faqs || [])];
                     newFaqs[index] = { ...newFaqs[index], [field]: value };
                     return { ...page, content: { ...page.content, faqs: newFaqs } };
                 }
@@ -125,7 +125,7 @@ export default function AdminPagesPage() {
         setPages(currentPages =>
             currentPages.map(page => {
                 if (page.slug === slug) {
-                    const newFaqs = page.content.faqs.filter((_: any, i: number) => i !== index);
+                    const newFaqs = (page.content.faqs || []).filter((_: any, i: number) => i !== index);
                     return { ...page, content: { ...page.content, faqs: newFaqs } };
                 }
                 return page;
@@ -217,6 +217,12 @@ export default function AdminPagesPage() {
             case 'shipping-returns':
                 const shipping = pageContent.shipping || {};
                 const returns = pageContent.returns || {};
+                const deliveryTimes = shipping.deliveryTimes || {};
+                const shippingCosts = shipping.costs || {};
+                const shippingTracking = shipping.tracking || {};
+                const returnsPolicy = returns.policy || {};
+                const returnsRefunds = returns.refunds || {};
+
                 return (
                     <div className="space-y-6">
                         {/* Shipping Policy Section */}
@@ -232,19 +238,19 @@ export default function AdminPagesPage() {
                             </div>
                              <div className="space-y-2">
                                 <Label>Delivery Times (Inside Valley)</Label>
-                                <Input value={shipping.deliveryTimes?.insideValley || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.insideValley', e.target.value)} />
+                                <Input value={deliveryTimes.insideValley || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.insideValley', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Delivery Times (Outside Valley)</Label>
-                                <Input value={shipping.deliveryTimes?.outsideValley || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.outsideValley', e.target.value)} />
+                                <Input value={deliveryTimes.outsideValley || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.outsideValley', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Shipping Costs</Label>
-                                <Textarea value={shipping.costs?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.costs.content', e.target.value)} />
+                                <Textarea value={shippingCosts.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.costs.content', e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Tracking</Label>
-                                <Textarea value={shipping.tracking?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.tracking.content', e.target.value)} />
+                                <Textarea value={shippingTracking.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.tracking.content', e.target.value)} />
                             </div>
                         </div>
                         {/* Return Policy Section */}
@@ -260,11 +266,11 @@ export default function AdminPagesPage() {
                             </div>
                              <div className="space-y-2">
                                 <Label>Policy Details</Label>
-                                <Textarea value={returns.policy?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.policy.content', e.target.value)} />
+                                <Textarea value={returnsPolicy.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.policy.content', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Refunds</Label>
-                                <Textarea value={returns.refunds?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.refunds.content', e.target.value)} />
+                                <Textarea value={returnsRefunds.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.refunds.content', e.target.value)} />
                             </div>
                         </div>
                     </div>

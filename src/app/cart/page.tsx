@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 export default function CartPage() {
   const { items, totalItems, totalPrice, updateQuantity, removeItem, isCartMounted } = useCart();
@@ -25,24 +27,30 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="container py-12 text-center">
-        <Card className="max-w-md mx-auto">
-          <CardHeader>
-            <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground" />
-            <CardTitle className="mt-4">Your Cart is Empty</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">You have no items in your shopping cart.</p>
-            <Button onClick={() => router.push('/products')} className="mt-6">
-              Continue Shopping
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+        <>
+        <Header />
+        <div className="container py-12 text-center">
+            <Card className="max-w-md mx-auto">
+            <CardHeader>
+                <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground" />
+                <CardTitle className="mt-4">Your Cart is Empty</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">You have no items in your shopping cart.</p>
+                <Button onClick={() => router.push('/products')} className="mt-6">
+                Continue Shopping
+                </Button>
+            </CardContent>
+            </Card>
+        </div>
+        <Footer />
+      </>
     );
   }
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">Shopping Cart</h1>
@@ -135,5 +143,7 @@ export default function CartPage() {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }

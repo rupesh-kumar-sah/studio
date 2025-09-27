@@ -17,6 +17,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
@@ -42,7 +44,7 @@ export default function OrderDetailPage() {
   const acceptOrder = (orderId: string) => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     const updatedOrders = storedOrders.map(o => 
-        o.id === orderId ? { ...o, status: 'confirmed' } : o
+        o.id === orderId ? { ...o, status: 'confirmed' as const } : o
     );
     localStorage.setItem('orders', JSON.stringify(updatedOrders));
     setOrder(updatedOrders.find(o => o.id === orderId) || null);
@@ -85,6 +87,8 @@ export default function OrderDetailPage() {
 
   if (!order) {
     return (
+      <>
+      <Header />
       <div className="container py-12 text-center">
         <Card className="max-w-md mx-auto">
           <CardHeader>
@@ -99,14 +103,18 @@ export default function OrderDetailPage() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
+      </>
     );
   }
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
       <div className="mb-8">
         <Button asChild variant="ghost" className="mb-4">
-            <Link href="/orders">
+            <Link href={isOwner ? "/admin/orders" : "/orders"}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to All Orders
             </Link>
@@ -223,5 +231,7 @@ export default function OrderDetailPage() {
           </DialogContent>
         </Dialog>
     </div>
+    <Footer />
+    </>
   );
 }

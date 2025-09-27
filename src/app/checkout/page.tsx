@@ -1,9 +1,8 @@
 
-
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Image from 'next/image';
@@ -25,6 +24,8 @@ import type { OrderStatus } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { isToday } from 'date-fns';
 import { EsewaQrCode } from '@/components/checkout/esewa-qr-code';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 export type Order = {
   id: string;
@@ -87,7 +88,7 @@ export default function CheckoutPage() {
   
    useEffect(() => {
     if (isCartMounted && totalItems === 0 && !isProcessing) {
-      router.replace('/cart');
+      router.replace('/');
     }
   }, [isCartMounted, totalItems, isProcessing, router]);
 
@@ -138,7 +139,7 @@ export default function CheckoutPage() {
     }, 1500);
   };
   
-  if (!isCartMounted || totalItems === 0) {
+  if (!isCartMounted || (isCartMounted && totalItems === 0)) {
       return (
           <div className="container flex items-center justify-center py-20 text-center">
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -150,6 +151,8 @@ export default function CheckoutPage() {
   }
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
         <div className="text-center mb-12">
             <h1 className="text-4xl font-bold tracking-tight">Checkout</h1>
@@ -322,5 +325,7 @@ export default function CheckoutPage() {
             </form>
         </Form>
     </div>
+    <Footer />
+    </>
   );
 }
