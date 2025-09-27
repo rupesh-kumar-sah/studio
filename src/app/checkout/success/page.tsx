@@ -83,7 +83,7 @@ function CheckoutSuccessContent() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground">
-                        To confirm your order or for any inquiries, please contact our support team.
+                        To confirm your order or for any inquiries, please contact our support team at 9824812753.
                     </p>
                 </CardContent>
             </Card>
@@ -101,3 +101,5 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
+
+    
