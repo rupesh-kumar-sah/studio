@@ -15,7 +15,7 @@ interface ProductContextType {
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export function ProductProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -73,5 +73,3 @@ export function useProducts() {
   }
   return context;
 }
-
-    
