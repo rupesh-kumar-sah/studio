@@ -1,4 +1,5 @@
 
+
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -14,10 +15,8 @@ import { getIsOwner } from '@/lib/auth-db';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Badge } from '@/components/ui/badge';
+import { ProductReviewsServer } from '@/components/products/product-reviews-server';
 
-const ProductReviews = dynamic(() => import('@/components/products/product-reviews-server').then(mod => mod.ProductReviewsServer), {
-  loading: () => <Skeleton className="h-48 w-full" />,
-});
 const ProductRecommendations = dynamic(() => import('@/components/products/product-recommendations').then(mod => mod.ProductRecommendations), {
   loading: () => <Skeleton className="h-48 w-full" />,
 });
@@ -91,7 +90,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
         
         <div className="mt-16">
           <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-              <ProductReviews productId={product.id} />
+              <ProductReviewsServer productId={product.id} />
           </Suspense>
         </div>
 
