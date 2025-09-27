@@ -94,7 +94,7 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutFormValues) => {
     setIsProcessing(true);
     
-    const DAILY_PURCHASE_LIMIT = 50;
+    const DAILY_PURCHASE_LIMIT = 5;
     const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     const customerOrders = existingOrders.filter(o => o.customer.email === data.customer.email);
     
@@ -328,5 +328,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-    
