@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -21,6 +22,8 @@ import { Loader2 } from 'lucide-react';
 import type { CartItem } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { OrderStatus } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import { isToday } from 'date-fns';
 
 export type Order = {
   id: string;
@@ -54,6 +57,7 @@ export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart, isCartMounted } = useCart();
   const { currentUser } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
@@ -90,6 +94,24 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutFormValues) => {
     setIsProcessing(true);
     
+    const DAILY_PURCHASE_LIMIT = 50;
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+    const customerOrders = existingOrders.filter(o => o.customer.email === data.customer.email);
+    
+    const itemsPurchasedToday = customerOrders
+      .filter(o => isToday(new Date(o.date)))
+      .reduce((acc, order) => acc + order.items.reduce((sum, item) => sum + item.quantity, 0), 0);
+
+    if (itemsPurchasedToday + totalItems > DAILY_PURCHASE_LIMIT) {
+      toast({
+        variant: 'destructive',
+        title: 'Daily Limit Exceeded',
+        description: `You can only purchase up to ${DAILY_PURCHASE_LIMIT} items per day. You have already purchased ${itemsPurchasedToday} items today.`,
+      });
+      setIsProcessing(false);
+      return;
+    }
+
     // Simulate API call
     setTimeout(() => {
         const orderId = `NEm-${Date.now().toString().slice(-6)}`;
@@ -105,7 +127,6 @@ export default function CheckoutPage() {
         };
         
         // Save order to localStorage
-        const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
         localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
 
         // Dispatch a custom event to notify other components
@@ -307,3 +328,5 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+    
