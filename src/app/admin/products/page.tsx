@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState, useMemo, Suspense, useEffect } from 'react';
 import type { Product } from '@/lib/types';
 import { ProductCard } from '@/components/products/product-card';
 import {
@@ -13,15 +13,23 @@ import {
 } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import { useProducts } from '@/components/products/product-provider';
 import { AddProductSheet } from '@/components/products/add-product-sheet';
 import { Input } from '@/components/ui/input';
+import { getProducts } from '@/lib/products-db';
 
 function AdminProductsPageContent() {
-  const { products: allProducts } = useProducts();
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('featured');
   const [isAddSheetOpen, setAddSheetOpen] = useState(false);
+
+  useEffect(() => {
+    async function loadProducts() {
+        const products = await getProducts();
+        setAllProducts(products);
+    }
+    loadProducts();
+  }, []);
   
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = allProducts.filter((product: Product) => {
