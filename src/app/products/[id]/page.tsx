@@ -91,7 +91,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
         
         <div className="mt-16">
           <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-              <ProductReviewsServer productId={product.id} />
+              <ProductReviews productId={product.id} />
           </Suspense>
         </div>
 
