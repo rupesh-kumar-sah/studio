@@ -58,7 +58,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart, isCartMounted } = useCart();
-  const { currentUser } = useAuth();
+  const { currentUser, isOwner } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -97,7 +97,7 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutFormValues) => {
     setIsProcessing(true);
     
-    const DAILY_PURCHASE_LIMIT = 5;
+    const DAILY_PURCHASE_LIMIT = isOwner ? 50 : 5;
     const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     const customerOrders = existingOrders.filter(o => o.customer.email === data.customer.email);
     
