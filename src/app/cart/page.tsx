@@ -82,7 +82,10 @@ export default function CartPage() {
                           min="1"
                           max={item.product.purchaseLimit || 99}
                           value={item.quantity}
-                          onChange={(e) => updateQuantity(item.product.id, item.size, item.color, parseInt(e.target.value))}
+                          onChange={(e) => {
+                            const newQuantity = parseInt(e.target.value, 10);
+                            updateQuantity(item.product.id, item.size, item.color, isNaN(newQuantity) ? 0 : newQuantity);
+                          }}
                           className="h-9 w-20 mx-auto"
                         />
                       </TableCell>
