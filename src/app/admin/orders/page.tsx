@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, CheckCircle, Clock, Trash2, ArrowRight } from 'lucide-react';
-import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -18,7 +17,6 @@ import { Label } from '@/components/ui/label';
 export default function AdminOrdersPage() {
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
-  const { authIsMounted } = useAuth();
   const { toast } = useToast();
   
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
@@ -35,10 +33,8 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    if (authIsMounted) {
-        loadOrders();
-    }
-  }, [authIsMounted, loadOrders]);
+    loadOrders();
+  }, [loadOrders]);
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
@@ -100,7 +96,7 @@ export default function AdminOrdersPage() {
     }
   };
   
-  if (!isMounted || !authIsMounted) {
+  if (!isMounted) {
     return (
         <div className="container py-12 text-center">
             <p>Loading orders...</p>
@@ -110,7 +106,7 @@ export default function AdminOrdersPage() {
 
   if (displayOrders.length === 0) {
     return (
-      <div className="container py-12 text-center">
+      <div className="p-4 sm:p-6 text-center">
         <Card className="max-w-md mx-auto">
             <CardHeader>
                 <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground" />
