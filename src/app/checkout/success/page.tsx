@@ -119,17 +119,6 @@ function CheckoutSuccessContent() {
                     </Button>
                 </CardContent>
             </Card>
-             <Card className="mt-6">
-                <CardHeader className="flex-row items-center gap-3">
-                    <Phone className="h-6 w-6 text-muted-foreground" />
-                    <CardTitle className="text-xl">Questions about your order?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">
-                        For any inquiries, please contact our support team at 9824812753.
-                    </p>
-                </CardContent>
-            </Card>
         </div>
     )
 }

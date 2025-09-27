@@ -29,7 +29,6 @@ export function Footer() {
                 <a href="mailto:rsah0123456@gmail.com" className="text-sm text-muted-foreground hover:text-foreground block">
                   <span>📧 rsah0123456@gmail.com</span>
                 </a>
-                <span className="text-sm text-muted-foreground">📞 9824812753</span>
             </div>
           </div>
           <div>

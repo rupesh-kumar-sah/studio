@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 const owner = {
     name: "Rupesh Kumar Sah",
     email: "rsah0123456@gmail.com",
-    phone: "9824812753",
     avatar: "https://github.com/shadcn.png"
 };
 
@@ -42,7 +41,6 @@ export default function ProfilePage() {
   const user = isOwner ? {
     name: owner.name,
     email: owner.email,
-    phone: owner.phone,
     avatar: owner.avatar,
     title: 'Owner Profile',
     description: 'Account details for the site administrator.',
@@ -50,7 +48,6 @@ export default function ProfilePage() {
   } : {
     name: currentUser?.name,
     email: currentUser?.email,
-    phone: '', // Customers don't have phone numbers in this version
     avatar: `https://ui-avatars.com/api/?name=${currentUser?.name?.replace(' ', '+')}&background=random`,
     title: 'My Profile',
     description: 'View and manage your account details.',
@@ -81,12 +78,6 @@ export default function ProfilePage() {
                             <Mail className="h-5 w-5 text-muted-foreground" />
                             <span className="text-foreground">{user.email}</span>
                         </div>
-                        {isOwner && user.phone && (
-                            <div className="flex items-center gap-4 p-3 bg-secondary rounded-lg">
-                                <Phone className="h-5 w-5 text-muted-foreground" />
-                                <span className="text-foreground">{user.phone}</span>
-                            </div>
-                        )}
                     </div>
                      <div className="border-t pt-6 space-y-4">
                         <Button asChild className="w-full" size="lg">

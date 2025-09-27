@@ -110,7 +110,6 @@ export function EsewaQrCode() {
             <div className="flex justify-center mb-2">
                 <Image src={qrCodeUrl} alt="eSewa QR Code" width={200} height={200} className="rounded-md border p-1" unoptimized />
             </div>
-            <p>Wallet Number: <strong>9824812753</strong></p>
             <p>Account Name: <strong>Rupesh Kumar Sah</strong></p>
             <Separator className="my-4" />
             <p className="mt-2 text-muted-foreground">After completing the payment, please enter the Transaction ID below to confirm.</p>
