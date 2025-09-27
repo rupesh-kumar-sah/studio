@@ -20,7 +20,9 @@ export default function OrdersPage() {
   const [isMounted, setIsMounted] = useState(false);
   const { isOwner, currentUser, isMounted: authIsMounted } = useAuth();
 
-  const loadAndFilterOrders = useCallback((isOwner: boolean, currentUser: User | null) => {
+  const loadAndFilterOrders = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -32,28 +34,35 @@ export default function OrdersPage() {
     } else {
         setDisplayOrders([]);
     }
-  }, []);
+  }, [isOwner, currentUser]);
+
 
   useEffect(() => {
     setIsMounted(true);
     if (authIsMounted) {
-        loadAndFilterOrders(isOwner, currentUser);
+        loadAndFilterOrders();
     }
-  }, [authIsMounted, isOwner, currentUser, loadAndFilterOrders]);
+  }, [authIsMounted, loadAndFilterOrders]);
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'orders' && event.newValue !== event.oldValue) {
-        // We re-call loadAndFilterOrders with the latest auth state from the useAuth hook
-        loadAndFilterOrders(isOwner, currentUser);
+      if (event.key === 'orders') {
+        loadAndFilterOrders();
       }
+    };
+    
+    const handleCustomOrderUpdate = () => {
+        loadAndFilterOrders();
     };
 
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('orders-updated', handleCustomOrderUpdate);
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('orders-updated', handleCustomOrderUpdate);
     };
-  }, [isOwner, currentUser, loadAndFilterOrders]); // Depend on auth state
+  }, [loadAndFilterOrders]); 
   
   const acceptOrder = (orderId: string) => {
     const allOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
@@ -64,7 +73,12 @@ export default function OrdersPage() {
       return order;
     });
     localStorage.setItem('orders', JSON.stringify(updatedOrders));
-    loadAndFilterOrders(isOwner, currentUser); // Reload and re-filter to update the state
+    
+    // Dispatch custom event to notify all components including the current tab
+    window.dispatchEvent(new CustomEvent('orders-updated'));
+    
+    // Also call directly to ensure immediate update in the current component
+    loadAndFilterOrders();
   };
 
   const formatPaymentMethod = (method: 'esewa' | 'khalti') => {

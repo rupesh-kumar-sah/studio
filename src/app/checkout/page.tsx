@@ -20,6 +20,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ShoppingBag, Loader2 } from 'lucide-react';
 import type { CartItem } from '@/lib/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 // Define a union type for payment status
@@ -112,6 +113,9 @@ export default function CheckoutPage() {
         const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
         localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
 
+        // Dispatch a custom event to notify other components
+        window.dispatchEvent(new CustomEvent('orders-updated'));
+
         clearCart();
         router.push('/checkout/success');
     }, 1500);
@@ -138,7 +142,7 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent>
                 <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
-                <Button asChild className="mt-6" onClick={() => router.push('/products')}>
+                <Button onClick={() => router.push('/products')}>
                     Start Shopping
                 </Button>
             </CardContent>
@@ -352,12 +356,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-// Temporary ScrollArea component until it's officially added
-const ScrollArea = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-    <div className={`overflow-y-auto ${className}`} {...props}>
-        {children}
-    </div>
-);
-
-    
