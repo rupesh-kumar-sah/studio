@@ -18,3 +18,10 @@ export type CartItem = {
   size: string;
   color: string;
 };
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  password?: string; // Optional for social logins
+};

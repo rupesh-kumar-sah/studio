@@ -50,7 +50,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth();
+  const { ownerLogin, customerLogin } = useAuth();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -58,12 +58,19 @@ export default function LoginPage() {
   });
 
   function onSubmit(data: z.infer<typeof loginSchema>) {
-    if (login(data.email, data.password)) {
+    // Try owner login first
+    if (ownerLogin(data.email, data.password)) {
       toast({ title: "Owner Login Successful", description: "Welcome back, Rupesh!" });
       router.push("/profile");
+      return;
+    }
+    
+    // If owner login fails, try customer login
+    if (customerLogin(data.email, data.password)) {
+      toast({ title: "Login Successful", description: "Welcome back!" });
+      router.push("/");
     } else {
-        console.log("Customer login attempt:", data);
-        toast({ variant: 'destructive', title: "Login Failed", description: "Invalid credentials for customer account." });
+        toast({ variant: 'destructive', title: "Login Failed", description: "Invalid email or password." });
     }
   }
 

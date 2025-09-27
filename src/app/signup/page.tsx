@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useAuth } from "@/components/auth/auth-provider";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -49,14 +53,23 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   }
 
 export default function SignupPage() {
+  const { signup } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
   function onSubmit(data: z.infer<typeof signupSchema>) {
-    console.log("Signup attempt:", data);
-    // Here you would typically call your authentication provider
+    if (signup(data.name, data.email, data.password)) {
+      toast({
+        title: "Account Created",
+        description: "You have successfully signed up. Please log in.",
+      });
+      router.push("/login");
+    }
   }
 
   function handleGoogleSignUp() {
