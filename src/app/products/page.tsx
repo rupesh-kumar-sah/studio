@@ -92,7 +92,6 @@ function ProductsPageContent() {
   const uniqueSizes = useMemo(() => [...new Set(allProducts.flatMap(p => p.sizes))], [allProducts]);
 
   return (
-    <>
     <div className="container py-8">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">Our Products</h1>
@@ -167,16 +166,21 @@ function ProductsPageContent() {
           )}
         </main>
       </div>
+      {isOwner && (
+        <ProductProvider>
+          <AddProductSheet isOpen={isAddSheetOpen} onOpenChange={setAddSheetOpen} />
+        </ProductProvider>
+      )}
     </div>
-    {isOwner && <AddProductSheet isOpen={isAddSheetOpen} onOpenChange={setAddSheetOpen} />}
-    </>
   );
 }
 
 export default function ProductsPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ProductsPageContent />
+      <ProductProvider>
+        <ProductsPageContent />
+      </ProductProvider>
     </Suspense>
   )
 }

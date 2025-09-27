@@ -12,8 +12,6 @@ interface ProductContextType {
   updateProduct: (updatedProduct: Product) => void;
   addProduct: (newProduct: Omit<Product, 'id' | 'rating' | 'reviews' | 'detailedReviews'>) => void;
   deleteProduct: (productId: string) => void;
-  updateReview: (productId: string, reviewId: string, newComment: string, newRating: number) => void;
-  deleteReview: (productId: string, reviewId: string) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -96,44 +94,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     });
   }, [products, toast]);
 
-  const updateReview = useCallback((productId: string, reviewId: string, newComment: string, newRating: number) => {
-    setProducts(prevProducts => 
-        prevProducts.map(p => {
-            if (p.id === productId) {
-                const updatedReviews = p.detailedReviews.map(r => 
-                    r.id === reviewId ? { ...r, comment: newComment, rating: newRating } : r
-                );
-                const updatedProduct = { ...p, detailedReviews: updatedReviews };
-                return refreshProductCalculations(updatedProduct);
-            }
-            return p;
-        })
-    );
-     toast({
-        title: "Review Updated",
-        description: "The review has been successfully updated."
-    });
-  }, [toast]);
-
-  const deleteReview = useCallback((productId: string, reviewId: string) => {
-    setProducts(prevProducts => 
-        prevProducts.map(p => {
-            if (p.id === productId) {
-                const updatedReviews = p.detailedReviews.filter(r => r.id !== reviewId);
-                const updatedProduct = { ...p, detailedReviews: updatedReviews };
-                return refreshProductCalculations(updatedProduct);
-            }
-            return p;
-        })
-    );
-    toast({
-        variant: 'destructive',
-        title: "Review Deleted",
-        description: "The review has been successfully removed."
-    });
-  }, [toast]);
-
-  const value = { products, getProductById, updateProduct, addProduct, deleteProduct, updateReview, deleteReview };
+  const value = { products, getProductById, updateProduct, addProduct, deleteProduct };
 
   return (
     <ProductContext.Provider value={value}>

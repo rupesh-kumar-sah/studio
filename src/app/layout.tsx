@@ -6,7 +6,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { CartProvider } from '@/components/cart/cart-provider';
-import { ProductProvider } from '@/components/products/product-provider';
 import { AuthProvider } from '@/components/auth/auth-provider';
 import { CategoryProvider } from '@/components/categories/category-provider';
 
@@ -71,16 +70,14 @@ export default function RootLayout({
       <body className="font-body antialiased flex flex-col min-h-screen">
         <AuthProvider>
           <CategoryProvider>
-            <ProductProvider>
-              <CartProvider>
-                <Header />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
-                <Toaster />
-              </CartProvider>
-            </ProductProvider>
+            <CartProvider>
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+              <Toaster />
+            </CartProvider>
           </CategoryProvider>
         </AuthProvider>
       </body>

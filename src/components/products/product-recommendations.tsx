@@ -2,37 +2,46 @@
 
 import { useState } from "react"
 import { getProductRecommendations, ProductRecommendationsInput } from "@/ai/flows/product-recommendations-flow"
-import { ProductCard } from "@/components/products/product-card"
+import { ProductCard } from "@/components/products/product-card-server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Loader2 } from "lucide-react"
-import { useProducts } from "./product-provider"
+import { getProducts, getProductById } from "@/lib/products-db"
+import { Product } from "@/lib/types"
 
 interface ProductRecommendationsProps {
   currentProductId: string
 }
 
 export function ProductRecommendations({ currentProductId }: ProductRecommendationsProps) {
-  const { products, getProductById } = useProducts();
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [recommendations, setRecommendations] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [boostPopularity, setBoostPopularity] = useState(1)
   const [boostRecency, setBoostRecency] = useState(1)
 
+  useState(() => {
+    async function fetchProducts() {
+      const products = await getProducts();
+      setAllProducts(products);
+    }
+    fetchProducts();
+  });
+
   const handleGetRecommendations = async () => {
     setLoading(true)
     setRecommendations([])
 
-    const currentProduct = getProductById(currentProductId)
+    const currentProduct = await getProductById(currentProductId)
     if (!currentProduct) {
       setLoading(false)
       return
     }
 
     // Simulate viewing history: current product + 2 other random products from the same category
-    const similarProducts = products
+    const similarProducts = allProducts
       .filter(p => p.category === currentProduct.category && p.id !== currentProductId)
       .sort(() => 0.5 - Math.random())
       .slice(0, 2)
@@ -49,7 +58,7 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
       const result = await getProductRecommendations(input)
       if (result && Array.isArray(result.recommendedProducts)) {
         // Filter out products that don't exist in our mock data and the current one
-        const validRecommendations = result.recommendedProducts.filter(id => id !== currentProductId && getProductById(id));
+        const validRecommendations = result.recommendedProducts.filter(id => id !== currentProductId && allProducts.some(p => p.id === id));
         setRecommendations(validRecommendations.slice(0, 2)); // Limit to 2 recommendations
       } else {
         // Fallback on invalid AI response
@@ -64,7 +73,16 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
     }
   }
 
-  const recommendedProducts = recommendations.map(id => getProductById(id)).filter(Boolean) as any[]
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
+
+  useState(() => {
+    async function fetchRecommendedProducts() {
+      const products = await Promise.all(recommendations.map(id => getProductById(id)));
+      setRecommendedProducts(products.filter(p => p) as Product[]);
+    }
+    fetchRecommendedProducts();
+  });
+
 
   return (
     <Card>

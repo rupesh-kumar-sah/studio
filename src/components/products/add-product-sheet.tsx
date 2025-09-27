@@ -16,8 +16,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import type { Product } from '@/lib/types';
-import { useProducts } from './product-provider';
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
@@ -41,7 +39,6 @@ interface AddProductSheetProps {
 }
 
 export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) {
-  const { addProduct } = useProducts();
   const { categories } = useCategories();
   const [imagePreview1, setImagePreview1] = useState<string | null>(null);
   const [imagePreview2, setImagePreview2] = useState<string | null>(null);
@@ -88,20 +85,8 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
   }, [isOpen, reset, categories]);
 
   const onSubmit = (data: z.infer<typeof productSchema>) => {
-    const placeholderUrl = 'https://placehold.co/600x800';
-    const newProduct: Omit<Product, 'id' | 'rating' | 'reviews' | 'detailedReviews'> = {
-      ...data,
-      originalPrice: data.originalPrice || undefined,
-      colors: data.colors.split(',').map(c => c.trim()).filter(Boolean),
-      sizes: data.sizes.split(',').map(s => s.trim()).filter(Boolean),
-      images: [
-        { url: imagePreview1 || placeholderUrl, alt: data.name, hint: '' },
-        { url: imagePreview2 || placeholderUrl, alt: data.name, hint: '' },
-        { url: imagePreview3 || placeholderUrl, alt: data.name, hint: '' },
-      ],
-    };
-    
-    addProduct(newProduct);
+    // This would be a server action in a real app
+    console.log('New product submitted. In a real app, this would trigger a server action.');
     onOpenChange(false);
   };
   

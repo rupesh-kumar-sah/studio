@@ -18,7 +18,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Product } from '@/lib/types';
-import { useProducts } from './product-provider';
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
@@ -45,7 +44,6 @@ interface EditProductSheetProps {
 }
 
 export function EditProductSheet({ product, children }: EditProductSheetProps) {
-  const { updateProduct, deleteProduct } = useProducts();
   const { categories } = useCategories();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -95,22 +93,8 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
 
 
   const onSubmit = (data: z.infer<typeof productSchema>) => {
-    const updatedImages = [...product.images];
-    
-    if (imagePreview1) updatedImages[0] = { ...updatedImages[0], url: imagePreview1 };
-    if (imagePreview2) updatedImages[1] = { ...(updatedImages[1] || { alt: product.name, hint: '' }), url: imagePreview2 };
-    if (imagePreview3) updatedImages[2] = { ...(updatedImages[2] || { alt: product.name, hint: '' }), url: imagePreview3 };
-
-    const updatedProduct: Product = {
-      ...product,
-      ...data,
-      originalPrice: data.originalPrice || undefined,
-      colors: data.colors.split(',').map(c => c.trim()).filter(Boolean),
-      sizes: data.sizes.split(',').map(s => s.trim()).filter(Boolean),
-      images: updatedImages,
-    };
-    
-    updateProduct(updatedProduct);
+    // This would be a server action in a real app
+    console.log('Product update submitted. In a real app, this would trigger a server action and revalidation.');
     setIsOpen(false);
   };
   
@@ -132,7 +116,8 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
   const handleImageChange3 = createImageChangeHandler(setImagePreview3);
 
   const handleDelete = () => {
-    deleteProduct(product.id);
+    // This would be a server action in a real app
+    console.log('Product delete submitted. In a real app, this would trigger a server action and redirection.');
     setIsOpen(false);
     router.push('/products');
   };
