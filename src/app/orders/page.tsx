@@ -10,36 +10,50 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, LogIn, ShoppingBag } from 'lucide-react';
+import { useAuth } from '@/components/auth/auth-provider';
+import Link from 'next/link';
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [allOrders, setAllOrders] = useState<Order[]>([]);
+  const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const { isOwner, currentUser, isMounted: authIsMounted } = useAuth();
 
   useEffect(() => {
     setIsMounted(true);
-    loadOrders();
-  }, []);
+    if (authIsMounted) {
+        loadAndFilterOrders();
+    }
+  }, [authIsMounted, currentUser, isOwner]);
 
-  const loadOrders = () => {
+  const loadAndFilterOrders = () => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-    // Sort orders from newest to oldest
     storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    setOrders(storedOrders);
+    setAllOrders(storedOrders);
+
+    if (isOwner) {
+        setDisplayOrders(storedOrders);
+    } else if (currentUser) {
+        const customerOrders = storedOrders.filter(order => order.customer.email === currentUser.email);
+        setDisplayOrders(customerOrders);
+    } else {
+        setDisplayOrders([]);
+    }
   };
   
   const acceptOrder = (orderId: string) => {
-    const updatedOrders = orders.map(order => {
+    const updatedOrders = allOrders.map(order => {
       if (order.id === orderId) {
         return { ...order, paymentStatus: 'Accepted' as const };
       }
       return order;
     });
     localStorage.setItem('orders', JSON.stringify(updatedOrders));
-    setOrders(updatedOrders);
+    loadAndFilterOrders(); // Reload and re-filter to update the state
   };
 
-  if (!isMounted) {
+  if (!isMounted || !authIsMounted) {
     return (
         <div className="container py-12 text-center">
             <p>Loading orders...</p>
@@ -47,15 +61,36 @@ export default function OrdersPage() {
     );
   }
 
-  if (orders.length === 0) {
+  if (!isOwner && !currentUser) {
+     return (
+        <div className="container flex flex-col items-center justify-center text-center py-20">
+            <Card className="w-full max-w-md p-8">
+                 <LogIn className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h1 className="text-2xl font-bold mt-4">Please Log In</h1>
+                <p className="mt-2 text-muted-foreground">You need to be logged in to view your orders.</p>
+                <Button asChild className="mt-6">
+                    <Link href="/login">Go to Login</Link>
+                </Button>
+            </Card>
+        </div>
+    )
+  }
+
+  if (displayOrders.length === 0) {
     return (
       <div className="container py-12 text-center">
-        <Card>
+        <Card className="max-w-md mx-auto">
             <CardHeader>
-                <CardTitle>No Orders Found</CardTitle>
+                <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground" />
+                <CardTitle className="mt-4">No Orders Found</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-muted-foreground">There are currently no orders to display.</p>
+                <p className="text-muted-foreground">{currentUser ? "You haven't placed any orders yet." : "There are currently no orders to display."}</p>
+                {currentUser && (
+                    <Button asChild className="mt-6">
+                        <Link href="/products">Start Shopping</Link>
+                    </Button>
+                )}
             </CardContent>
         </Card>
       </div>
@@ -65,13 +100,13 @@ export default function OrdersPage() {
   return (
     <div className="container py-12">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">Customer Orders</h1>
+        <h1 className="text-4xl font-bold tracking-tight">{isOwner ? "Customer Orders" : "My Orders"}</h1>
         <p className="mt-2 text-lg text-muted-foreground">
-          A list of all submitted orders.
+          {isOwner ? "A list of all submitted orders." : "A list of your past orders."}
         </p>
       </div>
       <Accordion type="single" collapsible className="w-full space-y-4">
-        {orders.map((order) => (
+        {displayOrders.map((order) => (
           <AccordionItem key={order.id} value={order.id}>
              <Card>
                 <AccordionTrigger className="p-6 text-left">
@@ -131,7 +166,7 @@ export default function OrdersPage() {
                             </div>
                         </div>
                     </div>
-                    {order.paymentStatus === 'Pending' && (
+                    {isOwner && order.paymentStatus === 'Pending' && (
                         <CardFooter className="pt-6">
                             <Button onClick={() => acceptOrder(order.id)}>Accept Order</Button>
                         </CardFooter>
