@@ -10,6 +10,8 @@ const initialCategories: Category[] = ['Men', 'Women', 'Junior', 'Electronics', 
 interface CategoryContextType {
   categories: Category[];
   addCategory: (category: Category) => boolean;
+  editCategory: (oldName: string, newName: string) => boolean;
+  deleteCategory: (categoryName: string) => void;
 }
 
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
@@ -28,7 +30,6 @@ export function CategoryProvider({ children }: { children: React.ReactNode }) {
             if (Array.isArray(parsed) && parsed.length > 0) {
               setCategories(parsed);
             } else {
-              // Fallback to initial if stored is empty or invalid
               localStorage.setItem('categories', JSON.stringify(initialCategories));
               setCategories(initialCategories);
             }
@@ -64,9 +65,35 @@ export function CategoryProvider({ children }: { children: React.ReactNode }) {
     });
     return true;
   }, [categories, toast]);
+  
+  const editCategory = useCallback((oldName: string, newName: string) => {
+     if (categories.find(c => c.toLowerCase() === newName.toLowerCase() && c.toLowerCase() !== oldName.toLowerCase())) {
+        toast({
+            variant: 'destructive',
+            title: 'Category exists',
+            description: `The category "${newName}" already exists.`,
+        });
+        return false;
+    }
+    setCategories(prev => prev.map(c => (c === oldName ? newName : c)));
+    toast({
+        title: 'Category Updated',
+        description: `Category "${oldName}" has been updated to "${newName}".`,
+    });
+    return true;
+  }, [categories, toast]);
+
+  const deleteCategory = useCallback((categoryName: string) => {
+    setCategories(prev => prev.filter(c => c !== categoryName));
+    toast({
+        variant: 'destructive',
+        title: 'Category Deleted',
+        description: `Category "${categoryName}" has been deleted.`,
+    });
+  }, [toast]);
 
 
-  const value = { categories, addCategory };
+  const value = { categories, addCategory, editCategory, deleteCategory };
 
   return (
     <CategoryContext.Provider value={value}>
