@@ -41,7 +41,9 @@ interface EditProductSheetProps {
 
 export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductSheetProps) {
   const { updateProduct } = useProducts();
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview1, setImagePreview1] = useState<string | null>(null);
+  const [imagePreview2, setImagePreview2] = useState<string | null>(null);
+  const [imagePreview3, setImagePreview3] = useState<string | null>(null);
 
   const {
     register,
@@ -62,7 +64,6 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
     },
   });
   
-  // Reset form when product changes or sheet opens
   React.useEffect(() => {
     if (isOpen) {
       reset({
@@ -74,40 +75,50 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
         colors: product.colors.join(','),
         sizes: product.sizes.join(','),
       });
-      setImagePreview(null); // Clear image preview as well
+      setImagePreview1(null);
+      setImagePreview2(null);
+      setImagePreview3(null);
     }
   }, [product, isOpen, reset]);
 
 
   const onSubmit = (data: z.infer<typeof productSchema>) => {
-    const updatedImages = imagePreview 
-      ? [{ ...product.images[0], url: imagePreview }, ...product.images.slice(1)]
-      : product.images;
+    const updatedImages = [...product.images];
+    
+    if (imagePreview1) updatedImages[0] = { ...updatedImages[0], url: imagePreview1 };
+    if (imagePreview2) updatedImages[1] = { ...(updatedImages[1] || { alt: product.name, hint: '' }), url: imagePreview2 };
+    if (imagePreview3) updatedImages[2] = { ...(updatedImages[2] || { alt: product.name, hint: '' }), url: imagePreview3 };
 
     const updatedProduct: Product = {
       ...product,
       ...data,
       colors: data.colors.split(',').map(c => c.trim()).filter(Boolean),
       sizes: data.sizes.split(',').map(s => s.trim()).filter(Boolean),
-      images: updatedImages
+      images: updatedImages,
     };
     
     updateProduct(updatedProduct);
     onOpenChange(false);
   };
   
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const createImageChangeHandler = (setter: React.Dispatch<React.SetStateAction<string | null>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setter(reader.result as string);
       };
       reader.readAsDataURL(file);
     } else {
-      setImagePreview(null);
+      setter(null);
     }
   };
+
+  const handleImageChange1 = createImageChangeHandler(setImagePreview1);
+  const handleImageChange2 = createImageChangeHandler(setImagePreview2);
+  const handleImageChange3 = createImageChangeHandler(setImagePreview3);
+
+  const hasImagePreviews = imagePreview1 || imagePreview2 || imagePreview3;
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -196,27 +207,60 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                  <p className="text-xs text-muted-foreground">Enter comma-separated sizes.</p>
                 {errors.sizes && <p className="text-sm text-destructive">{errors.sizes.message}</p>}
             </div>
-             <div className="space-y-2">
-                <Label htmlFor="images">Image</Label>
-                <Input id="images" type="file" accept="image/*" onChange={handleImageChange} />
-                {(imagePreview || (product.images && product.images.length > 0)) && (
-                  <div className="mt-4">
-                    <Label>Image Preview</Label>
-                    <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                       <Image
-                        key={imagePreview}
-                        src={imagePreview || product.images[0].url}
-                        alt="Product image preview"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+             
+             <div className="space-y-4 border-t pt-4">
+                <Label>Product Images</Label>
+                <p className="text-xs text-muted-foreground">Upload new images to replace existing ones. Changes are temporary for this session.</p>
+
+                {/* Image 1 */}
+                <div className="space-y-2">
+                  <Label htmlFor="image1">Image 1 (Primary)</Label>
+                  <Input id="image1" type="file" accept="image/*" onChange={handleImageChange1} />
+                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
+                    <Image
+                      key={imagePreview1 || product.images[0]?.url}
+                      src={imagePreview1 || product.images[0]?.url || 'https://placehold.co/600x400'}
+                      alt="Product image 1 preview"
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                )}
-                <p className="text-sm text-muted-foreground">Image upload is for preview only and persists for the session.</p>
+                </div>
+
+                {/* Image 2 */}
+                <div className="space-y-2">
+                  <Label htmlFor="image2">Image 2</Label>
+                  <Input id="image2" type="file" accept="image/*" onChange={handleImageChange2} />
+                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
+                    <Image
+                      key={imagePreview2 || product.images[1]?.url}
+                      src={imagePreview2 || product.images[1]?.url || 'https://placehold.co/600x400'}
+                      alt="Product image 2 preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Image 3 */}
+                <div className="space-y-2">
+                  <Label htmlFor="image3">Image 3</Label>
+                  <Input id="image3" type="file" accept="image/*" onChange={handleImageChange3} />
+                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
+                    <Image
+                      key={imagePreview3 || product.images[2]?.url}
+                      src={imagePreview3 || product.images[2]?.url || 'https://placehold.co/600x400'}
+                      alt="Product image 3 preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
              </div>
+
+
              <div className="pt-2">
-                <Button type="submit" disabled={!isDirty && !imagePreview} className="w-full">Save Product Changes</Button>
+                <Button type="submit" disabled={!isDirty && !hasImagePreviews} className="w-full">Save Product Changes</Button>
              </div>
           </div>
           <SheetFooter className="pt-6 border-t">

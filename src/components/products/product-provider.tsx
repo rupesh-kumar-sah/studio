@@ -15,14 +15,15 @@ interface ProductContextType {
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export function ProductProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+    let storedProducts;
     try {
-        const storedProducts = localStorage.getItem('products');
+        storedProducts = localStorage.getItem('products');
         if (storedProducts) {
             setProducts(JSON.parse(storedProducts));
         } else {
@@ -73,3 +74,5 @@ export function useProducts() {
   }
   return context;
 }
+
+    
