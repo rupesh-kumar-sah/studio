@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { getIsOwner } from '@/lib/auth-db';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { Badge } from '@/components/ui/badge';
 
 const ProductReviews = dynamic(() => import('@/components/products/product-reviews-server').then(mod => mod.ProductReviewsServer), {
   loading: () => <Skeleton className="h-48 w-full" />,
@@ -37,6 +38,8 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
   
   const reviews = product.detailedReviews?.length || 0;
 
+  const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
   return (
     <>
       <Header />
@@ -58,6 +61,14 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
               </div>
               <div className="flex items-baseline gap-3 mt-2">
                 <p className="text-2xl font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
+                 {product.originalPrice && (
+                    <p className="text-xl text-muted-foreground line-through">
+                        Rs.{product.originalPrice.toFixed(2)}
+                    </p>
+                )}
+                 {discount > 0 && (
+                    <Badge variant="destructive">{discount}% OFF</Badge>
+                )}
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex items-center text-amber-500">
@@ -80,7 +91,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
         
         <div className="mt-16">
           <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-              <ProductReviews productId={product.id} />
+              <ProductReviewsServer productId={product.id} />
           </Suspense>
         </div>
 

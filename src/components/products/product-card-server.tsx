@@ -3,13 +3,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  
+  const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg group bg-white">
       <CardHeader className="p-0 border-b relative">
@@ -25,6 +27,11 @@ export function ProductCard({ product }: ProductCardProps) {
             />
           </div>
         </Link>
+        {discount > 0 && (
+          <Badge variant="destructive" className="absolute top-3 right-3">
+            {discount}% OFF
+          </Badge>
+        )}
       </CardHeader>
       <CardContent className="p-4 flex-1 flex flex-col text-center">
         <div className="flex-1">
@@ -35,6 +42,11 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="mt-4">
              <div className="flex justify-center items-baseline gap-2">
                 <p className="text-lg font-bold text-primary">NPR{product.price.toFixed(2)}</p>
+                {product.originalPrice && (
+                    <p className="text-sm text-muted-foreground line-through">
+                        NPR{product.originalPrice.toFixed(2)}
+                    </p>
+                )}
             </div>
         </div>
       </CardContent>

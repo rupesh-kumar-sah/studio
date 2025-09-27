@@ -25,6 +25,7 @@ const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
   price: z.number().min(0, 'Price must be positive'),
+  originalPrice: z.number().min(0, 'Price must be positive').optional(),
   stock: z.number().int().min(0, 'Stock must be a positive integer'),
   category: z.string().min(1, 'Category is required'),
   colors: z.string().min(1, "Please enter at least one color."),
@@ -55,6 +56,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
       name: '',
       description: '',
       price: 0,
+      originalPrice: undefined,
       stock: 0,
       category: categories[0] || '',
       colors: '',
@@ -69,6 +71,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         name: '',
         description: '',
         price: 0,
+        originalPrice: undefined,
         stock: 0,
         category: categories[0] || '',
         colors: '',
@@ -143,22 +146,42 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
               <Textarea id="description" {...register('description')} rows={5} />
               {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="price">Price</Label>
-              <Controller
-                  name="price"
-                  control={control}
-                  render={({ field }) => (
-                      <Input
-                      id="price"
-                      type="number"
-                      step="0.01"
-                      value={field.value}
-                      onChange={e => field.onChange(parseFloat(e.target.value) || 0)}
-                      />
-                  )}
-              />
-              {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="price">Price</Label>
+                <Controller
+                    name="price"
+                    control={control}
+                    render={({ field }) => (
+                        <Input
+                        id="price"
+                        type="number"
+                        step="0.01"
+                        value={field.value}
+                        onChange={e => field.onChange(parseFloat(e.target.value) || 0)}
+                        />
+                    )}
+                />
+                {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="originalPrice">Original Price (Optional)</Label>
+                 <Controller
+                    name="originalPrice"
+                    control={control}
+                    render={({ field }) => (
+                        <Input
+                        id="originalPrice"
+                        type="number"
+                        step="0.01"
+                        value={field.value || ''}
+                        onChange={e => field.onChange(parseFloat(e.target.value) || undefined)}
+                        placeholder="e.g. 199.99"
+                        />
+                    )}
+                />
+                {errors.originalPrice && <p className="text-sm text-destructive">{errors.originalPrice.message}</p>}
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
