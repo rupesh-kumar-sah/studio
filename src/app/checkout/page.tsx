@@ -24,6 +24,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import type { OrderStatus } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { isToday } from 'date-fns';
+import { EsewaQrCode } from '@/components/checkout/esewa-qr-code';
 
 export type Order = {
   id: string;
@@ -217,17 +218,7 @@ export default function CheckoutPage() {
                             <CardTitle>Payment</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="p-4 bg-secondary rounded-lg text-sm text-center">
-                                <h3 className="font-semibold text-base mb-2">Pay with eSewa</h3>
-                                <p className="mb-2">Scan this QR to pay</p>
-                                <div className="flex justify-center mb-2">
-                                     <Image src="https://firebasestorage.googleapis.com/v0/b/project-revelation-staging.appspot.com/o/images%2F624443a6-b516-432d-96e0-9a25032501a3?alt=media&token=d1b0985c-15a0-47b2-9a3e-43ff9e3b7b20" alt="eSewa QR Code" width={200} height={200} className="rounded-md border p-1" />
-                                </div>
-                                <p>Wallet Number: <strong>9824812753</strong></p>
-                                <p>Account Name: <strong>Rupesh Kumar Sah</strong></p>
-                                <Separator className="my-4" />
-                                <p className="mt-2 text-muted-foreground">After completing the payment, please enter the Transaction ID below to confirm.</p>
-                            </div>
+                            <EsewaQrCode />
                             <FormField
                                 control={form.control}
                                 name="transactionId"
@@ -333,7 +324,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-    
-
-    
