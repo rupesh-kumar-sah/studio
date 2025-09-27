@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Banknote, CreditCard, ShieldCheck, Loader2, CheckCircle2 } from "lucide-react";
 import type { CartItem } from "@/lib/types";
+import { Textarea } from "@/components/ui/textarea";
 
 const shippingSchema = z.object({
   email: z.string().email(),
@@ -24,6 +25,7 @@ const shippingSchema = z.object({
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   postalCode: z.string().min(1, "Postal code is required"),
+  message: z.string().optional(),
   paymentMethod: z.enum(["card", "esewa", "khalti", "cod"], {
     required_error: "You need to select a payment method.",
   }),
@@ -40,13 +42,14 @@ const shippingSchema = z.object({
 
 export type Order = {
   id: string;
-  customer: Omit<z.infer<typeof shippingSchema>, 'paymentMethod' | 'walletId'>;
+  customer: Omit<z.infer<typeof shippingSchema>, 'paymentMethod' | 'walletId' | 'message'>;
   items: CartItem[];
   total: number;
   paymentMethod: string;
   paymentStatus: 'Paid' | 'Pending';
   walletId?: string;
   date: string;
+  message?: string;
 };
 
 // eSewa data structure for the form post
@@ -135,6 +138,7 @@ export default function CheckoutPage() {
       address: "",
       city: "",
       postalCode: "",
+      message: "",
       walletId: "",
     },
   });
@@ -163,6 +167,7 @@ export default function CheckoutPage() {
         paymentStatus: 'Pending',
         walletId: data.walletId,
         date: new Date().toISOString(),
+        message: data.message,
     };
     
     const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
@@ -297,6 +302,13 @@ export default function CheckoutPage() {
                         </FormItem>
                       )} />
                     </div>
+                     <FormField control={form.control} name="message" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message to Owner (Optional)</FormLabel>
+                          <FormControl><Textarea placeholder="Add any special instructions for your order..." {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
                   </CardContent>
                 </Card>
 
@@ -415,3 +427,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    

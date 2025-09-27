@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { MessageSquare } from 'lucide-react';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -79,6 +80,7 @@ export default function OrdersPage() {
                         <p className="text-sm text-muted-foreground">{order.customer.firstName} {order.customer.lastName} &bull; {format(new Date(order.date), "PPP p")}</p>
                     </div>
                      <div className="flex items-center gap-4">
+                        {order.message && <MessageSquare className="text-primary" />}
                         <Badge variant={order.paymentStatus === 'Paid' ? 'default' : 'secondary'} className={cn(order.paymentStatus === 'Paid' ? 'bg-green-600' : 'bg-orange-500', 'text-white')}>
                             {order.paymentStatus}
                         </Badge>
@@ -86,6 +88,15 @@ export default function OrdersPage() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
+                    {order.message && (
+                        <div className="mb-6 p-4 bg-secondary rounded-lg">
+                            <h4 className="font-semibold flex items-center gap-2 mb-2">
+                                <MessageSquare className="h-5 w-5" />
+                                Customer Message
+                            </h4>
+                            <p className="text-muted-foreground text-sm">{order.message}</p>
+                        </div>
+                    )}
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                             <h3 className="font-semibold mb-2">Shipping Details</h3>
@@ -132,3 +143,5 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+    
