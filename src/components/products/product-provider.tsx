@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Product } from '@/lib/types';
-import { initialProducts } from '@/lib/products';
+import { products as initialProducts } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProductContextType {
