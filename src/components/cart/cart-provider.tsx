@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect, useCallback } from 'react';
 import type { CartItem, Product } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -77,9 +78,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([]);
-  };
+  }, []);
 
   const { totalItems, totalPrice } = useMemo(() => {
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
