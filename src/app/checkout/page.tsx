@@ -125,7 +125,7 @@ export default function CheckoutPage() {
     return (
       <div className="container flex flex-col items-center justify-center text-center py-40">
         <Loader2 className="h-12 w-12 animate-spin mb-4" />
-        <h1 className="text-2xl font-bold">Loading Cart...</h1>
+        <h1 className="text-2xl font-bold">Shopping cart is loading...</h1>
       </div>
     );
   }
@@ -363,3 +363,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    
