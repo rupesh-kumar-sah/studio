@@ -18,8 +18,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Product } from '@/lib/types';
 import { useProducts } from './product-provider';
-import React from 'react';
+import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Image from 'next/image';
 
 
 const productSchema = z.object({
@@ -40,6 +41,8 @@ interface EditProductSheetProps {
 
 export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductSheetProps) {
   const { updateProduct } = useProducts();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -71,6 +74,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
         colors: product.colors.join(','),
         sizes: product.sizes.join(','),
       });
+      setImagePreview(null); // Clear image preview as well
     }
   }, [product, isOpen, reset]);
 
@@ -82,8 +86,22 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
       colors: data.colors.split(',').map(c => c.trim()).filter(Boolean),
       sizes: data.sizes.split(',').map(s => s.trim()).filter(Boolean),
     };
+    // Note: Image preview is for UI only and not saved here.
     updateProduct(updatedProduct);
     onOpenChange(false);
+  };
+  
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
   };
 
   return (
@@ -174,12 +192,25 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                 {errors.sizes && <p className="text-sm text-destructive">{errors.sizes.message}</p>}
             </div>
              <div className="space-y-2">
-                <Label htmlFor="images">Images</Label>
-                <Input id="images" type="file" />
-                <p className="text-sm text-muted-foreground">Image uploading is not functional. This is a UI placeholder.</p>
+                <Label htmlFor="images">Image</Label>
+                <Input id="images" type="file" accept="image/*" onChange={handleImageChange} />
+                {(imagePreview || (product.images && product.images.length > 0)) && (
+                  <div className="mt-4">
+                    <Label>Image Preview</Label>
+                    <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
+                       <Image
+                        src={imagePreview || product.images[0].url}
+                        alt="Product image preview"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+                <p className="text-sm text-muted-foreground">Image upload is for preview only. The image will not be saved.</p>
              </div>
              <div className="pt-2">
-                <Button type="submit" disabled={!isDirty} className="w-full">Save Product Changes</Button>
+                <Button type="submit" disabled={!isDirty && !imagePreview} className="w-full">Save Product Changes</Button>
              </div>
           </div>
           <SheetFooter className="pt-6 border-t">
