@@ -47,7 +47,7 @@ export type Order = {
   items: CartItem[];
   total: number;
   paymentMethod: string;
-  paymentStatus: 'Paid' | 'Pending';
+  paymentStatus: 'Pending' | 'Accepted';
   walletId?: string;
   date: string;
   message?: string;
@@ -354,5 +354,7 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    
 
     

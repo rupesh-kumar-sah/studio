@@ -31,7 +31,7 @@ export default function OrdersPage() {
   const acceptOrder = (orderId: string) => {
     const updatedOrders = orders.map(order => {
       if (order.id === orderId) {
-        return { ...order, paymentStatus: 'Paid' as const };
+        return { ...order, paymentStatus: 'Accepted' as const };
       }
       return order;
     });
@@ -81,7 +81,7 @@ export default function OrdersPage() {
                     </div>
                      <div className="flex items-center gap-4">
                         {order.message && <MessageSquare className="text-primary" />}
-                        <Badge variant={order.paymentStatus === 'Paid' ? 'default' : 'secondary'} className={cn(order.paymentStatus === 'Paid' ? 'bg-green-600' : 'bg-orange-500', 'text-white')}>
+                        <Badge variant={order.paymentStatus === 'Accepted' ? 'default' : 'secondary'} className={cn(order.paymentStatus === 'Accepted' ? 'bg-green-600' : 'bg-orange-500', 'text-white')}>
                             {order.paymentStatus}
                         </Badge>
                         <p className="font-bold text-lg text-right">Rs.{order.total.toFixed(2)}</p>
@@ -143,5 +143,7 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+    
 
     
