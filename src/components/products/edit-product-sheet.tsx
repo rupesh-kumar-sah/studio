@@ -199,6 +199,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                     <Label>Image Preview</Label>
                     <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
                        <Image
+                        key={imagePreview}
                         src={imagePreview || product.images[0].url}
                         alt="Product image preview"
                         fill
