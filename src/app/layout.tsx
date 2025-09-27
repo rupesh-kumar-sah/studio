@@ -3,11 +3,10 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
-import { CartProvider } from '@/components/cart/cart-provider';
 import { AuthProvider } from '@/components/auth/auth-provider';
 import { CategoryProvider } from '@/components/categories/category-provider';
+import { CartProvider } from '@/components/cart/cart-provider';
+import { ProductProvider } from '@/components/products/product-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -70,12 +69,14 @@ export default function RootLayout({
       <body className="font-body antialiased flex flex-col min-h-screen">
         <AuthProvider>
           <CategoryProvider>
-            <CartProvider>
-              <main className="flex-1 flex flex-col">
-                {children}
-              </main>
-              <Toaster />
-            </CartProvider>
+            <ProductProvider>
+              <CartProvider>
+                <main className="flex-1 flex flex-col">
+                  {children}
+                </main>
+                <Toaster />
+              </CartProvider>
+            </ProductProvider>
           </CategoryProvider>
         </AuthProvider>
       </body>
