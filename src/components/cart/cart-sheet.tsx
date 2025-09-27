@@ -18,17 +18,13 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { ShoppingCart, Trash2 } from 'lucide-react';
 import type { CartItem } from '@/lib/types';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export function CartSheet() {
-  const { items, totalItems, totalPrice } = useCart();
-  const [isMounted, setIsMounted] = useState(false);
+  const { items, totalItems, totalPrice, isCartMounted } = useCart();
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
+  if (!isCartMounted) {
     return (
       <Button variant="outline" size="icon" className="relative" disabled>
         <ShoppingCart className="h-5 w-5" />
@@ -39,7 +35,7 @@ export function CartSheet() {
 
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="relative">
           <ShoppingCart className="h-5 w-5" />
@@ -61,7 +57,7 @@ export function CartSheet() {
             <ScrollArea className="flex-1">
               <div className="flex flex-col gap-4 px-6 py-4">
                 {items.map((item) => (
-                  <CartEntry key={`${item.product.id}-${item.size}-${item.color}`} item={item} />
+                  <CartEntry key={`${item.product.id}-${item.size}-${item.color}`} item={item} setSheetOpen={setIsOpen} />
                 ))}
               </div>
             </ScrollArea>
@@ -71,7 +67,7 @@ export function CartSheet() {
                   <span>Subtotal</span>
                   <span>Rs.{totalPrice.toFixed(2)}</span>
                 </div>
-                <Button asChild size="lg" className="w-full">
+                <Button asChild size="lg" className="w-full" onClick={() => setIsOpen(false)}>
                   <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
               </div>
@@ -81,11 +77,9 @@ export function CartSheet() {
           <div className="flex flex-1 flex-col items-center justify-center gap-4">
             <ShoppingCart className="h-24 w-24 text-muted-foreground" />
             <p className="text-muted-foreground">Your cart is empty.</p>
-            <SheetTrigger asChild>
-                <Button asChild>
+            <Button asChild onClick={() => setIsOpen(false)}>
                 <Link href="/products">Start Shopping</Link>
-                </Button>
-            </SheetTrigger>
+            </Button>
           </div>
         )}
       </SheetContent>
@@ -93,7 +87,7 @@ export function CartSheet() {
   );
 }
 
-function CartEntry({ item }: { item: CartItem }) {
+function CartEntry({ item, setSheetOpen }: { item: CartItem, setSheetOpen: (open: boolean) => void }) {
   const { updateQuantity, removeItem } = useCart();
 
   return (
@@ -109,11 +103,9 @@ function CartEntry({ item }: { item: CartItem }) {
         />
       </div>
       <div className="flex-1">
-        <SheetTrigger asChild>
-            <Link href={`/products/${item.product.id}`} className="font-semibold hover:underline">
+        <Link href={`/products/${item.product.id}`} className="font-semibold hover:underline" onClick={() => setSheetOpen(false)}>
             {item.product.name}
-            </Link>
-        </SheetTrigger>
+        </Link>
         <p className="text-sm text-muted-foreground">
           {item.size} / {item.color !== 'Natural' ? item.color : ''}
         </p>

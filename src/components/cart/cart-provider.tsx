@@ -24,7 +24,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartMounted, setIsCartMounted] = useState(false);
 
   useEffect(() => {
-    
     try {
       const storedCart = localStorage.getItem('cart');
       if (storedCart) {
@@ -32,13 +31,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error("Failed to parse cart from localStorage", error);
+      // If parsing fails, clear the corrupt cart data
+      localStorage.removeItem('cart');
     } finally {
       setIsCartMounted(true);
     }
   }, []);
 
   useEffect(() => {
-    if(isCartMounted) {
+    if (isCartMounted) {
       localStorage.setItem('cart', JSON.stringify(items));
     }
   }, [items, isCartMounted]);
