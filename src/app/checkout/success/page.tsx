@@ -56,7 +56,7 @@ function CheckoutSuccessContent() {
                     {order ? (
                         <div className='text-sm text-left bg-secondary p-4 rounded-md'>
                             <p className='font-semibold mb-2'>Order Summary:</p>
-                            <p><strong>Order ID:</strong> #{order.id}</p>
+                            <p><strong>Order ID:</strong> {order.id}</p>
                             <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
                             <p><strong>Payment Method:</strong> {formatPaymentMethod(order.paymentMethod)}</p>
                              <p className='mt-2 text-muted-foreground'>
@@ -101,5 +101,3 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
-
-    

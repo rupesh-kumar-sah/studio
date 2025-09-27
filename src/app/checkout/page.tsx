@@ -105,7 +105,7 @@ export default function CheckoutPage() {
     // Simulate API call
     setTimeout(() => {
         const newOrder: Order = {
-            id: Math.random().toString(36).substr(2, 9),
+            id: `NEm-${Date.now().toString().slice(-6)}`,
             date: new Date().toISOString(),
             items: items,
             total: totalPrice,
@@ -344,5 +344,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-    
