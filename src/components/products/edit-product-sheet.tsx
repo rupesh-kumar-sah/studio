@@ -178,10 +178,12 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                 <Input id="images" type="file" />
                 <p className="text-sm text-muted-foreground">Image uploading is not functional. This is a UI placeholder.</p>
              </div>
+             <div className="pt-2">
+                <Button type="submit" disabled={!isDirty} className="w-full">Save Product Changes</Button>
+             </div>
           </div>
           <SheetFooter className="pt-6 border-t">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={!isDirty}>Save Product Changes</Button>
           </SheetFooter>
         </form>
       </SheetContent>
