@@ -47,9 +47,14 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
 
     try {
       const result = await getProductRecommendations(input)
-      // Filter out products that don't exist in our mock data
-      const validRecommendations = result.recommendedProducts.filter(id => getProductById(id));
-      setRecommendations(validRecommendations)
+      if (result && Array.isArray(result.recommendedProducts)) {
+        // Filter out products that don't exist in our mock data and the current one
+        const validRecommendations = result.recommendedProducts.filter(id => id !== currentProductId && getProductById(id));
+        setRecommendations(validRecommendations.slice(0, 2)); // Limit to 2 recommendations
+      } else {
+        // Fallback on invalid AI response
+        setRecommendations(similarProducts.map(p => p.id));
+      }
     } catch (error) {
       console.error("Failed to get recommendations:", error)
       // Fallback to simple category-based recommendations on error

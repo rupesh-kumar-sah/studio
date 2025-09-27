@@ -47,9 +47,8 @@ Consider boosting the popularity of frequently viewed items by a factor of {{boo
 Consider boosting recently viewed items by a factor of {{boostRecency}}.
 {{/if}}
 
-Based on this viewing history, recommend a list of product IDs.  Only return a JSON array of product IDs.
-Make sure the response can be parsed as a JSON array of strings. Do not include any other text.
-`, // Changed to request JSON array
+Based on this viewing history, recommend a list of product IDs. Only return a valid JSON object that conforms to the output schema. Do not include any other text or formatting.
+`,
 });
 
 const productRecommendationsFlow = ai.defineFlow(
