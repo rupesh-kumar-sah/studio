@@ -5,7 +5,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, Phone, ShoppingBag, LogIn } from "lucide-react";
+import { User, Mail, Phone, ShoppingBag, LogIn, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -88,13 +88,21 @@ export default function ProfilePage() {
                             </div>
                         )}
                     </div>
-                     <div className="border-t pt-6">
+                     <div className="border-t pt-6 space-y-4">
                         <Button asChild className="w-full" size="lg">
                             <Link href="/orders">
                                 <ShoppingBag className="mr-2 h-5 w-5" />
                                 {isOwner ? 'View All Customer Orders' : 'View My Orders'}
                             </Link>
                         </Button>
+                        {isOwner && (
+                            <Button asChild className="w-full" size="lg" variant="secondary">
+                                <Link href="/customers">
+                                    <Users className="mr-2 h-5 w-5" />
+                                    View All Customers
+                                </Link>
+                            </Button>
+                        )}
                     </div>
                 </CardContent>
             </Card>

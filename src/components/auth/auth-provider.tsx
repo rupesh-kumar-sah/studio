@@ -9,6 +9,7 @@ interface AuthContextType {
   isOwner: boolean;
   currentUser: User | null;
   isMounted: boolean;
+  allUsers: User[];
   ownerLogin: (email: string, pass: string) => boolean;
   customerLogin: (email: string, pass: string) => boolean;
   signup: (name: string, email: string, pass: string) => boolean;
@@ -20,13 +21,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isOwner, setIsOwner] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
 
-  const loadUsers = (): User[] => {
+  const loadUsers = useCallback((): User[] => {
     if (typeof window === 'undefined') return [];
-    return JSON.parse(localStorage.getItem('users') || '[]');
-  };
+    const storedUsers = localStorage.getItem('users');
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
@@ -38,7 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (storedUser) {
       setCurrentUser(JSON.parse(storedUser));
     }
-  }, []);
+    setAllUsers(loadUsers());
+  }, [loadUsers]);
 
   const ownerLogin = useCallback((email: string, pass: string) => {
     if (email === "rsah0123456@gmail.com" && pass === "rupesh@0123456") {
@@ -62,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return true;
     }
     return false;
-  }, []);
+  }, [loadUsers]);
 
   const signup = useCallback((name: string, email: string, pass: string) => {
     const users = loadUsers();
@@ -75,9 +79,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return false;
     }
     const newUser: User = { id: Date.now().toString(), name, email, password: pass };
-    localStorage.setItem('users', JSON.stringify([...users, newUser]));
+    const updatedUsers = [...users, newUser];
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    setAllUsers(updatedUsers);
     return true;
-  }, [toast]);
+  }, [loadUsers, toast]);
 
   const logout = useCallback(() => {
     localStorage.removeItem('isOwnerLoggedIn');
@@ -86,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(null);
   }, []);
 
-  const value = { isOwner, currentUser, isMounted, ownerLogin, customerLogin, signup, logout };
+  const value = { isOwner, currentUser, isMounted, allUsers, ownerLogin, customerLogin, signup, logout };
 
   return (
     <AuthContext.Provider value={value}>
