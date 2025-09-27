@@ -28,7 +28,9 @@ export default function AdminDashboardPage() {
         }
     }, []);
 
-    const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+    const totalRevenue = orders
+        .filter(order => order.status === 'confirmed')
+        .reduce((sum, order) => sum + order.total, 0);
     const totalOrders = orders.length;
     const totalCustomers = allUsers.filter(u => u.email !== "rsah0123456@gmail.com").length;
 
@@ -49,7 +51,7 @@ export default function AdminDashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">NPR {totalRevenue.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
-              From all successful orders.
+              From all confirmed orders.
             </p>
           </CardContent>
         </Card>
