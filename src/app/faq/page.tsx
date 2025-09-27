@@ -1,4 +1,6 @@
 
+'use client';
+
 import {
   Accordion,
   AccordionContent,
@@ -6,38 +8,40 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { HelpCircle } from "lucide-react"
-
-const faqs = [
-  {
-    question: "What payment methods do you accept?",
-    answer: "We accept all major credit cards, PayPal, and also offer Cash on Delivery (COD) for certain locations. For digital payments, we support eSewa and Khalti."
-  },
-  {
-    question: "How can I track my order?",
-    answer: "Once your order is shipped, you will receive an email with a tracking number. You can also view your order status by logging into your account and visiting the 'My Orders' page."
-  },
-  {
-    question: "What is your return policy?",
-    answer: "We offer a 14-day return policy for unused and unworn items. Please visit our Shipping & Returns page for detailed instructions on how to process a return."
-  },
-  {
-    question: "How long does shipping take?",
-    answer: "Shipping within Kathmandu Valley typically takes 1-2 business days. For orders outside the valley, it may take 3-7 business days depending on the location."
-  },
-  {
-    question: "Do you ship internationally?",
-    answer: "Currently, we only ship within Nepal. We are working on expanding our shipping options to international locations in the future."
-  }
-];
+import { HelpCircle, Loader2 } from "lucide-react"
+import { usePageContent } from "@/hooks/use-page-content"
 
 export default function FaqPage() {
+  const { content, loading } = usePageContent('faq');
+
+  if (loading) {
+    return (
+      <div className="container flex items-center justify-center py-20 text-center">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <p>Loading Content...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!content) {
+    return (
+      <div className="container py-12 text-center">
+        <h1 className="text-2xl font-bold">Content not found.</h1>
+        <p className="text-muted-foreground">This page could not be loaded.</p>
+      </div>
+    )
+  }
+
+  const { title, description, content: { faqs } } = content;
+
   return (
     <div className="container py-12">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">Frequently Asked Questions</h1>
+        <h1 className="text-4xl font-bold tracking-tight">{title}</h1>
         <p className="mt-2 text-lg text-muted-foreground">
-          Find answers to common questions about our products, shipping, and policies.
+          {description}
         </p>
       </div>
 
@@ -49,7 +53,7 @@ export default function FaqPage() {
           </CardHeader>
           <CardContent>
             <Accordion type="single" collapsible className="w-full">
-              {faqs.map((faq, index) => (
+              {faqs.map((faq: {question: string, answer: string}, index: number) => (
                 <AccordionItem key={index} value={`item-${index}`}>
                   <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
                   <AccordionContent className="text-base text-muted-foreground">

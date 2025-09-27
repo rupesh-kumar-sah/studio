@@ -1,14 +1,41 @@
 
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Loader2 } from "lucide-react";
+import { usePageContent } from "@/hooks/use-page-content";
 
 export default function PrivacyPolicyPage() {
+  const { content, loading } = usePageContent('privacy-policy');
+
+  if (loading) {
+    return (
+      <div className="container flex items-center justify-center py-20 text-center">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <p>Loading Content...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!content) {
+    return (
+      <div className="container py-12 text-center">
+        <h1 className="text-2xl font-bold">Content not found.</h1>
+        <p className="text-muted-foreground">This page could not be loaded.</p>
+      </div>
+    )
+  }
+
+  const { title, description, content: { sections, lastUpdated } } = content;
+
   return (
     <div className="container py-12">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">Privacy Policy</h1>
+        <h1 className="text-4xl font-bold tracking-tight">{title}</h1>
         <p className="mt-2 text-lg text-muted-foreground">
-          Your privacy is important to us.
+          {description}
         </p>
       </div>
 
@@ -19,28 +46,14 @@ export default function PrivacyPolicyPage() {
             <CardTitle className="text-2xl">How We Protect Your Data</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 text-muted-foreground">
-            <div className="space-y-2">
-              <h3 className="font-semibold text-foreground text-lg">1. Information We Collect</h3>
-              <p>We collect information you provide directly to us when you create an account, place an order, or communicate with us. This may include your name, email address, shipping address, and payment information. We do not store your full credit card details.</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold text-foreground text-lg">2. How We Use Your Information</h3>
-              <p>We use the information we collect to process your orders, communicate with you, and improve our services. We may also use your information to send you promotional materials, but you can opt out at any time.</p>
-            </div>
-             <div className="space-y-2">
-              <h3 className="font-semibold text-foreground text-lg">3. Data Sharing</h3>
-              <p>We do not sell or rent your personal information to third parties. We may share your information with trusted partners who assist us in operating our website, conducting our business, or servicing you, so long as those parties agree to keep this information confidential.</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold text-foreground text-lg">4. Data Security</h3>
-              <p>We implement a variety of security measures to maintain the safety of your personal information. Your personal information is contained behind secured networks and is only accessible by a limited number of persons who have special access rights to such systems.</p>
-            </div>
-             <div className="space-y-2">
-              <h3 className="font-semibold text-foreground text-lg">5. Your Rights</h3>
-              <p>You have the right to access, correct, or delete your personal information. You can do this by logging into your account or by contacting our customer support.</p>
-            </div>
+            {sections.map((section: {title: string, content: string}, index: number) => (
+               <div key={index} className="space-y-2">
+                <h3 className="font-semibold text-foreground text-lg">{section.title}</h3>
+                <p>{section.content}</p>
+              </div>
+            ))}
             <div className="pt-4 text-sm">
-                <p>Last updated: {new Date().toLocaleDateString()}</p>
+                <p>Last updated: {lastUpdated}</p>
             </div>
           </CardContent>
         </Card>

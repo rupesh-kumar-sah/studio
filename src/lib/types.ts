@@ -1,4 +1,3 @@
-
 export type Review = {
   id: string;
   author: string;
@@ -43,3 +42,10 @@ export type User = {
 export type Category = string;
 
 export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+
+export interface PageContent {
+  slug: string;
+  title: string;
+  description: string;
+  content: Record<string, any>;
+}
