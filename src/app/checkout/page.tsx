@@ -15,10 +15,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Banknote, CreditCard, ShieldCheck, Loader2, CheckCircle2, QrCode, LogIn } from "lucide-react";
+import { Banknote, CreditCard, ShieldCheck, Loader2, CheckCircle2, QrCode } from "lucide-react";
 import type { CartItem } from "@/lib/types";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/components/auth/auth-provider";
 
 const shippingSchema = z.object({
   email: z.string().email(),
@@ -56,7 +55,6 @@ export type Order = {
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems } = useCart();
-  const { currentUser, isMounted: authIsMounted } = useAuth();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showQrDialog, setShowQrDialog] = useState(false);
@@ -64,9 +62,9 @@ export default function CheckoutPage() {
   const form = useForm<z.infer<typeof shippingSchema>>({
     resolver: zodResolver(shippingSchema),
     defaultValues: {
-      email: currentUser?.email || "",
-      firstName: currentUser?.name.split(' ')[0] || "",
-      lastName: currentUser?.name.split(' ').slice(1).join(' ') || "",
+      email: "",
+      firstName: "",
+      lastName: "",
       address: "",
       city: "",
       postalCode: "",
@@ -74,21 +72,6 @@ export default function CheckoutPage() {
       walletId: "",
     },
   });
-
-  useEffect(() => {
-    if (authIsMounted && currentUser) {
-        form.reset({
-            email: currentUser.email,
-            firstName: currentUser.name.split(' ')[0] || "",
-            lastName: currentUser.name.split(' ').slice(1).join(' ') || "",
-            address: "",
-            city: "",
-            postalCode: "",
-            message: "",
-            walletId: "",
-        });
-    }
-  }, [currentUser, authIsMounted, form]);
 
   const paymentMethod = form.watch("paymentMethod");
   
@@ -138,15 +121,6 @@ export default function CheckoutPage() {
     router.push("/checkout/success");
   }
 
-  if (!authIsMounted) {
-    return (
-        <div className="container flex flex-col items-center justify-center text-center py-40">
-            <Loader2 className="h-12 w-12 animate-spin mb-4" />
-            <h1 className="text-2xl font-bold">Loading...</h1>
-        </div>
-    )
-  }
-
   if (totalItems === 0 && !isProcessing) {
     return (
         <div className="container flex flex-col items-center justify-center text-center py-20">
@@ -157,21 +131,6 @@ export default function CheckoutPage() {
             </Button>
         </div>
     )
-  }
-
-  if (!currentUser) {
-    return (
-        <div className="container flex flex-col items-center justify-center text-center py-20">
-            <Card className="w-full max-w-md p-8">
-                 <LogIn className="h-12 w-12 mx-auto text-muted-foreground" />
-                <h1 className="text-2xl font-bold mt-4">Login Required</h1>
-                <p className="mt-2 text-muted-foreground">Please log in to your account to proceed with the checkout.</p>
-                <Button asChild className="mt-6">
-                    <Link href="/login">Go to Login</Link>
-                </Button>
-            </Card>
-        </div>
-    );
   }
 
   return (
@@ -226,7 +185,7 @@ export default function CheckoutPage() {
                         <FormField control={form.control} name="email" render={({ field }) => (
                         <FormItem>
                             <FormLabel>Email</FormLabel>
-                            <FormControl><Input placeholder="you@example.com" {...field} readOnly /></FormControl>
+                            <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
                             <FormMessage />
                         </FormItem>
                         )} />
@@ -395,3 +354,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    
