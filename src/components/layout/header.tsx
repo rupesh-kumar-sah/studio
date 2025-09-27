@@ -25,6 +25,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useCategories } from '../categories/category-provider';
 import { cn } from '@/lib/utils';
+import { SearchDialog } from '../shared/search-dialog';
 
 export function Header() {
   const router = useRouter();
@@ -123,17 +124,13 @@ export function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
-          <form onSubmit={handleSearch} className="relative hidden lg:block w-full max-w-sm">
-            <Input 
-              type="search" 
-              name="search" 
-              placeholder="Search products..." 
-              className="pl-10" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          </form>
+          <div className="hidden lg:block w-full max-w-sm">
+            <SearchDialog />
+          </div>
+          
+          <div className="lg:hidden">
+            <SearchDialog />
+          </div>
 
           {isMounted && renderUserMenu()}
 
