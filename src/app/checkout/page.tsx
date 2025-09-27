@@ -91,6 +91,13 @@ export default function CheckoutPage() {
       form.setValue('customer.email', currentUser.email);
     }
   }, [currentUser, form]);
+  
+   useEffect(() => {
+    if (isCartMounted && totalItems === 0 && !isProcessing) {
+      router.replace('/cart');
+    }
+  }, [isCartMounted, totalItems, isProcessing, router]);
+
 
   const onSubmit = (data: CheckoutFormValues) => {
     setIsProcessing(true);
@@ -121,34 +128,15 @@ export default function CheckoutPage() {
     }, 1500);
   };
   
-  if (!isCartMounted) {
+  if (!isCartMounted || totalItems === 0) {
       return (
           <div className="container flex items-center justify-center py-20 text-center">
               <div className="flex items-center gap-2 text-muted-foreground">
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  <p>Shopping cart is loading...</p>
+                  <p>Loading or redirecting...</p>
               </div>
           </div>
       );
-  }
-
-  if (isCartMounted && totalItems === 0 && !isProcessing) {
-    return (
-      <div className="container py-12 text-center">
-        <Card className="max-w-md mx-auto">
-            <CardHeader>
-                <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground" />
-                <CardTitle className="mt-4">Your Cart is Empty</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
-                <Button onClick={() => router.push('/products')}>
-                    Start Shopping
-                </Button>
-            </CardContent>
-        </Card>
-      </div>
-    );
   }
 
   return (

@@ -67,8 +67,8 @@ export function CartSheet() {
                   <span>Subtotal</span>
                   <span>Rs.{totalPrice.toFixed(2)}</span>
                 </div>
-                <Button asChild size="lg" className="w-full" onClick={() => setIsOpen(false)}>
-                  <Link href="/checkout">Proceed to Checkout</Link>
+                 <Button asChild size="lg" className="w-full" onClick={() => setIsOpen(false)}>
+                  <Link href="/cart">View Cart & Checkout</Link>
                 </Button>
               </div>
             </SheetFooter>
