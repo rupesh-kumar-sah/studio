@@ -1,9 +1,12 @@
 
+"use client";
+
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Youtube, Send } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { usePathname } from 'next/navigation';
 
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -13,8 +16,14 @@ function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-
 export function Footer() {
+  const pathname = usePathname();
+
+  // Hide footer on admin pages
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <footer className="bg-secondary">
       <div className="container py-12">

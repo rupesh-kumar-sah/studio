@@ -15,15 +15,14 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Filter, PlusCircle } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import { useProducts } from '@/components/products/product-provider';
-import { useAuth } from '@/components/auth/auth-provider';
-import { AddProductSheet } from '@/components/products/add-product-sheet';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 function ProductsPageContent() {
   const { products: allProducts } = useProducts();
   const searchParams = useSearchParams();
-  const { isOwner } = useAuth();
 
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
@@ -36,7 +35,6 @@ function ProductsPageContent() {
   });
   const [sort, setSort] = useState('featured');
   const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
-  const [isAddSheetOpen, setAddSheetOpen] = useState(false);
   
   useEffect(() => {
     setFilters(f => ({
@@ -92,6 +90,8 @@ function ProductsPageContent() {
   const uniqueSizes = useMemo(() => [...new Set(allProducts.flatMap(p => p.sizes))], [allProducts]);
 
   return (
+    <>
+    <Header />
     <div className="container py-8">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">Our Products</h1>
@@ -114,12 +114,6 @@ function ProductsPageContent() {
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-muted-foreground">{filteredAndSortedProducts.length} products found</p>
             <div className="flex items-center gap-4">
-              {isOwner && (
-                <Button onClick={() => setAddSheetOpen(true)}>
-                  <PlusCircle className="mr-2 h-5 w-5" />
-                  Add New Product
-                </Button>
-              )}
               <Select value={sort} onValueChange={setSort}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Sort by" />
@@ -166,21 +160,16 @@ function ProductsPageContent() {
           )}
         </main>
       </div>
-      {isOwner && (
-        <ProductProvider>
-          <AddProductSheet isOpen={isAddSheetOpen} onOpenChange={setAddSheetOpen} />
-        </ProductProvider>
-      )}
     </div>
+    <Footer />
+    </>
   );
 }
 
 export default function ProductsPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ProductProvider>
         <ProductsPageContent />
-      </ProductProvider>
     </Suspense>
   )
 }

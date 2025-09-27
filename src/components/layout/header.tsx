@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Search, User, Menu } from 'lucide-react';
+import { Search, User, Menu, LayoutDashboard } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,14 +20,16 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useCategories } from '../categories/category-provider';
+import { cn } from '@/lib/utils';
 
 export function Header() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isOwner, currentUser, isMounted, logout } = useAuth();
@@ -79,11 +81,19 @@ export function Header() {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {isOwner && (
+                    <DropdownMenuItem asChild>
+                        <Link href="/admin">
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            Admin Dashboard
+                        </Link>
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                     <Link href="/profile">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                    <Link href="/orders">Orders</Link>
+                    <Link href={isOwner ? "/admin/orders" : "/orders"}>Orders</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
@@ -92,6 +102,10 @@ export function Header() {
     );
   }
 
+  // Hide header on admin pages
+  if (pathname.startsWith('/admin')) {
+      return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

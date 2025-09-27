@@ -6,13 +6,15 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, ShoppingBag, LogIn, Users, Edit, Phone } from "lucide-react";
+import { User, Mail, ShoppingBag, LogIn, Users, Edit, Phone, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Image from 'next/image';
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 export default function ProfilePage() {
   const { isOwner, currentUser, owner, isMounted, updateAvatar } = useAuth();
@@ -54,6 +56,8 @@ export default function ProfilePage() {
   
   if (!isOwner && !currentUser) {
     return (
+        <>
+        <Header />
         <div className="container flex flex-col items-center justify-center text-center py-20">
             <Card className="w-full max-w-md p-8">
                  <LogIn className="h-12 w-12 mx-auto text-muted-foreground" />
@@ -64,6 +68,8 @@ export default function ProfilePage() {
                 </Button>
             </Card>
         </div>
+        <Footer />
+        </>
     )
   }
 
@@ -88,6 +94,8 @@ export default function ProfilePage() {
   };
 
   return (
+    <>
+    <Header />
     <div className="container py-12">
         <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold tracking-tight">{user.title}</h1>
@@ -152,24 +160,27 @@ export default function ProfilePage() {
                         )}
                     </div>
                      <div className="border-t pt-6 space-y-4">
-                        <Button asChild className="w-full" size="lg">
-                            <Link href="/orders">
-                                <ShoppingBag className="mr-2 h-5 w-5" />
-                                {isOwner ? 'View All Customer Orders' : 'View My Orders'}
-                            </Link>
-                        </Button>
-                        {isOwner && (
-                            <Button asChild className="w-full" size="lg" variant="secondary">
-                                <Link href="/customers">
-                                    <Users className="mr-2 h-5 w-5" />
-                                    View All Customers
+                         {isOwner ? (
+                             <Button asChild className="w-full" size="lg">
+                                <Link href="/admin">
+                                    <LayoutDashboard className="mr-2 h-5 w-5" />
+                                    Go to Admin Dashboard
                                 </Link>
                             </Button>
-                        )}
+                         ) : (
+                            <Button asChild className="w-full" size="lg">
+                                <Link href="/orders">
+                                    <ShoppingBag className="mr-2 h-5 w-5" />
+                                    View My Orders
+                                </Link>
+                            </Button>
+                         )}
                     </div>
                 </CardContent>
             </Card>
         </div>
     </div>
+    <Footer />
+    </>
   );
 }

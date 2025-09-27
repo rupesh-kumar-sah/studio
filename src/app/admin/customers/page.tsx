@@ -2,24 +2,13 @@
 'use client';
 
 import { useAuth } from "@/components/auth/auth-provider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { LogIn, ShieldAlert } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { User } from "@/lib/types";
 
-export default function CustomersPage() {
-  const { isOwner, allUsers, isMounted, reloadAllUsers } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isMounted && !isOwner) {
-      router.push('/admin');
-    }
-  }, [isOwner, isMounted, router]);
+export default function AdminCustomersPage() {
+  const { allUsers, reloadAllUsers } = useAuth();
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
@@ -34,17 +23,13 @@ export default function CustomersPage() {
     };
   }, [reloadAllUsers]);
 
-  if (!isMounted || !isOwner) {
-    return <div className="container py-12 text-center">Loading or redirecting...</div>;
-  }
-
   const customerUsers = allUsers.filter(user => user.email !== "rsah0123456@gmail.com");
 
   return (
-    <div className="container py-12">
-      <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">Registered Customers</h1>
-        <p className="mt-2 text-lg text-muted-foreground">A list of all customer accounts.</p>
+    <div className="p-4 sm:p-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Registered Customers</h1>
+        <p className="text-muted-foreground">A list of all customer accounts.</p>
       </div>
       <Card>
         <CardContent className="p-0">
@@ -67,7 +52,7 @@ export default function CustomersPage() {
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center text-muted-foreground">
+                            <TableCell colSpan={3} className="text-center text-muted-foreground py-10">
                                 No customers have signed up yet.
                             </TableCell>
                         </TableRow>

@@ -71,11 +71,9 @@ export default function RootLayout({
         <AuthProvider>
           <CategoryProvider>
             <CartProvider>
-              <Header />
-              <main className="flex-1">
+              <main className="flex-1 flex flex-col">
                 {children}
               </main>
-              <Footer />
               <Toaster />
             </CartProvider>
           </CategoryProvider>

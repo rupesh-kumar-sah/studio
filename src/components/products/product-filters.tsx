@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Checkbox } from '../ui/checkbox';
 import { Separator } from '../ui/separator';
+import { useRouter } from 'next/navigation';
 
 const newCategorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
@@ -24,6 +25,7 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
   const { categories, addCategory } = useCategories();
   const { isOwner } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -189,6 +191,12 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
         </div>
       </CardContent>
     </Card>
+    {isOwner && (
+        <Button className="w-full mt-4" onClick={() => router.push('/admin/products')}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add/Edit Products
+        </Button>
+    )}
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>

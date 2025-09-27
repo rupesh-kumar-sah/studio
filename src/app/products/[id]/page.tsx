@@ -11,6 +11,8 @@ import { Star, Edit, BadgePercent } from 'lucide-react';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getIsOwner } from '@/lib/auth-db';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 const ProductReviews = dynamic(() => import('@/components/products/product-reviews-server').then(mod => mod.ProductReviewsServer), {
   loading: () => <Skeleton className="h-48 w-full" />,
@@ -38,64 +40,68 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
   return (
-    <div className="container py-12">
-      <div className="grid md:grid-cols-2 gap-12">
-        <ProductImageGallery product={product} />
-        <div className="space-y-6">
-          <div>
-            <div className="flex justify-between items-start">
-              <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
-              {isOwner && (
-                <EditProductSheet product={product}>
-                  <Button variant="outline" size="icon">
-                    <Edit className="h-5 w-5" />
-                    <span className="sr-only">Edit Product</span>
-                  </Button>
-                </EditProductSheet>
-              )}
-            </div>
-            <div className="flex items-baseline gap-3 mt-2">
-              <p className="text-2xl font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
-              {hasDiscount && (
-                  <p className="text-xl text-muted-foreground line-through">Rs.{product.originalPrice?.toFixed(2)}</p>
-              )}
-            </div>
-             {hasDiscount && (
-                <div className="flex items-center gap-2 mt-2 text-sm font-medium text-destructive">
-                    <BadgePercent className="h-4 w-4" />
-                    <span>
-                        {Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)}% off
-                    </span>
-                </div>
-            )}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-5 w-5 ${i < Math.round(rating) ? 'fill-current' : 'fill-muted stroke-muted-foreground'}`}/>
-                ))}
+    <>
+      <Header />
+      <div className="container py-12">
+        <div className="grid md:grid-cols-2 gap-12">
+          <ProductImageGallery product={product} />
+          <div className="space-y-6">
+            <div>
+              <div className="flex justify-between items-start">
+                <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+                {isOwner && (
+                  <EditProductSheet product={product}>
+                    <Button variant="outline" size="icon">
+                      <Edit className="h-5 w-5" />
+                      <span className="sr-only">Edit Product</span>
+                    </Button>
+                  </EditProductSheet>
+                )}
               </div>
-              <span className="text-sm text-muted-foreground">({reviews} reviews)</span>
+              <div className="flex items-baseline gap-3 mt-2">
+                <p className="text-2xl font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
+                {hasDiscount && (
+                    <p className="text-xl text-muted-foreground line-through">Rs.{product.originalPrice?.toFixed(2)}</p>
+                )}
+              </div>
+               {hasDiscount && (
+                  <div className="flex items-center gap-2 mt-2 text-sm font-medium text-destructive">
+                      <BadgePercent className="h-4 w-4" />
+                      <span>
+                          {Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)}% off
+                      </span>
+                  </div>
+              )}
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`h-5 w-5 ${i < Math.round(rating) ? 'fill-current' : 'fill-muted stroke-muted-foreground'}`}/>
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground">({reviews} reviews)</span>
+              </div>
             </div>
+
+            <Separator />
+
+            <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+
+            <AddToCartForm product={product} />
+
           </div>
+        </div>
+        
+        <div className="mt-16">
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <ProductReviews productId={product.id} />
+          </Suspense>
+        </div>
 
-          <Separator />
-
-          <p className="text-muted-foreground leading-relaxed">{product.description}</p>
-
-          <AddToCartForm product={product} />
-
+        <div className="mt-16">
+          <ProductRecommendations currentProductId={product.id} />
         </div>
       </div>
-      
-      <div className="mt-16">
-        <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-            <ProductReviews productId={product.id} />
-        </Suspense>
-      </div>
-
-      <div className="mt-16">
-        <ProductRecommendations currentProductId={product.id} />
-      </div>
-    </div>
+      <Footer />
+    </>
   );
 }
