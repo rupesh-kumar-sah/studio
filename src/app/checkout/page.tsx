@@ -130,7 +130,7 @@ export default function CheckoutPage() {
     );
   }
 
-  if (totalItems === 0 && isCartMounted) {
+  if (isCartMounted && totalItems === 0) {
     return (
         <div className="container flex flex-col items-center justify-center text-center py-20">
             <h1 className="text-3xl font-bold">Your Cart is Empty</h1>
