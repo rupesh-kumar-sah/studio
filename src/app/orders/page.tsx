@@ -7,12 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, LogIn, ShoppingBag, CheckCircle, Clock } from 'lucide-react';
+import { MessageSquare, LogIn, ShoppingBag, CheckCircle, Clock, Trash2 } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+
 
 export default function OrdersPage() {
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
@@ -46,6 +48,18 @@ export default function OrdersPage() {
     toast({
         title: "Order Confirmed",
         description: `Order #${orderId} has been marked as confirmed.`
+    });
+  };
+
+  const deleteOrder = (orderId: string) => {
+    const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+    const updatedOrders = storedOrders.filter(order => order.id !== orderId);
+    localStorage.setItem('orders', JSON.stringify(updatedOrders));
+    window.dispatchEvent(new CustomEvent('orders-updated'));
+    toast({
+        variant: 'destructive',
+        title: "Order Deleted",
+        description: `Order #${orderId} has been successfully deleted.`
     });
   };
 
@@ -199,12 +213,34 @@ export default function OrdersPage() {
                     </div>
                 </div>
             </CardContent>
-            {isOwner && order.status === 'pending' && (
-                <CardFooter>
-                    <Button onClick={() => acceptOrder(order.id)}>
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Accept Order
-                    </Button>
+            {isOwner && (
+                <CardFooter className="gap-2">
+                    {order.status === 'pending' && (
+                        <Button onClick={() => acceptOrder(order.id)}>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Accept Order
+                        </Button>
+                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive">
+                           <Trash2 className="mr-2 h-4 w-4" />
+                           Delete Order
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the order and all its data.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteOrder(order.id)}>Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                 </CardFooter>
             )}
           </Card>
@@ -213,3 +249,5 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+    
