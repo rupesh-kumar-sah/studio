@@ -44,7 +44,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [items, isCartMounted]);
 
-  const addItem = (product: Product, size: string, color: string) => {
+  const addItem = useCallback((product: Product, size: string, color: string) => {
     setItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
         (item) => item.product.id === product.id && item.size === size && item.color === color
@@ -85,7 +85,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prevItems, { product, quantity: 1, size, color }];
       }
     });
-  };
+  }, [toast]);
 
   const removeItem = (productId: string, size: string, color: string) => {
     setItems((prevItems) =>
