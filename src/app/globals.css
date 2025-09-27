@@ -10,25 +10,24 @@
     --card-foreground: 240 5.9% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 5.9% 10%;
-    --primary: 243 80% 60%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 212 70% 60%; /* Light Blue from image */
+    --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 60 90% 90%; /* Light Yellow from image */
+    --accent-foreground: 60 40% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 243 80% 60%;
-    --radius: 0.5rem;
-    --chart-1: 243, 80%, 60%;
-    --chart-2: 160, 60%, 45%;
-    --chart-3: 340, 85%, 65%;
-    --chart-4: 280, 55%, 60%;
-    --chart-5: 20, 75%, 55%;
+    --ring: 212 70% 60%;
+    --chart-1: 212, 70%, 60%; /* Light Blue */
+    --chart-2: 350, 80%, 88%; /* Light Pink */
+    --chart-3: 120, 60%, 88%; /* Light Green */
+    --chart-4: 60, 90%, 88%;  /* Light Yellow */
+    --chart-5: 280, 55%, 60%;
   }
 
   .dark {
@@ -38,24 +37,24 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 6% 10%;
     --popover-foreground: 0 0% 98%;
-    --primary: 243 80% 60%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 212 70% 60%; /* Light Blue from image */
+    --primary-foreground: 240 6% 10%;
     --secondary: 240 4% 16%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 4% 16%;
     --muted-foreground: 240 4% 65%;
-    --accent: 240 4% 16%;
+    --accent: 60 90% 80%; /* Light Yellow from image */
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 4% 16%;
     --input: 240 4% 16%;
-    --ring: 243 80% 60%;
-    --chart-1: 243, 80%, 60%;
-    --chart-2: 160, 60%, 45%;
-    --chart-3: 340, 85%, 65%;
-    --chart-4: 280, 55%, 60%;
-    --chart-5: 20, 75%, 55%;
+    --ring: 212 70% 60%;
+    --chart-1: 212, 70%, 60%; /* Light Blue */
+    --chart-2: 350, 80%, 88%; /* Light Pink */
+    --chart-3: 120, 60%, 88%; /* Light Green */
+    --chart-4: 60, 90%, 88%;  /* Light Yellow */
+    --chart-5: 280, 55%, 60%;
   }
 }
 
