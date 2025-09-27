@@ -7,12 +7,12 @@ import { useProducts } from '@/components/products/product-provider';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Star, Edit } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
 import { ProductRecommendations } from '@/components/products/product-recommendations';
+import { ProductReviews } from '@/components/products/product-reviews';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -62,6 +62,10 @@ export default function ProductDetailPage() {
         </div>
       </div>
       
+      <div className="mt-16">
+        <ProductReviews product={product} />
+      </div>
+
       <div className="mt-16">
         <ProductRecommendations currentProductId={product.id} />
       </div>

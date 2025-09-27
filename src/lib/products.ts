@@ -1,4 +1,5 @@
-import { Product } from '@/lib/types';
+
+import { Product, Review } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const getImage = (id: string) => {
@@ -10,6 +11,35 @@ const getImage = (id: string) => {
     return { url: img.imageUrl, alt: img.description, hint: img.imageHint };
 };
 
+const generateReviews = (productId: string, rating: number, reviewCount: number): Review[] => {
+  const reviews: Review[] = [];
+  const authors = ['Anjali S.', 'Bikram T.', 'Sunita M.', 'Ramesh P.', 'Sita G.'];
+  const comments = [
+    "Absolutely love it! The quality is outstanding.",
+    "Good product, but could be better.",
+    "Exceeded my expectations. Highly recommended!",
+    "Decent for the price. Does the job.",
+    "Not what I expected. The color looks different in person.",
+    "Fantastic! Will definitely buy again from this store.",
+    "It's okay. Nothing special.",
+    "A must-have item. So glad I found it.",
+    "The shipping was faster than I thought. Great service.",
+    "Great quality and amazing customer service."
+  ];
+
+  for (let i = 0; i < reviewCount; i++) {
+    reviews.push({
+      id: `${productId}-review-${i + 1}`,
+      author: authors[i % authors.length],
+      rating: Math.max(1, Math.min(5, Math.round(rating - 1 + (i % 3)))), // Vary rating around the average
+      comment: comments[i % comments.length],
+      date: new Date(Date.now() - (i * 3 + 2) * 24 * 60 * 60 * 1000).toISOString(),
+    });
+  }
+  return reviews;
+};
+
+
 export const products: Product[] = [
   {
     id: '1',
@@ -20,6 +50,7 @@ export const products: Product[] = [
     category: 'Clothing',
     rating: 4.5,
     reviews: 120,
+    detailedReviews: generateReviews('1', 4.5, 5),
     stock: 50,
     colors: ['#2F3A4C', '#8B4513', '#556B2F'],
     sizes: ['S', 'M', 'L', 'XL'],
@@ -33,6 +64,7 @@ export const products: Product[] = [
     category: 'Clothing',
     rating: 4.8,
     reviews: 250,
+    detailedReviews: generateReviews('2', 4.8, 3),
     stock: 100,
     colors: ['#FFFFFF', '#F0E68C', '#B0C4DE'],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -46,6 +78,7 @@ export const products: Product[] = [
     category: 'Shoes',
     rating: 4.9,
     reviews: 300,
+    detailedReviews: generateReviews('3', 4.9, 4),
     stock: 30,
     colors: ['#A0522D', '#000000'],
     sizes: ['8', '9', '10', '11', '12'],
@@ -59,6 +92,7 @@ export const products: Product[] = [
     category: 'Shoes',
     rating: 4.6,
     reviews: 80,
+    detailedReviews: generateReviews('4', 4.6, 2),
     stock: 60,
     colors: ['#D2B48C', '#8B4513'],
     sizes: ['7', '8', '9', '10'],
@@ -72,6 +106,7 @@ export const products: Product[] = [
     category: 'Accessories',
     rating: 4.7,
     reviews: 150,
+    detailedReviews: generateReviews('5', 4.7, 5),
     stock: 40,
     colors: ['Natural'],
     sizes: ['One Size'],
@@ -85,6 +120,7 @@ export const products: Product[] = [
     category: 'Clothing',
     rating: 4.8,
     reviews: 180,
+    detailedReviews: generateReviews('6', 4.8, 3),
     stock: 70,
     colors: ['#464646', '#800000'],
     sizes: ['S', 'M', 'L', 'XL'],
@@ -98,6 +134,7 @@ export const products: Product[] = [
     category: 'Shoes',
     rating: 4.4,
     reviews: 95,
+    detailedReviews: generateReviews('7', 4.4, 4),
     stock: 80,
     colors: ['#ADD8E6', '#FFFFFF'],
     sizes: ['8', '9', '10', '11'],
@@ -111,6 +148,7 @@ export const products: Product[] = [
     category: 'Accessories',
     rating: 4.9,
     reviews: 210,
+    detailedReviews: generateReviews('8', 4.9, 2),
     stock: 90,
     colors: ['#FF4500', '#FFD700', '#FF69B4'],
     sizes: ['One Size'],
@@ -124,6 +162,7 @@ export const products: Product[] = [
     category: 'Clothing',
     rating: 4.3,
     reviews: 75,
+    detailedReviews: generateReviews('9', 4.3, 3),
     stock: 65,
     colors: ['#556B2F', '#D2B48C'],
     sizes: ['M', 'L', 'XL', 'XXL'],
@@ -137,6 +176,7 @@ export const products: Product[] = [
     category: 'Shoes',
     rating: 4.7,
     reviews: 110,
+    detailedReviews: generateReviews('10', 4.7, 1),
     stock: 45,
     colors: ['#483D8B', '#FFA500'],
     sizes: ['9', '10', '11', '12'],
@@ -150,6 +190,7 @@ export const products: Product[] = [
     category: 'Accessories',
     rating: 4.8,
     reviews: 60,
+    detailedReviews: generateReviews('11', 4.8, 4),
     stock: 25,
     colors: ['#8B4513', '#C0C0C0'],
     sizes: ['One Size'],
@@ -163,6 +204,7 @@ export const products: Product[] = [
     category: 'Accessories',
     rating: 4.9,
     reviews: 190,
+    detailedReviews: generateReviews('12', 4.9, 0),
     stock: 120,
     colors: ['#A0522D', '#2E4053'],
     sizes: ['One Size'],
