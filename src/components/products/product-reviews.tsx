@@ -64,7 +64,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                 <CardDescription>See what others are saying about this product.</CardDescription>
             </CardHeader>
             <CardContent>
-                {product.detailedReviews.length > 0 ? (
+                {product.detailedReviews && product.detailedReviews.length > 0 ? (
                     <div className="space-y-6">
                         {product.detailedReviews.map((review) => (
                             <div key={review.id}>
