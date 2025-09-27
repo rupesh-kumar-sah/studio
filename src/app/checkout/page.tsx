@@ -89,7 +89,7 @@ export default function CheckoutPage() {
   
    useEffect(() => {
     if (isCartMounted && totalItems === 0 && !isProcessing) {
-      router.replace('/cart');
+      router.replace('/products');
     }
   }, [isCartMounted, totalItems, isProcessing, router]);
 
@@ -97,7 +97,7 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutFormValues) => {
     setIsProcessing(true);
     
-    const DAILY_PURCHASE_LIMIT = isOwner ? 50 : 5;
+    const DAILY_PURCHASE_LIMIT = isOwner ? 100 : 5;
     const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     const customerOrders = existingOrders.filter(o => o.customer.email === data.customer.email);
     
