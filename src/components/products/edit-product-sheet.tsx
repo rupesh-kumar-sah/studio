@@ -80,13 +80,18 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
 
 
   const onSubmit = (data: z.infer<typeof productSchema>) => {
+    const updatedImages = imagePreview 
+      ? [{ ...product.images[0], url: imagePreview }, ...product.images.slice(1)]
+      : product.images;
+
     const updatedProduct: Product = {
       ...product,
       ...data,
       colors: data.colors.split(',').map(c => c.trim()).filter(Boolean),
       sizes: data.sizes.split(',').map(s => s.trim()).filter(Boolean),
+      images: updatedImages
     };
-    // Note: Image preview is for UI only and not saved here.
+    
     updateProduct(updatedProduct);
     onOpenChange(false);
   };
@@ -193,7 +198,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
             </div>
              <div className="space-y-2">
                 <Label htmlFor="images">Image</Label>
-                <Input id="images" type="file" accept="image/*" onChange={handleImageChange} />
+                <Input id="images" type="file" accept="image/*" onChange={handleImagechange} />
                 {(imagePreview || (product.images && product.images.length > 0)) && (
                   <div className="mt-4">
                     <Label>Image Preview</Label>
@@ -208,7 +213,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                     </div>
                   </div>
                 )}
-                <p className="text-sm text-muted-foreground">Image upload is for preview only. The image will not be saved.</p>
+                <p className="text-sm text-muted-foreground">Image upload is for preview only and persists for the session.</p>
              </div>
              <div className="pt-2">
                 <Button type="submit" disabled={!isDirty && !imagePreview} className="w-full">Save Product Changes</Button>
@@ -222,3 +227,5 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
     </Sheet>
   );
 }
+
+    
