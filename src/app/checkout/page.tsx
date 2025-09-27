@@ -20,6 +20,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Loader2 } from 'lucide-react';
 import type { CartItem } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import type { OrderStatus } from '@/lib/types';
 
 export type Order = {
   id: string;
@@ -29,6 +30,7 @@ export type Order = {
   customer: z.infer<typeof customerInfoSchema>;
   transactionId: string;
   message?: string;
+  status: OrderStatus;
 };
 
 const customerInfoSchema = z.object({
@@ -90,14 +92,16 @@ export default function CheckoutPage() {
     
     // Simulate API call
     setTimeout(() => {
+        const orderId = `NEm-${Date.now().toString().slice(-6)}`;
         const newOrder: Order = {
-            id: `NEm-${Date.now().toString().slice(-6)}`,
+            id: orderId,
             date: new Date().toISOString(),
             items: items,
             total: totalPrice,
             customer: data.customer,
             transactionId: data.transactionId,
             message: data.message,
+            status: 'pending',
         };
         
         // Save order to localStorage
@@ -108,7 +112,7 @@ export default function CheckoutPage() {
         window.dispatchEvent(new CustomEvent('orders-updated'));
 
         clearCart();
-        router.push('/checkout/success');
+        router.push(`/checkout/success?orderId=${orderId}`);
     }, 1500);
   };
   
@@ -303,5 +307,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-    

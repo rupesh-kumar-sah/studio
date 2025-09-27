@@ -37,3 +37,5 @@ export type User = {
 };
 
 export type Category = string;
+
+export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';

@@ -8,20 +8,87 @@ import { CheckCircle2, Clock, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import type { Order } from '@/app/checkout/page';
+import { useSearchParams } from 'next/navigation';
 
 
 function CheckoutSuccessContent() {
     const { clearCart } = useCart();
     const [order, setOrder] = useState<Order | null>(null);
+    const searchParams = useSearchParams();
+    const orderId = searchParams.get('orderId');
 
     useEffect(() => {
-        const orders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-        if (orders.length > 0) {
-            const mostRecentOrder = orders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-            setOrder(mostRecentOrder);
+        if (!orderId) return;
+
+        const findOrder = () => {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+            const foundOrder = orders.find(o => o.id === orderId);
+            setOrder(foundOrder || null);
+            
+            // Only clear cart if the order is confirmed
+            if (foundOrder?.status === 'confirmed') {
+                clearCart();
+            }
+        };
+
+        findOrder();
+
+        const handleStorageChange = (event: StorageEvent) => {
+          if (event.key === 'orders') {
+            findOrder();
+          }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('orders-updated', findOrder);
+        
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('orders-updated', findOrder);
         }
-        clearCart();
-    }, [clearCart]);
+
+    }, [orderId, clearCart]);
+
+    if (!order) {
+        return (
+            <div className="text-center text-muted-foreground">
+                <p>Loading order details...</p>
+            </div>
+        )
+    }
+
+    if (order.status === 'pending') {
+        return (
+            <div className="w-full max-w-lg">
+                <Card className="text-center">
+                    <CardHeader>
+                        <div className="mx-auto rounded-full p-3 w-fit bg-amber-100">
+                            <Clock className="h-12 w-12 text-amber-600" />
+                        </div>
+                        <CardTitle className="mt-4 text-2xl">
+                            Order Pending Verification
+                        </CardTitle>
+                        <CardDescription>
+                            Thank you for your purchase. We are now verifying your payment.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className='text-sm text-left bg-secondary p-4 rounded-md'>
+                            <p className='font-semibold mb-2'>Order Summary:</p>
+                            <p><strong>Order ID:</strong> {order.id}</p>
+                            <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
+                            <p><strong>Transaction ID:</strong> {order.transactionId}</p>
+                            <p className='mt-2 text-muted-foreground'>
+                                You will be notified once payment is confirmed. You can check your order status on the orders page.
+                            </p>
+                        </div>
+                        <Button asChild className="mt-6">
+                            <Link href="/products">Continue Shopping</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full max-w-lg">
@@ -34,25 +101,19 @@ function CheckoutSuccessContent() {
                         Order Placed Successfully!
                     </CardTitle>
                     <CardDescription>
-                        Thank you for your purchase. We are now verifying your payment.
+                        Your payment has been confirmed. Thank you for your purchase!
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {order ? (
-                        <div className='text-sm text-left bg-secondary p-4 rounded-md'>
-                            <p className='font-semibold mb-2'>Order Summary:</p>
-                            <p><strong>Order ID:</strong> {order.id}</p>
-                            <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
-                            <p><strong>Transaction ID:</strong> {order.transactionId}</p>
-                             <p className='mt-2 text-muted-foreground'>
-                                You will be notified once payment is confirmed. You can view your order status on the orders page.
-                            </p>
-                        </div>
-                    ) : (
-                         <p className="text-muted-foreground">
-                            Loading order details...
+                    <div className='text-sm text-left bg-secondary p-4 rounded-md'>
+                        <p className='font-semibold mb-2'>Order Summary:</p>
+                        <p><strong>Order ID:</strong> {order.id}</p>
+                        <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
+                        <p><strong>Transaction ID:</strong> {order.transactionId}</p>
+                         <p className='mt-2 text-muted-foreground'>
+                            You can view your order details on the orders page.
                         </p>
-                    )}
+                    </div>
                     <Button asChild className="mt-6">
                     <Link href="/products">Continue Shopping</Link>
                     </Button>
@@ -83,5 +144,3 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
-
-    

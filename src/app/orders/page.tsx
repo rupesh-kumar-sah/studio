@@ -7,15 +7,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, LogIn, ShoppingBag } from 'lucide-react';
+import { MessageSquare, LogIn, ShoppingBag, CheckCircle, Clock } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export default function OrdersPage() {
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { isOwner, currentUser, isMounted: authIsMounted } = useAuth();
+  const { toast } = useToast();
 
   const loadAndFilterOrders = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -33,6 +36,18 @@ export default function OrdersPage() {
     }
   }, [isOwner, currentUser]);
 
+  const acceptOrder = (orderId: string) => {
+    const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+    const updatedOrders = storedOrders.map(order => 
+        order.id === orderId ? { ...order, status: 'confirmed' } : order
+    );
+    localStorage.setItem('orders', JSON.stringify(updatedOrders));
+    window.dispatchEvent(new CustomEvent('orders-updated'));
+    toast({
+        title: "Order Confirmed",
+        description: `Order #${orderId} has been marked as confirmed.`
+    });
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -116,15 +131,22 @@ export default function OrdersPage() {
       <div className="space-y-6">
         {displayOrders.map((order) => (
           <Card key={order.id}>
-             <CardHeader className="flex-row justify-between items-start">
-                <div>
+             <CardHeader className="flex-col md:flex-row justify-between items-start md:items-center">
+                <div className="mb-4 md:mb-0">
                     <CardTitle className="text-xl">Order #{order.id}</CardTitle>
                     <CardDescription>
                         {order.customer.firstName} {order.customer.lastName} &bull; {format(new Date(order.date), "PPP p")}
                     </CardDescription>
                 </div>
-                 <div className="text-right">
+                 <div className="flex items-center gap-4">
                      <p className="font-bold text-xl">Rs.{order.total.toFixed(2)}</p>
+                      <div className={cn(
+                        "flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium",
+                        order.status === 'confirmed' ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
+                        )}>
+                        {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
+                        {order.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                     </div>
                 </div>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -153,7 +175,7 @@ export default function OrdersPage() {
                         <div className="text-sm text-muted-foreground">
                             <p><strong>Method:</strong> eSewa (Manual)</p>
                             <p><strong>Transaction ID:</strong> {order.transactionId}</p>
-                            <p><strong>Status:</strong> <span className="text-amber-600 font-medium">Pending Verification</span></p>
+                            <p><strong>Status:</strong> <span className={cn("font-medium", order.status === 'confirmed' ? 'text-green-600' : 'text-amber-600')}>{order.status === 'confirmed' ? 'Payment Confirmed' : 'Pending Verification'}</span></p>
                         </div>
                     </div>
                 </div>
@@ -177,11 +199,17 @@ export default function OrdersPage() {
                     </div>
                 </div>
             </CardContent>
+            {isOwner && order.status === 'pending' && (
+                <CardFooter>
+                    <Button onClick={() => acceptOrder(order.id)}>
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Accept Order
+                    </Button>
+                </CardFooter>
+            )}
           </Card>
         ))}
       </div>
     </div>
   );
 }
-
-    
