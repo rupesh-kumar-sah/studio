@@ -7,7 +7,7 @@ import { ProductImageGallery } from '@/components/products/product-image-gallery
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Star, Edit, BadgePercent } from 'lucide-react';
+import { Star, Edit } from 'lucide-react';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getIsOwner } from '@/lib/auth-db';
@@ -37,8 +37,6 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
   
   const reviews = product.detailedReviews?.length || 0;
 
-  const hasDiscount = product.originalPrice && product.originalPrice > product.price;
-
   return (
     <>
       <Header />
@@ -60,18 +58,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
               </div>
               <div className="flex items-baseline gap-3 mt-2">
                 <p className="text-2xl font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
-                {hasDiscount && (
-                    <p className="text-xl text-muted-foreground line-through">Rs.{product.originalPrice?.toFixed(2)}</p>
-                )}
               </div>
-               {hasDiscount && (
-                  <div className="flex items-center gap-2 mt-2 text-sm font-medium text-destructive">
-                      <BadgePercent className="h-4 w-4" />
-                      <span>
-                          {Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)}% off
-                      </span>
-                  </div>
-              )}
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex items-center text-amber-500">
                   {[...Array(5)].map((_, i) => (
