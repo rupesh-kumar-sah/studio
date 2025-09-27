@@ -3,7 +3,7 @@
 
 import { useState, useMemo, Suspense, useEffect } from 'react';
 import type { Product } from '@/lib/types';
-import { ProductCard } from '@/components/products/product-card';
+import { AdminProductCard } from '@/components/products/admin-product-card';
 import {
   Select,
   SelectContent,
@@ -100,7 +100,7 @@ function AdminProductsPageContent() {
           {filteredAndSortedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredAndSortedProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
+                <AdminProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
