@@ -13,17 +13,16 @@ import { MessageSquare, LogIn, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import type { User } from '@/lib/types';
 
 export default function OrdersPage() {
-  const [allOrders, setAllOrders] = useState<Order[]>([]);
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { isOwner, currentUser, isMounted: authIsMounted } = useAuth();
 
-  const loadAndFilterOrders = useCallback(() => {
+  const loadAndFilterOrders = useCallback((isOwner: boolean, currentUser: User | null) => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    setAllOrders(storedOrders);
 
     if (isOwner) {
         setDisplayOrders(storedOrders);
@@ -33,19 +32,20 @@ export default function OrdersPage() {
     } else {
         setDisplayOrders([]);
     }
-  }, [isOwner, currentUser]);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
     if (authIsMounted) {
-        loadAndFilterOrders();
+        loadAndFilterOrders(isOwner, currentUser);
     }
-  }, [authIsMounted, loadAndFilterOrders]);
+  }, [authIsMounted, isOwner, currentUser, loadAndFilterOrders]);
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'orders' && event.newValue !== event.oldValue) {
-        loadAndFilterOrders();
+        // We re-call loadAndFilterOrders with the latest auth state from the useAuth hook
+        loadAndFilterOrders(isOwner, currentUser);
       }
     };
 
@@ -53,9 +53,10 @@ export default function OrdersPage() {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [loadAndFilterOrders]);
+  }, [isOwner, currentUser, loadAndFilterOrders]); // Depend on auth state
   
   const acceptOrder = (orderId: string) => {
+    const allOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     const updatedOrders = allOrders.map(order => {
       if (order.id === orderId) {
         return { ...order, paymentStatus: 'Accepted' as const };
@@ -63,7 +64,7 @@ export default function OrdersPage() {
       return order;
     });
     localStorage.setItem('orders', JSON.stringify(updatedOrders));
-    loadAndFilterOrders(); // Reload and re-filter to update the state
+    loadAndFilterOrders(isOwner, currentUser); // Reload and re-filter to update the state
   };
 
   const formatPaymentMethod = (method: 'esewa' | 'khalti') => {
