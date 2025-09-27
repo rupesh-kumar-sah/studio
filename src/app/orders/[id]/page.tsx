@@ -14,7 +14,9 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
@@ -24,6 +26,9 @@ export default function OrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     setIsMounted(true);
@@ -48,18 +53,31 @@ export default function OrderDetailPage() {
     });
   };
 
-  const deleteOrder = (orderId: string) => {
-    const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-    const updatedOrders = storedOrders.filter(o => o.id !== orderId);
-    localStorage.setItem('orders', JSON.stringify(updatedOrders));
-    window.dispatchEvent(new CustomEvent('orders-updated'));
-    toast({
-        variant: 'destructive',
-        title: "Order Deleted",
-        description: `Order #${orderId} has been successfully deleted.`
-    });
-    router.push('/orders');
+  const handleDeleteConfirm = () => {
+    if (deletePassword === '1234') {
+        if (order) {
+            const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+            const updatedOrders = storedOrders.filter(o => o.id !== order.id);
+            localStorage.setItem('orders', JSON.stringify(updatedOrders));
+            window.dispatchEvent(new CustomEvent('orders-updated'));
+            toast({
+                variant: 'destructive',
+                title: "Order Deleted",
+                description: `Order #${order.id} has been successfully deleted.`
+            });
+            setIsDeleteDialogOpen(false);
+            router.push('/orders');
+        }
+    } else {
+        setDeleteError('Incorrect password. Please try again.');
+    }
   };
+  
+  const openDeleteDialog = () => {
+      setDeletePassword('');
+      setDeleteError('');
+      setIsDeleteDialogOpen(true);
+  }
 
   if (!isMounted) {
     return <div className="container py-12 text-center"><p>Loading order details...</p></div>;
@@ -170,31 +188,40 @@ export default function OrderDetailPage() {
                             Accept Order
                         </Button>
                     )}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive">
-                           <Trash2 className="mr-2 h-4 w-4" />
-                           Delete Order
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the order and all its data.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deleteOrder(order.id)}>Delete</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                     <Button variant="destructive" onClick={openDeleteDialog}>
+                       <Trash2 className="mr-2 h-4 w-4" />
+                       Delete Order
+                    </Button>
                 </CardFooter>
             )}
         </Card>
       </div>
+
+       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. To permanently delete this order, please enter the admin password.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+                <Label htmlFor="delete-password">Password</Label>
+                <Input
+                    id="delete-password"
+                    type="password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    placeholder="Enter password..."
+                />
+                {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+              <Button type="button" variant="destructive" onClick={handleDeleteConfirm}>Delete Order</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
     </div>
   );
 }
-
