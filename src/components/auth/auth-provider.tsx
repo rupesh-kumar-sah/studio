@@ -25,6 +25,7 @@ interface AuthContextType {
   signup: (name: string, email: string, pass: string) => boolean;
   logout: () => void;
   updateAvatar: (userId: string, avatar: string) => void;
+  findUserByEmail: (email: string) => User | undefined;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -143,7 +144,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isOwner, owner, currentUser, loadUsers]);
 
-  const value = { isOwner, currentUser, owner, isMounted, allUsers, reloadAllUsers, ownerLogin, customerLogin, signup, logout, updateAvatar };
+  const findUserByEmail = useCallback((email: string): User | undefined => {
+    if (email === ownerDetails.email) {
+      return ownerDetails as User;
+    }
+    const users = loadUsers();
+    return users.find(u => u.email === email);
+  }, [loadUsers]);
+
+  const value = { isOwner, currentUser, owner, isMounted, allUsers, reloadAllUsers, ownerLogin, customerLogin, signup, logout, updateAvatar, findUserByEmail };
 
   return (
     <AuthContext.Provider value={value}>

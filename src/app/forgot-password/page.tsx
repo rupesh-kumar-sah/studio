@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
+import { useAuth } from "@/components/auth/auth-provider";
+import { useToast } from "@/hooks/use-toast";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -17,16 +19,21 @@ const forgotPasswordSchema = z.object({
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
+  const { findUserByEmail } = useAuth();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: { email: "" },
   });
 
   function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
-    // In a real application, you would call a service like Firebase Auth
-    // to send a password reset email.
-    // e.g., await sendPasswordResetEmail(auth, data.email);
-    console.log("Forgot password request for:", data.email);
+    // In a real app, this would trigger an email service.
+    // Here, we just check if the user exists and show a message.
+    const userExists = findUserByEmail(data.email);
+    
+    // We show the same message whether the user exists or not
+    // to avoid leaking information about registered emails.
+    console.log(`Password reset requested for: ${data.email}. User exists: ${!!userExists}`);
     setSubmitted(true);
   }
 
