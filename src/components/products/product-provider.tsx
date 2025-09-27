@@ -11,6 +11,7 @@ interface ProductContextType {
   getProductById: (id: string) => Product | undefined;
   updateProduct: (updatedProduct: Product) => void;
   addProduct: (newProduct: Omit<Product, 'id' | 'rating' | 'reviews'>) => void;
+  deleteProduct: (productId: string) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -73,7 +74,17 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     });
   }, [toast]);
 
-  const value = { products, getProductById, updateProduct, addProduct };
+  const deleteProduct = useCallback((productId: string) => {
+    const productName = products.find(p => p.id === productId)?.name || 'Product';
+    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
+    toast({
+        variant: 'destructive',
+        title: "Product Deleted",
+        description: `${productName} has been removed.`
+    });
+  }, [products, toast]);
+
+  const value = { products, getProductById, updateProduct, addProduct, deleteProduct };
 
   return (
     <ProductContext.Provider value={value}>

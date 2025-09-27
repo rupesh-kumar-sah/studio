@@ -21,6 +21,8 @@ import { useProducts } from './product-provider';
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useRouter } from 'next/navigation';
 
 
 const productSchema = z.object({
@@ -40,7 +42,8 @@ interface EditProductSheetProps {
 }
 
 export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductSheetProps) {
-  const { updateProduct } = useProducts();
+  const { updateProduct, deleteProduct } = useProducts();
+  const router = useRouter();
   const [imagePreview1, setImagePreview1] = useState<string | null>(null);
   const [imagePreview2, setImagePreview2] = useState<string | null>(null);
   const [imagePreview3, setImagePreview3] = useState<string | null>(null);
@@ -118,6 +121,12 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
   const handleImageChange2 = createImageChangeHandler(setImagePreview2);
   const handleImageChange3 = createImageChangeHandler(setImagePreview3);
 
+  const handleDelete = () => {
+    deleteProduct(product.id);
+    onOpenChange(false);
+    router.push('/products');
+  };
+
   const hasImagePreviews = imagePreview1 || imagePreview2 || imagePreview3;
 
   return (
@@ -128,7 +137,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
             <SheetTitle>Edit Product</SheetTitle>
             <SheetDescription>Make changes to your product. Click save when you're done.</SheetDescription>
           </SheetHeader>
-          <div className="space-y-4 py-6 max-h-[80vh] overflow-y-auto pr-6">
+          <div className="space-y-4 py-6 max-h-[calc(100vh-12rem)] overflow-y-auto pr-6">
             <div className="space-y-2">
               <Label htmlFor="name">Product Name</Label>
               <Input id="name" {...register('name')} />
@@ -257,14 +266,29 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                   </div>
                 </div>
              </div>
-
-
-             <div className="pt-2">
-                <Button type="submit" disabled={!isDirty && !hasImagePreviews} className="w-full">Save Product Changes</Button>
-             </div>
           </div>
-          <SheetFooter className="pt-6 border-t">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <SheetFooter className="pt-6 border-t flex-col sm:flex-row sm:justify-between space-y-2 sm:space-y-0">
+             <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button type="button" variant="destructive">Delete Product</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete the product from the database.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <div className="flex sm:justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+              <Button type="submit" disabled={!isDirty && !hasImagePreviews}>Save Changes</Button>
+            </div>
           </SheetFooter>
         </form>
       </SheetContent>
