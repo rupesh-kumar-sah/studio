@@ -117,7 +117,10 @@ export default function OrdersPage() {
                 </div>
                  <div className="text-right">
                      <p className="font-bold text-xl">Rs.{order.total.toFixed(2)}</p>
-                    <Badge variant={order.paymentStatus === 'Accepted' ? 'default' : 'secondary'} className={cn(order.paymentStatus === 'Accepted' ? 'bg-green-600' : 'bg-orange-500', 'text-white mt-1')}>
+                    <Badge className={cn(
+                        'mt-1 text-white',
+                        order.paymentStatus === 'Accepted' ? 'bg-green-600' : 'bg-orange-500'
+                    )}>
                         {order.paymentStatus}
                     </Badge>
                 </div>
