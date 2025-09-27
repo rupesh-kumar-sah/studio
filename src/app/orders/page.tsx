@@ -53,6 +53,12 @@ export default function OrdersPage() {
     loadAndFilterOrders(); // Reload and re-filter to update the state
   };
 
+  const formatPaymentMethod = (method: 'esewa' | 'khalti') => {
+      if (method === 'esewa') return 'eSewa';
+      if (method === 'khalti') return 'Khalti';
+      return method;
+  }
+
   if (!isMounted || !authIsMounted) {
     return (
         <div className="container py-12 text-center">
@@ -147,7 +153,7 @@ export default function OrdersPage() {
                         </div>
                         <h3 className="font-semibold mt-4 mb-2">Payment</h3>
                          <div className="text-sm text-muted-foreground">
-                            <p><strong>Method:</strong> <span className="font-medium uppercase">{order.paymentMethod}</span></p>
+                            <p><strong>Method:</strong> <span className="font-medium">{formatPaymentMethod(order.paymentMethod)}</span></p>
                             <p><strong>Status:</strong> <span className="font-medium">{order.paymentStatus}</span></p>
                             {order.walletId && <p><strong>Wallet ID:</strong> {order.walletId}</p>}
                         </div>

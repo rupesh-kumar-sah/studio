@@ -24,6 +24,12 @@ function CheckoutSuccessContent() {
     }, [clearCart]);
 
     const isPending = order?.paymentStatus === 'Pending';
+    
+    const formatPaymentMethod = (method: 'esewa' | 'khalti') => {
+        if (method === 'esewa') return 'eSewa';
+        if (method === 'khalti') return 'Khalti';
+        return method;
+    }
 
     return (
         <div className="w-full max-w-lg">
@@ -52,7 +58,7 @@ function CheckoutSuccessContent() {
                             <p className='font-semibold mb-2'>Order Summary:</p>
                             <p><strong>Order ID:</strong> #{order.id}</p>
                             <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
-                            <p><strong>Payment Method:</strong> {order.paymentMethod.toUpperCase()}</p>
+                            <p><strong>Payment Method:</strong> {formatPaymentMethod(order.paymentMethod)}</p>
                              <p className='mt-2 text-muted-foreground'>
                                 {isPending
                                     ? "We will notify you once the payment is accepted. You can check the status on the orders page."
