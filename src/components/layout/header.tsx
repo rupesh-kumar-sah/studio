@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Search, User, Menu, LayoutDashboard } from 'lucide-react';
+import { Search, User, Menu, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,7 +33,7 @@ export function Header() {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isOwner, currentUser, isMounted, logout } = useAuth();
+  const { isOwner, currentUser, isMounted, logout, owner } = useAuth();
   const { categories } = useCategories();
   
   useEffect(() => {
@@ -110,6 +110,19 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {isMounted && isOwner && (
+          <div className="bg-primary/10 text-primary-foreground">
+              <div className="container flex items-center justify-center gap-4 text-sm h-10">
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                  <p className="text-primary font-semibold">
+                      Welcome, {owner?.name}! You are viewing the site as the owner.
+                  </p>
+                  <Button asChild variant="secondary" size="sm" className="ml-4 h-7">
+                      <Link href="/admin">Go to Dashboard</Link>
+                  </Button>
+              </div>
+          </div>
+      )}
       <div className="container flex h-16 items-center">
         <Logo />
         <nav className="ml-6 hidden md:flex items-center space-x-4 lg:space-x-6">
