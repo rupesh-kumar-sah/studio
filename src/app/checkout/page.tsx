@@ -11,11 +11,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Banknote, CreditCard, ShieldCheck, Loader2, CheckCircle2, QrCode } from "lucide-react";
+import { Banknote, CreditCard, ShieldCheck, Loader2, QrCode } from "lucide-react";
 import type { CartItem } from "@/lib/types";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -54,7 +54,7 @@ export type Order = {
 };
 
 export default function CheckoutPage() {
-  const { items, totalPrice, totalItems } = useCart();
+  const { items, totalPrice, totalItems, isCartMounted } = useCart();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showQrDialog, setShowQrDialog] = useState(false);
@@ -119,6 +119,15 @@ export default function CheckoutPage() {
     }
 
     router.push("/checkout/success");
+  }
+
+  if (!isCartMounted) {
+    return (
+      <div className="container flex flex-col items-center justify-center text-center py-40">
+        <Loader2 className="h-12 w-12 animate-spin mb-4" />
+        <h1 className="text-2xl font-bold">Loading Cart...</h1>
+      </div>
+    );
   }
 
   if (totalItems === 0 && !isProcessing) {
@@ -354,5 +363,3 @@ export default function CheckoutPage() {
     </>
   );
 }
-
-    

@@ -13,6 +13,7 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  isCartMounted: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -20,21 +21,27 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const { toast } = useToast();
-  const [isMounted, setIsMounted] = useState(false);
+  const [isCartMounted, setIsCartMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      setItems(JSON.parse(storedCart));
+    
+    try {
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        setItems(JSON.parse(storedCart));
+      }
+    } catch (error) {
+      console.error("Failed to parse cart from localStorage", error);
+    } finally {
+      setIsCartMounted(true);
     }
   }, []);
 
   useEffect(() => {
-    if(isMounted) {
+    if(isCartMounted) {
       localStorage.setItem('cart', JSON.stringify(items));
     }
-  }, [items, isMounted]);
+  }, [items, isCartMounted]);
 
   const addItem = (product: Product, size: string, color: string) => {
     setItems((prevItems) => {
@@ -88,7 +95,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return { totalItems, totalPrice };
   }, [items]);
   
-  const value = { items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice };
+  const value = { items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, isCartMounted };
 
   return (
     <CartContext.Provider value={value}>
