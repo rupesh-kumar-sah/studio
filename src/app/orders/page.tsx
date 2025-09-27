@@ -4,7 +4,6 @@
 import { useEffect, useState } from 'react';
 import type { Order } from '@/app/checkout/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare, LogIn, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
+import { Separator } from '@/components/ui/separator';
 
 export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState<Order[]>([]);
@@ -105,77 +105,80 @@ export default function OrdersPage() {
           {isOwner ? "A list of all submitted orders." : "A list of your past orders."}
         </p>
       </div>
-      <Accordion type="single" collapsible className="w-full space-y-4">
+      <div className="space-y-6">
         {displayOrders.map((order) => (
-          <AccordionItem key={order.id} value={order.id}>
-             <Card>
-                <AccordionTrigger className="p-6 text-left">
-                    <div className="flex-1">
-                        <p className="font-bold text-lg">Order #{order.id}</p>
-                        <p className="text-sm text-muted-foreground">{order.customer.firstName} {order.customer.lastName} &bull; {format(new Date(order.date), "PPP p")}</p>
+          <Card key={order.id}>
+             <CardHeader className="flex-row justify-between items-start">
+                <div>
+                    <CardTitle className="text-xl">Order #{order.id}</CardTitle>
+                    <CardDescription>
+                        {order.customer.firstName} {order.customer.lastName} &bull; {format(new Date(order.date), "PPP p")}
+                    </CardDescription>
+                </div>
+                 <div className="text-right">
+                     <p className="font-bold text-xl">Rs.{order.total.toFixed(2)}</p>
+                    <Badge variant={order.paymentStatus === 'Accepted' ? 'default' : 'secondary'} className={cn(order.paymentStatus === 'Accepted' ? 'bg-green-600' : 'bg-orange-500', 'text-white mt-1')}>
+                        {order.paymentStatus}
+                    </Badge>
+                </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <Separator />
+                {order.message && (
+                    <div className="p-4 bg-secondary rounded-lg">
+                        <h4 className="font-semibold flex items-center gap-2 mb-2">
+                            <MessageSquare className="h-5 w-5" />
+                            Customer Message
+                        </h4>
+                        <p className="text-muted-foreground text-sm">{order.message}</p>
                     </div>
-                     <div className="flex items-center gap-4">
-                        {order.message && <MessageSquare className="text-primary" />}
-                        <Badge variant={order.paymentStatus === 'Accepted' ? 'default' : 'secondary'} className={cn(order.paymentStatus === 'Accepted' ? 'bg-green-600' : 'bg-orange-500', 'text-white')}>
-                            {order.paymentStatus}
-                        </Badge>
-                        <p className="font-bold text-lg text-right">Rs.{order.total.toFixed(2)}</p>
+                )}
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 className="font-semibold mb-2">Shipping Details</h3>
+                        <div className="text-sm text-muted-foreground">
+                            <p>{order.customer.firstName} {order.customer.lastName}</p>
+                            <p>{order.customer.email}</p>
+                            <p>{order.customer.address}</p>
+                            <p>{order.customer.city}, {order.customer.postalCode}</p>
+                        </div>
+                        <h3 className="font-semibold mt-4 mb-2">Payment</h3>
+                         <div className="text-sm text-muted-foreground">
+                            <p>Method: <span className="font-medium uppercase">{order.paymentMethod}</span></p>
+                            <p>Status: <span className="font-medium">{order.paymentStatus}</span></p>
+                            {order.walletId && <p>Wallet ID: {order.walletId}</p>}
+                        </div>
                     </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-6">
-                    {order.message && (
-                        <div className="mb-6 p-4 bg-secondary rounded-lg">
-                            <h4 className="font-semibold flex items-center gap-2 mb-2">
-                                <MessageSquare className="h-5 w-5" />
-                                Customer Message
-                            </h4>
-                            <p className="text-muted-foreground text-sm">{order.message}</p>
-                        </div>
-                    )}
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 className="font-semibold mb-2">Shipping Details</h3>
-                            <div className="text-sm text-muted-foreground">
-                                <p>{order.customer.firstName} {order.customer.lastName}</p>
-                                <p>{order.customer.email}</p>
-                                <p>{order.customer.address}</p>
-                                <p>{order.customer.city}, {order.customer.postalCode}</p>
-                            </div>
-                            <h3 className="font-semibold mt-4 mb-2">Payment</h3>
-                             <div className="text-sm text-muted-foreground">
-                                <p>Method: <span className="font-medium uppercase">{order.paymentMethod}</span></p>
-                                <p>Status: <span className="font-medium">{order.paymentStatus}</span></p>
-                                {order.walletId && <p>Wallet ID: {order.walletId}</p>}
-                            </div>
-                        </div>
-                        <div>
-                             <h3 className="font-semibold mb-2">Items</h3>
-                              <div className="space-y-2">
-                                {order.items.map(item => (
-                                    <div key={`${item.product.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
-                                         <div className="relative h-16 w-16 rounded-md overflow-hidden">
-                                           <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
-                                        </div>
-                                        <div>
-                                            <p className="font-medium">{item.product.name}</p>
-                                            <p className="text-sm text-muted-foreground">Qty: {item.quantity} &bull; Rs.{item.product.price.toFixed(2)}</p>
-                                            <p className="text-sm text-muted-foreground">Size: {item.size} &bull; Color: {item.color}</p>
-                                        </div>
+                    <div>
+                         <h3 className="font-semibold mb-2">Items ({order.items.length})</h3>
+                          <div className="space-y-3">
+                            {order.items.map(item => (
+                                <div key={`${item.product.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
+                                     <div className="relative h-16 w-16 rounded-md overflow-hidden border">
+                                       <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="flex-1">
+                                        <p className="font-medium">{item.product.name}</p>
+                                        <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                                        <p className="text-sm text-muted-foreground">Size: {item.size}, Color: {item.color}</p>
+                                    </div>
+                                    <p className="text-sm font-medium">Rs.{(item.product.price * item.quantity).toFixed(2)}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    {isOwner && order.paymentStatus === 'Pending' && (
-                        <CardFooter className="pt-6">
-                            <Button onClick={() => acceptOrder(order.id)}>Accept Order</Button>
-                        </CardFooter>
-                    )}
-                </AccordionContent>
-             </Card>
-          </AccordionItem>
+                </div>
+            </CardContent>
+            {isOwner && order.paymentStatus === 'Pending' && (
+                <CardFooter>
+                    <Button onClick={() => acceptOrder(order.id)}>Accept Order</Button>
+                </CardFooter>
+            )}
+          </Card>
         ))}
-      </Accordion>
+      </div>
     </div>
   );
 }
+
+    
