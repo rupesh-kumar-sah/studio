@@ -3,11 +3,14 @@
 
 import type { Category } from './types';
 
-// Mock database for categories
-let categories: Category[] = ['Men', 'Women', 'Junior', 'Electronics', 'Fashion'];
+// Mock database for categories. This should align with the initial state in the provider.
+let categories: Category[] = ['Clothing', 'Shoes', 'Accessories', 'Electronics'];
 
 export async function getCategories(): Promise<Category[]> {
-  // In a real app, you'd fetch this from a database
+  // In a real app, you'd fetch this from a database.
+  // For the prototype, we check localStorage first, then fall back to the mock array.
+  // Note: This server function cannot access localStorage directly. The client-side
+  // CategoryProvider is the primary source of truth. This is a simplified representation.
   return Promise.resolve(categories);
 }
 

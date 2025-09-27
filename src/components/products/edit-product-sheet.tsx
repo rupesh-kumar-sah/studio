@@ -37,12 +37,6 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
-  // NOTE: Image uploads are not supported in this prototype.
-  // The state logic is here as a placeholder for a real implementation.
-  const [imagePreview1, setImagePreview1] = useState<string | null>(null);
-  const [imagePreview2, setImagePreview2] = useState<string | null>(null);
-  const [imagePreview3, setImagePreview3] = useState<string | null>(null);
-
   const {
     register,
     handleSubmit,
@@ -78,9 +72,6 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
         sizes: product.sizes.join(','),
         purchaseLimit: product.purchaseLimit || 10,
       });
-      setImagePreview1(null);
-      setImagePreview2(null);
-      setImagePreview3(null);
     }
   }, [product, isOpen, reset]);
 
@@ -93,7 +84,7 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
         description: `"${result.product?.name}" has been successfully updated.`,
       });
       setIsOpen(false);
-      // No need to call router.refresh() here as revalidatePath is used in server action
+      window.dispatchEvent(new CustomEvent('product-updated'));
     } else {
        toast({
         variant: 'destructive',
@@ -103,23 +94,6 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
     }
   };
   
-  const createImageChangeHandler = (setter: React.Dispatch<React.SetStateAction<string | null>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setter(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setter(null);
-    }
-  };
-
-  const handleImageChange1 = createImageChangeHandler(setImagePreview1);
-  const handleImageChange2 = createImageChangeHandler(setImagePreview2);
-  const handleImageChange3 = createImageChangeHandler(setImagePreview3);
-
   const handleDelete = async () => {
     const result = await deleteProduct(product.id);
     if (result.success) {
@@ -128,6 +102,7 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
         description: `"${product.name}" has been deleted.`,
       });
       setIsOpen(false);
+      window.dispatchEvent(new CustomEvent('product-updated'));
       router.push('/admin/products');
     } else {
       toast({
@@ -137,8 +112,6 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
       });
     }
   };
-
-  const hasImagePreviews = imagePreview1 || imagePreview2 || imagePreview3;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -270,46 +243,17 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
                 <Label>Product Images</Label>
                 <p className="text-xs text-muted-foreground">Image uploads are not supported in this prototype. Existing images will be retained.</p>
 
-                {/* Image 1 */}
-                <div className="space-y-2">
-                  <Label htmlFor="image1">Image 1 (Primary)</Label>
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview1 || product.images[0]?.url}
-                      src={imagePreview1 || product.images[0]?.url || 'https://placehold.co/600x400'}
-                      alt="Product image 1 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-
-                {/* Image 2 */}
-                <div className="space-y-2">
-                  <Label htmlFor="image2">Image 2</Label>
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview2 || product.images[1]?.url}
-                      src={imagePreview2 || product.images[1]?.url || 'https://placehold.co/600x400'}
-                      alt="Product image 2 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-
-                {/* Image 3 */}
-                <div className="space-y-2">
-                  <Label htmlFor="image3">Image 3</Label>
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview3 || product.images[2]?.url}
-                      src={imagePreview3 || product.images[2]?.url || 'https://placehold.co/600x400'}
-                      alt="Product image 3 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                <div className="grid grid-cols-3 gap-2">
+                   {product.images.map((image, index) => (
+                     <div key={index} className="relative w-full aspect-square rounded-md overflow-hidden border">
+                        <Image
+                        src={image.url}
+                        alt={image.alt}
+                        fill
+                        className="object-cover"
+                        />
+                    </div>
+                   ))}
                 </div>
              </div>
           </div>

@@ -31,10 +31,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
   const { categories } = useCategories();
   const { toast } = useToast();
   const router = useRouter();
-  const [imagePreview1, setImagePreview1] = useState<string | null>(null);
-  const [imagePreview2, setImagePreview2] = useState<string | null>(null);
-  const [imagePreview3, setImagePreview3] = useState<string | null>(null);
-
+  
   const {
     register,
     handleSubmit,
@@ -68,9 +65,6 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         sizes: '',
         purchaseLimit: 10,
       });
-      setImagePreview1(null);
-      setImagePreview2(null);
-      setImagePreview3(null);
     }
   }, [isOpen, reset, categories]);
 
@@ -82,7 +76,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         description: `"${result.product?.name}" has been successfully added.`,
       });
       onOpenChange(false);
-      // No need to call router.refresh() here as revalidatePath is used in server action
+      window.dispatchEvent(new CustomEvent('product-updated'));
     } else {
       toast({
         variant: 'destructive',
@@ -91,23 +85,6 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
       });
     }
   };
-  
-  const createImageChangeHandler = (setter: React.Dispatch<React.SetStateAction<string | null>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setter(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setter(null);
-    }
-  };
-
-  const handleImageChange1 = createImageChangeHandler(setImagePreview1);
-  const handleImageChange2 = createImageChangeHandler(setImagePreview2);
-  const handleImageChange3 = createImageChangeHandler(setImagePreview3);
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>

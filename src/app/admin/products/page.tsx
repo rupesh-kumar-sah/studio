@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, Suspense, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Product } from '@/lib/types';
 import { AdminProductCard } from '@/components/products/admin-product-card';
 import {
@@ -17,7 +17,7 @@ import { AddProductSheet } from '@/components/products/add-product-sheet';
 import { Input } from '@/components/ui/input';
 import { getProducts } from '@/lib/products-db';
 
-function AdminProductsPageContent() {
+export default function AdminProductsPage() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('featured');
@@ -29,6 +29,19 @@ function AdminProductsPageContent() {
         setAllProducts(products);
     }
     loadProducts();
+
+    const handleStorageUpdate = async () => {
+      const products = await getProducts();
+      setAllProducts(products);
+    };
+
+    window.addEventListener('storage', handleStorageUpdate);
+    window.addEventListener('product-updated', handleStorageUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageUpdate);
+      window.removeEventListener('product-updated', handleStorageUpdate);
+    };
   }, []);
   
   const filteredAndSortedProducts = useMemo(() => {
@@ -47,12 +60,13 @@ function AdminProductsPageContent() {
         filtered.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
         break;
       case 'newest':
+        // Assuming IDs are sortable timestamps/numbers
         filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
       case 'popularity':
          filtered.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0));
         break;
-      default: // featured
+      default: // featured (e.g., by popularity)
         filtered.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0));
         break;
     }
@@ -115,12 +129,4 @@ function AdminProductsPageContent() {
 
     </div>
   );
-}
-
-export default function AdminProductsPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-        <AdminProductsPageContent />
-    </Suspense>
-  )
 }
