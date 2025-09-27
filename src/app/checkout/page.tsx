@@ -130,7 +130,7 @@ export default function CheckoutPage() {
     );
   }
 
-  if (isCartMounted && totalItems === 0) {
+  if (totalItems === 0) {
     return (
         <div className="container flex flex-col items-center justify-center text-center py-20">
             <h1 className="text-3xl font-bold">Your Cart is Empty</h1>
@@ -173,7 +173,7 @@ export default function CheckoutPage() {
         </DialogContent>
       </Dialog>
       
-      {isProcessing && !showQrDialog ? (
+      {isProcessing ? (
           <div className="container flex flex-col items-center justify-center text-center py-40">
             <Loader2 className="h-12 w-12 animate-spin mb-4" />
             <h1 className="text-2xl font-bold">Processing Your Order...</h1>
