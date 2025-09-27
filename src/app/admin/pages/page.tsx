@@ -46,7 +46,7 @@ export default function AdminPagesPage() {
                 if (page.slug === slug) {
                     const newContent = { ...page.content };
                     const keys = path.split('.');
-                    let current = newContent;
+                    let current: any = newContent;
                     for (let i = 0; i < keys.length - 1; i++) {
                         current = current[keys[i]];
                     }
@@ -213,26 +213,52 @@ export default function AdminPagesPage() {
             case 'shipping-returns':
                 return (
                     <div className="space-y-6">
+                        {/* Shipping Policy Section */}
                         <div className="p-4 border rounded-lg space-y-4">
                             <h3 className="font-semibold text-lg">Shipping Policy</h3>
                             <div className="space-y-2">
-                                <Label htmlFor="shipping-title">Section Title</Label>
-                                <Input id="shipping-title" value={page.content.shipping.title} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.title', e.target.value)} />
+                                <Label>Title</Label>
+                                <Input value={page.content.shipping.title} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.title', e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Introduction</Label>
+                                <Textarea value={page.content.shipping.intro} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.intro', e.target.value)} />
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor="shipping-content">Content (HTML allowed)</Label>
-                                <Textarea id="shipping-content" value={page.content.shipping.content} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.content', e.target.value)} rows={6} />
+                                <Label>Delivery Times (Inside Valley)</Label>
+                                <Input value={page.content.shipping.deliveryTimes.insideValley} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.insideValley', e.target.value)} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label>Delivery Times (Outside Valley)</Label>
+                                <Input value={page.content.shipping.deliveryTimes.outsideValley} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.outsideValley', e.target.value)} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label>Shipping Costs</Label>
+                                <Textarea value={page.content.shipping.costs.content} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.costs.content', e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Tracking</Label>
+                                <Textarea value={page.content.shipping.tracking.content} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.tracking.content', e.target.value)} />
                             </div>
                         </div>
+                        {/* Return Policy Section */}
                         <div className="p-4 border rounded-lg space-y-4">
                              <h3 className="font-semibold text-lg">Return Policy</h3>
-                             <div className="space-y-2">
-                                <Label htmlFor="returns-title">Section Title</Label>
-                                <Input id="returns-title" value={page.content.returns.title} onChange={(e) => handleNestedContentChange(page.slug, 'returns.title', e.target.value)} />
+                            <div className="space-y-2">
+                                <Label>Title</Label>
+                                <Input value={page.content.returns.title} onChange={(e) => handleNestedContentChange(page.slug, 'returns.title', e.target.value)} />
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor="returns-content">Content (HTML allowed)</Label>
-                                <Textarea id="returns-content" value={page.content.returns.content} onChange={(e) => handleNestedContentChange(page.slug, 'returns.content', e.target.value)} rows={6} />
+                                <Label>Introduction</Label>
+                                <Textarea value={page.content.returns.intro} onChange={(e) => handleNestedContentChange(page.slug, 'returns.intro', e.target.value)} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label>Policy Details</Label>
+                                <Textarea value={page.content.returns.policy.content} onChange={(e) => handleNestedContentChange(page.slug, 'returns.policy.content', e.target.value)} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label>Refunds</Label>
+                                <Textarea value={page.content.returns.refunds.content} onChange={(e) => handleNestedContentChange(page.slug, 'returns.refunds.content', e.target.value)} />
                             </div>
                         </div>
                     </div>

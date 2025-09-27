@@ -45,7 +45,24 @@ export default function ShippingReturnsPage() {
              <Truck className="h-8 w-8 text-primary" />
             <CardTitle className="text-2xl">{shipping.title}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-muted-foreground" dangerouslySetInnerHTML={{ __html: shipping.content }} />
+          <CardContent className="space-y-4 text-muted-foreground">
+            <p>{shipping.intro}</p>
+            <div>
+              <h3 className='font-semibold text-foreground mb-1'>{shipping.deliveryTimes.title}</h3>
+              <ul className='list-disc pl-5 space-y-1'>
+                <li><strong>Inside Kathmandu Valley:</strong> {shipping.deliveryTimes.insideValley}</li>
+                <li><strong>Outside Kathmandu Valley:</strong> {shipping.deliveryTimes.outsideValley}</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className='font-semibold text-foreground mb-1'>{shipping.costs.title}</h3>
+              <p>{shipping.costs.content}</p>
+            </div>
+            <div>
+              <h3 className='font-semibold text-foreground mb-1'>{shipping.tracking.title}</h3>
+              <p>{shipping.tracking.content}</p>
+            </div>
+          </CardContent>
         </Card>
 
         <Card>
@@ -53,7 +70,25 @@ export default function ShippingReturnsPage() {
              <RefreshCw className="h-8 w-8 text-primary" />
             <CardTitle className="text-2xl">{returns.title}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-muted-foreground" dangerouslySetInnerHTML={{ __html: returns.content }} />
+          <CardContent className="space-y-4 text-muted-foreground">
+             <p>{returns.intro}</p>
+            <div>
+              <h3 className='font-semibold text-foreground mb-1'>{returns.policy.title}</h3>
+              <p>{returns.policy.content}</p>
+            </div>
+            <div>
+              <h3 className='font-semibold text-foreground mb-1'>{returns.process.title}</h3>
+              <ol className='list-decimal pl-5 space-y-1'>
+                {returns.process.steps.map((step: string, index: number) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </ol>
+            </div>
+             <div>
+              <h3 className='font-semibold text-foreground mb-1'>{returns.refunds.title}</h3>
+              <p>{returns.refunds.content}</p>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </div>
