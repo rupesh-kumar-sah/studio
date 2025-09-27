@@ -198,7 +198,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
             </div>
              <div className="space-y-2">
                 <Label htmlFor="images">Image</Label>
-                <Input id="images" type="file" accept="image/*" onChange={handleImagechange} />
+                <Input id="images" type="file" accept="image/*" onChange={handleImageChange} />
                 {(imagePreview || (product.images && product.images.length > 0)) && (
                   <div className="mt-4">
                     <Label>Image Preview</Label>
@@ -227,5 +227,6 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
     </Sheet>
   );
 }
+    
 
     
