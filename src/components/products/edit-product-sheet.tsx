@@ -175,7 +175,8 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
             </div>
              <div className="space-y-2">
                 <Label>Images</Label>
-                <p className="text-sm text-muted-foreground">Image editing is not yet implemented.</p>
+                <Input id="images" type="file" disabled />
+                <p className="text-sm text-muted-foreground">Image uploading is not functional. This is a UI placeholder.</p>
              </div>
           </div>
           <SheetFooter className="pt-6 border-t">
