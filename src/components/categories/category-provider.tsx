@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { Category } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-const initialCategories: Category[] = ['Men', 'Women', 'Junior', 'Electronics', 'Fashion'];
+const initialCategories: Category[] = ['Clothing', 'Shoes', 'Accessories', 'Electronics'];
 
 interface CategoryContextType {
   categories: Category[];

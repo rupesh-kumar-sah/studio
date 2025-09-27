@@ -18,11 +18,10 @@ export default async function Home() {
   const categories = await getCategories();
   const featuredProducts = products.slice(0, 4);
   const categoryImages = {
-    'Men': PlaceHolderImages.find(p => p.id === 'clothing-1'),
-    'Women': PlaceHolderImages.find(p => p.id === 'clothing-2'),
-    'Junior': PlaceHolderImages.find(p => p.id === 'clothing-3'),
+    'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
+    'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
+    'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-2'),
     'Electronics': PlaceHolderImages.find(p => p.id === 'accessory-4'),
-    'Fashion': PlaceHolderImages.find(p => p.id === 'accessory-2'),
   } as Record<string, any>;
 
   const whyChooseUs = [
