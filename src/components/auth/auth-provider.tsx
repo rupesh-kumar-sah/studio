@@ -5,9 +5,18 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { User } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
+// Define owner details in one place
+const ownerDetails = {
+    id: '1',
+    name: "Rupesh Kumar Sah",
+    email: "rsah0123456@gmail.com",
+    avatar: "https://github.com/shadcn.png"
+};
+
 interface AuthContextType {
   isOwner: boolean;
   currentUser: User | null;
+  owner: User | null;
   isMounted: boolean;
   allUsers: User[];
   reloadAllUsers: () => void;
@@ -15,6 +24,7 @@ interface AuthContextType {
   customerLogin: (email: string, pass: string) => boolean;
   signup: (name: string, email: string, pass: string) => boolean;
   logout: () => void;
+  updateAvatar: (userId: string, avatar: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,6 +32,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isOwner, setIsOwner] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [owner, setOwner] = useState<User | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
@@ -30,6 +41,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === 'undefined') return [];
     const storedUsers = localStorage.getItem('users');
     return storedUsers ? JSON.parse(storedUsers) : [];
+  }, []);
+  
+  const loadOwner = useCallback(() => {
+    if (typeof window === 'undefined') return null;
+    const storedOwner = localStorage.getItem('owner');
+    if (storedOwner) {
+        return JSON.parse(storedOwner);
+    }
+    // If no owner in local storage, initialize with default
+    localStorage.setItem('owner', JSON.stringify(ownerDetails));
+    return ownerDetails;
   }, []);
 
   const reloadAllUsers = useCallback(() => {
@@ -41,24 +63,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
     if (ownerLoggedIn) {
       setIsOwner(true);
+      setOwner(loadOwner());
     }
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       setCurrentUser(JSON.parse(storedUser));
     }
     setAllUsers(loadUsers());
-  }, [loadUsers]);
+  }, [loadUsers, loadOwner]);
 
   const ownerLogin = useCallback((email: string, pass: string) => {
-    if (email === "rsah0123456@gmail.com" && pass === "rupesh@0123456") {
+    if (email === ownerDetails.email && pass === "rupesh@0123456") {
       localStorage.setItem('isOwnerLoggedIn', 'true');
+      const ownerData = loadOwner();
+      setOwner(ownerData);
       setIsOwner(true);
-      setCurrentUser(null); // Clear customer session
+      setCurrentUser(null);
       localStorage.removeItem('currentUser');
       return true;
     }
     return false;
-  }, []);
+  }, [loadOwner]);
 
   const customerLogin = useCallback((email: string, pass: string) => {
     const users = loadUsers();
@@ -67,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('currentUser', JSON.stringify(user));
       setCurrentUser(user);
       setIsOwner(false);
+      setOwner(null);
       localStorage.removeItem('isOwnerLoggedIn');
       return true;
     }
@@ -75,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = useCallback((name: string, email: string, pass: string) => {
     const users = loadUsers();
-    if (users.some(u => u.email === email)) {
+    if (users.some(u => u.email === email) || email === ownerDetails.email) {
       toast({
         variant: 'destructive',
         title: 'Signup Failed',
@@ -95,9 +121,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('currentUser');
     setIsOwner(false);
     setCurrentUser(null);
+    setOwner(null);
   }, []);
 
-  const value = { isOwner, currentUser, isMounted, allUsers, reloadAllUsers, ownerLogin, customerLogin, signup, logout };
+  const updateAvatar = useCallback((userId: string, avatar: string) => {
+    if (isOwner && userId === owner?.id) {
+        const updatedOwner = { ...owner!, avatar };
+        setOwner(updatedOwner);
+        localStorage.setItem('owner', JSON.stringify(updatedOwner));
+    } else {
+        const users = loadUsers();
+        const updatedUsers = users.map(u => u.id === userId ? { ...u, avatar } : u);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        setAllUsers(updatedUsers);
+
+        if (currentUser?.id === userId) {
+            const updatedCurrentUser = { ...currentUser, avatar };
+            setCurrentUser(updatedCurrentUser);
+            localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+        }
+    }
+  }, [isOwner, owner, currentUser, loadUsers]);
+
+  const value = { isOwner, currentUser, owner, isMounted, allUsers, reloadAllUsers, ownerLogin, customerLogin, signup, logout, updateAvatar };
 
   return (
     <AuthContext.Provider value={value}>

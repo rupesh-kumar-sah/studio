@@ -35,7 +35,8 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  password?: string; // Optional for social logins
+  password?: string;
+  avatar?: string;
 };
 
 export type Category = string;

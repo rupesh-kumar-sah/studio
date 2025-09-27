@@ -1,23 +1,52 @@
 
 'use client';
 
+import { useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, Phone, ShoppingBag, LogIn, Users } from "lucide-react";
+import { User, Mail, ShoppingBag, LogIn, Users, Edit } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-const owner = {
-    name: "Rupesh Kumar Sah",
-    email: "rsah0123456@gmail.com",
-    avatar: "https://github.com/shadcn.png"
-};
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import Image from 'next/image';
 
 export default function ProfilePage() {
-  const { isOwner, currentUser, isMounted } = useAuth();
-  const router = useRouter();
+  const { isOwner, currentUser, owner, isMounted, updateAvatar } = useAuth();
+  const { toast } = useToast();
+  
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+        setNewAvatarFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreviewUrl(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveAvatar = () => {
+      if (previewUrl && (currentUser || isOwner)) {
+          const userId = isOwner ? owner!.id : currentUser!.id;
+          updateAvatar(userId, previewUrl);
+          toast({
+              title: 'Avatar Updated',
+              description: 'Your new profile photo has been saved.',
+          });
+          setIsEditDialogOpen(false);
+          setNewAvatarFile(null);
+          setPreviewUrl(null);
+      }
+  };
 
   if (!isMounted) {
     return <div className="container py-12 text-center">Loading profile...</div>;
@@ -39,16 +68,18 @@ export default function ProfilePage() {
   }
 
   const user = isOwner ? {
-    name: owner.name,
-    email: owner.email,
-    avatar: owner.avatar,
+    id: owner!.id,
+    name: owner!.name,
+    email: owner!.email,
+    avatar: owner!.avatar,
     title: 'Owner Profile',
     description: 'Account details for the site administrator.',
     role: 'Administrator'
   } : {
-    name: currentUser?.name,
-    email: currentUser?.email,
-    avatar: `https://ui-avatars.com/api/?name=${currentUser?.name?.replace(' ', '+')}&background=random`,
+    id: currentUser!.id,
+    name: currentUser!.name,
+    email: currentUser!.email,
+    avatar: currentUser!.avatar || `https://ui-avatars.com/api/?name=${currentUser?.name?.replace(' ', '+')}&background=random`,
     title: 'My Profile',
     description: 'View and manage your account details.',
     role: 'Customer'
@@ -65,10 +96,43 @@ export default function ProfilePage() {
         <div className="flex justify-center">
             <Card className="w-full max-w-2xl">
                 <CardHeader className="flex flex-col items-center text-center">
-                    <Avatar className="h-24 w-24 mb-4">
-                        <AvatarImage src={user.avatar} alt={user.name || ''} />
-                        <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
+                    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                        <div className="relative group">
+                            <Avatar className="h-24 w-24 mb-4">
+                                <AvatarImage src={user.avatar} alt={user.name || ''} />
+                                <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            </Avatar>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="icon" className="absolute bottom-4 right-0 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Edit className="h-4 w-4" />
+                                    <span className="sr-only">Edit Photo</span>
+                                </Button>
+                            </DialogTrigger>
+                        </div>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Update Profile Photo</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                                <div>
+                                    <Label htmlFor="avatar-upload">New Avatar Image</Label>
+                                    <Input id="avatar-upload" type="file" accept="image/*" onChange={handleFileChange} />
+                                </div>
+                                {previewUrl && (
+                                    <div>
+                                        <p className="text-sm font-medium mb-2">Preview:</p>
+                                        <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden">
+                                          <Image src={previewUrl} alt="New avatar preview" fill className="object-cover" />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+                                <Button onClick={handleSaveAvatar} disabled={!newAvatarFile}>Save Photo</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                     <CardTitle className="text-3xl">{user.name}</CardTitle>
                     <CardDescription>{user.role}</CardDescription>
                 </CardHeader>
