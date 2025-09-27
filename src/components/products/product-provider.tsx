@@ -10,6 +10,7 @@ interface ProductContextType {
   products: Product[];
   getProductById: (id: string) => Product | undefined;
   updateProduct: (updatedProduct: Product) => void;
+  addProduct: (newProduct: Omit<Product, 'id' | 'rating' | 'reviews'>) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -57,8 +58,22 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         description: `${updatedProduct.name} has been successfully updated.`
     });
   }, [toast]);
+  
+  const addProduct = useCallback((newProductData: Omit<Product, 'id' | 'rating' | 'reviews'>) => {
+    const newProduct: Product = {
+      ...newProductData,
+      id: new Date().getTime().toString(), // Simple unique ID
+      rating: 0,
+      reviews: 0,
+    };
+    setProducts(prevProducts => [newProduct, ...prevProducts]);
+    toast({
+        title: "Product Added",
+        description: `${newProduct.name} has been successfully added.`
+    });
+  }, [toast]);
 
-  const value = { products, getProductById, updateProduct };
+  const value = { products, getProductById, updateProduct, addProduct };
 
   return (
     <ProductContext.Provider value={value}>

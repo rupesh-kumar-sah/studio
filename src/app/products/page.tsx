@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -14,12 +15,16 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
+import { Filter, PlusCircle } from 'lucide-react';
 import { useProducts } from '@/components/products/product-provider';
+import { useAuth } from '@/components/auth/auth-provider';
+import { AddProductSheet } from '@/components/products/add-product-sheet';
 
 export default function ProductsPage() {
   const { products: allProducts } = useProducts();
   const searchParams = useSearchParams();
+  const { isOwner } = useAuth();
+
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
     category: searchParams.get('category') || 'All',
@@ -30,6 +35,7 @@ export default function ProductsPage() {
   });
   const [sort, setSort] = useState('featured');
   const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [isAddSheetOpen, setAddSheetOpen] = useState(false);
   
   useEffect(() => {
     setFilters(f => ({
@@ -62,9 +68,11 @@ export default function ProductsPage() {
         filtered.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
+        // Correctly sort by date of creation (using id as a proxy)
         filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
       default: // featured
+        // Keep existing logic for featured
         filtered.sort((a, b) => b.reviews - a.reviews);
         break;
     }
@@ -76,6 +84,7 @@ export default function ProductsPage() {
   const uniqueSizes = useMemo(() => [...new Set(allProducts.flatMap(p => p.sizes))], [allProducts]);
 
   return (
+    <>
     <div className="container py-8">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">Our Products</h1>
@@ -98,6 +107,12 @@ export default function ProductsPage() {
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-muted-foreground">{filteredAndSortedProducts.length} products found</p>
             <div className="flex items-center gap-4">
+              {isOwner && (
+                <Button onClick={() => setAddSheetOpen(true)}>
+                  <PlusCircle className="mr-2 h-5 w-5" />
+                  Add New Product
+                </Button>
+              )}
               <Select value={sort} onValueChange={setSort}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Sort by" />
@@ -144,5 +159,7 @@ export default function ProductsPage() {
         </main>
       </div>
     </div>
+    {isOwner && <AddProductSheet isOpen={isAddSheetOpen} onOpenChange={setAddSheetOpen} />}
+    </>
   );
 }
