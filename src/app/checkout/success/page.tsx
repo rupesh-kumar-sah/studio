@@ -23,33 +23,18 @@ function CheckoutSuccessContent() {
         clearCart();
     }, [clearCart]);
 
-    const isPending = order?.paymentStatus === 'Pending';
-    
-    const formatPaymentMethod = (method: 'esewa' | 'khalti') => {
-        if (method === 'esewa') return 'eSewa';
-        if (method === 'khalti') return 'Khalti';
-        return method;
-    }
-
     return (
         <div className="w-full max-w-lg">
             <Card className="text-center">
                 <CardHeader>
-                     <div className={`mx-auto rounded-full p-3 w-fit ${isPending ? 'bg-orange-100' : 'bg-green-100'}`}>
-                        {isPending ? (
-                             <Clock className="h-12 w-12 text-orange-600" />
-                        ) : (
-                             <CheckCircle2 className="h-12 w-12 text-green-600" />
-                        )}
+                     <div className="mx-auto rounded-full p-3 w-fit bg-green-100">
+                        <CheckCircle2 className="h-12 w-12 text-green-600" />
                     </div>
                     <CardTitle className="mt-4 text-2xl">
-                        {isPending ? "Order Submitted for Review" : "Order Placed Successfully!"}
+                        Order Placed Successfully!
                     </CardTitle>
                     <CardDescription>
-                         {isPending 
-                            ? "Your order is awaiting payment confirmation."
-                            : "Thank you for your purchase."
-                         }
+                        Thank you for your purchase.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -58,12 +43,8 @@ function CheckoutSuccessContent() {
                             <p className='font-semibold mb-2'>Order Summary:</p>
                             <p><strong>Order ID:</strong> {order.id}</p>
                             <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
-                            <p><strong>Payment Method:</strong> {formatPaymentMethod(order.paymentMethod)}</p>
                              <p className='mt-2 text-muted-foreground'>
-                                {isPending
-                                    ? "We will notify you once the payment is accepted. You can check the status on the orders page."
-                                    : "A confirmation email has been sent. You can view your order status on the orders page."
-                                }
+                                A confirmation email has been sent. You can view your order status on the orders page.
                             </p>
                         </div>
                     ) : (
@@ -83,7 +64,7 @@ function CheckoutSuccessContent() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground">
-                        To confirm your order or for any inquiries, please contact our support team at 9824812753.
+                        For any inquiries, please contact our support team at 9824812753.
                     </p>
                 </CardContent>
             </Card>

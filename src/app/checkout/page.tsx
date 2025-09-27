@@ -16,15 +16,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { ShoppingBag, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import type { CartItem } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-
-// Define a union type for payment status
-export type PaymentStatus = 'Pending' | 'Accepted' | 'Failed';
 
 export type Order = {
   id: string;
@@ -32,10 +27,7 @@ export type Order = {
   items: CartItem[];
   total: number;
   customer: z.infer<typeof customerInfoSchema>;
-  paymentMethod: 'esewa' | 'khalti';
-  walletId?: string;
   message?: string;
-  paymentStatus: PaymentStatus;
 };
 
 const customerInfoSchema = z.object({
@@ -49,14 +41,7 @@ const customerInfoSchema = z.object({
 
 const checkoutSchema = z.object({
   customer: customerInfoSchema,
-  paymentMethod: z.enum(['esewa', 'khalti'], {
-    required_error: 'You need to select a payment method.',
-  }),
-  walletId: z.string().optional(),
   message: z.string().optional(),
-}).refine(data => data.paymentMethod ? !!data.walletId && data.walletId.length > 0 : true, {
-    message: "Wallet ID is required",
-    path: ["walletId"],
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -78,8 +63,6 @@ export default function CheckoutPage() {
         city: '',
         postalCode: '',
       },
-      paymentMethod: undefined,
-      walletId: '',
       message: '',
     },
   });
@@ -110,10 +93,7 @@ export default function CheckoutPage() {
             items: items,
             total: totalPrice,
             customer: data.customer,
-            paymentMethod: data.paymentMethod,
-            walletId: data.walletId,
             message: data.message,
-            paymentStatus: 'Pending',
         };
         
         // Save order to localStorage
@@ -205,58 +185,6 @@ export default function CheckoutPage() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Payment</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                             <FormField
-                                control={form.control}
-                                name="paymentMethod"
-                                render={({ field }) => (
-                                    <FormItem className="space-y-3">
-                                        <FormControl>
-                                            <RadioGroup
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                                className="flex flex-col space-y-1"
-                                            >
-                                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                                    <FormControl><RadioGroupItem value="esewa" /></FormControl>
-                                                    <FormLabel className="font-normal flex items-center gap-2">
-                                                        <Image src="https://blog.esewa.com.np/wp-content/uploads/2022/12/esewa-icon.png" width={24} height={24} alt="eSewa" /> eSewa
-                                                    </FormLabel>
-                                                </FormItem>
-                                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                                    <FormControl><RadioGroupItem value="khalti" /></FormControl>
-                                                    <FormLabel className="font-normal flex items-center gap-2">
-                                                        <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Khalti_Digital_Wallet_Logo.png/640px-Khalti_Digital_Wallet_Logo.png" width={48} height={24} alt="Khalti" />
-                                                    </FormLabel>
-                                                </FormItem>
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <div className="mt-4">
-                                <FormField
-                                    control={form.control}
-                                    name="walletId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Wallet ID (Phone or Email)</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} placeholder="Your eSewa/Khalti account ID" />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
                             <CardTitle>Additional Information</CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -336,7 +264,7 @@ export default function CheckoutPage() {
                         </CardFooter>
                     </Card>
                     <p className="text-xs text-muted-foreground mt-4 text-center">
-                        By placing your order, you agree to our Terms of Service and Privacy Policy. Payment will be requested for verification after submission.
+                        By placing your order, you agree to our Terms of Service and Privacy Policy.
                     </p>
                 </div>
             </form>

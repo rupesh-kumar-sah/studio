@@ -6,14 +6,11 @@ import type { Order } from '@/app/checkout/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, LogIn, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import type { User } from '@/lib/types';
 
 export default function OrdersPage() {
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
@@ -64,29 +61,6 @@ export default function OrdersPage() {
     };
   }, [loadAndFilterOrders]); 
   
-  const acceptOrder = (orderId: string) => {
-    const allOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-    const updatedOrders = allOrders.map(order => {
-      if (order.id === orderId) {
-        return { ...order, paymentStatus: 'Accepted' as const };
-      }
-      return order;
-    });
-    localStorage.setItem('orders', JSON.stringify(updatedOrders));
-    
-    // Dispatch custom event to notify all components including the current tab
-    window.dispatchEvent(new CustomEvent('orders-updated'));
-    
-    // Also call directly to ensure immediate update in the current component
-    loadAndFilterOrders();
-  };
-
-  const formatPaymentMethod = (method: 'esewa' | 'khalti') => {
-      if (method === 'esewa') return 'eSewa';
-      if (method === 'khalti') return 'Khalti';
-      return method;
-  }
-
   if (!isMounted || !authIsMounted) {
     return (
         <div className="container py-12 text-center">
@@ -151,12 +125,6 @@ export default function OrdersPage() {
                 </div>
                  <div className="text-right">
                      <p className="font-bold text-xl">Rs.{order.total.toFixed(2)}</p>
-                    <Badge className={cn(
-                        'mt-1 text-white',
-                        order.paymentStatus === 'Accepted' ? 'bg-green-600' : 'bg-orange-500'
-                    )}>
-                        {order.paymentStatus}
-                    </Badge>
                 </div>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -179,12 +147,6 @@ export default function OrdersPage() {
                             <p><strong>Address:</strong> {order.customer.address}</p>
                             <p>{order.customer.city}, {order.customer.postalCode}</p>
                         </div>
-                        <h3 className="font-semibold mt-4 mb-2">Payment</h3>
-                         <div className="text-sm text-muted-foreground">
-                            <p><strong>Method:</strong> <span className="font-medium">{formatPaymentMethod(order.paymentMethod)}</span></p>
-                            <p><strong>Status:</strong> <span className="font-medium">{order.paymentStatus}</span></p>
-                            {order.walletId && <p><strong>Wallet ID:</strong> {order.walletId}</p>}
-                        </div>
                     </div>
                     <div>
                          <h3 className="font-semibold mb-2">Items ({order.items.length})</h3>
@@ -206,11 +168,6 @@ export default function OrdersPage() {
                     </div>
                 </div>
             </CardContent>
-            {isOwner && order.paymentStatus === 'Pending' && (
-                <CardFooter>
-                    <Button onClick={() => acceptOrder(order.id)}>Accept Order</Button>
-                </CardFooter>
-            )}
           </Card>
         ))}
       </div>
