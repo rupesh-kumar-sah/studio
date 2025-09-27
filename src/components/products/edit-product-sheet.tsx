@@ -182,7 +182,7 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
                         type="number"
                         step="0.01"
                         value={field.value || ''}
-                        onChange={e => field.onChange(parseFloat(e.target.value) || undefined)}
+                        onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                         placeholder="e.g. 199.99"
                         />
                     )}
@@ -218,8 +218,8 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
                             id="purchaseLimit"
                             type="number"
                             step="1"
-                            value={field.value}
-                            onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
+                            value={field.value || ''}
+                            onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))}
                             />
                         )}
                     />

@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm, Controller } from 'react-hook-form';
-import React, { useState } from 'react';
+import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
 import { useCategories } from '../categories/category-provider';
@@ -154,7 +154,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                         type="number"
                         step="0.01"
                         value={field.value || ''}
-                        onChange={e => field.onChange(parseFloat(e.target.value) || undefined)}
+                        onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                         placeholder="e.g. 199.99"
                         />
                     )}
@@ -190,8 +190,8 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                         id="purchaseLimit"
                         type="number"
                         step="1"
-                        value={field.value}
-                        onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
+                        value={field.value || ''}
+                        onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))}
                         />
                     )}
                 />
