@@ -8,83 +8,55 @@ import { CheckCircle2, Loader2, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import type { Order } from '@/app/checkout/page';
+
 
 function CheckoutSuccessContent() {
     const { clearCart } = useCart();
     const searchParams = useSearchParams();
-    const [verificationStatus, setVerificationStatus] = useState<'verifying' | 'verified' | 'idle'>('idle');
-    
-    // This effect simulates the server-side verification of the transaction
+    const [verificationStatus, setVerificationStatus] = useState<'verifying' | 'verified' | 'idle'>('verified');
+    const [order, setOrder] = useState<Order | null>(null);
+
+    // This effect is now simplified. We no longer need to verify eSewa payments
+    // via URL params, as they are handled manually by the owner.
     useEffect(() => {
-        const oid = searchParams.get('oid'); // eSewa passes back the order ID as 'oid'
-        const refId = searchParams.get('refId'); // eSewa passes back a reference ID
-
-        if (oid && refId) {
-            setVerificationStatus('verifying');
-            // Simulate an API call to our backend to verify the transaction with eSewa
-            setTimeout(() => {
-                console.log(`Verifying eSewa transaction: Order ID - ${oid}, Ref ID - ${refId}`);
-                // In a real app, the backend would call eSewa's verification API.
-                // If successful, we update the order status in our database from 'Pending' to 'Paid'.
-                
-                // For this simulation, we'll just proceed to the verified state.
-                const orders = JSON.parse(localStorage.getItem('orders') || '[]') as any[];
-                const updatedOrders = orders.map(o => o.id === oid ? { ...o, paymentStatus: 'Paid' } : o);
-                localStorage.setItem('orders', JSON.stringify(updatedOrders));
-
-                setVerificationStatus('verified');
-            }, 2000); // Simulate network delay
-        } else {
-            setVerificationStatus('verified'); // No verification needed for non-eSewa payments
+        // Find the most recent order from localStorage to display its details.
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+        if (orders.length > 0) {
+            const mostRecentOrder = orders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+            setOrder(mostRecentOrder);
         }
-    }, [searchParams]);
-
-
-    useEffect(() => {
-        if(verificationStatus === 'verified'){
-            clearCart();
-        }
-    }, [verificationStatus, clearCart]);
+        clearCart();
+    }, [clearCart]);
 
 
     return (
         <div className="w-full max-w-lg">
             <Card className="text-center">
                 <CardHeader>
-                    {verificationStatus === 'verifying' && (
-                        <>
-                            <div className="mx-auto p-3">
-                                <Loader2 className="h-12 w-12 text-primary animate-spin" />
-                            </div>
-                            <CardTitle className="mt-4 text-2xl">Verifying Payment...</CardTitle>
-                            <CardDescription>Please wait while we confirm your transaction.</CardDescription>
-                        </>
-                    )}
-                    {verificationStatus === 'verified' && (
-                        <>
-                             <div className="mx-auto bg-green-100 rounded-full p-3 w-fit">
-                                <CheckCircle2 className="h-12 w-12 text-green-600" />
-                            </div>
-                            <CardTitle className="mt-4 text-2xl">Order Successful!</CardTitle>
-                            <CardDescription>Thank you for your purchase.</CardDescription>
-                        </>
-                    )}
+                     <div className="mx-auto bg-green-100 rounded-full p-3 w-fit">
+                        <CheckCircle2 className="h-12 w-12 text-green-600" />
+                    </div>
+                    <CardTitle className="mt-4 text-2xl">Order Placed Successfully!</CardTitle>
+                    <CardDescription>Thank you for your purchase.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                     {verificationStatus === 'verifying' ? (
+                    {order ? (
+                        <div className='text-sm text-left bg-secondary p-4 rounded-md'>
+                            <p className='font-semibold mb-2'>Order Summary:</p>
+                            <p><strong>Order ID:</strong> #{order.id.slice(-6)}</p>
+                            <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
+                            <p><strong>Payment Method:</strong> {order.paymentMethod.toUpperCase()}</p>
+                            <p className='mt-2 text-muted-foreground'>We've received your order. A confirmation email has been sent. You can view order status on the orders page.</p>
+                        </div>
+                    ) : (
                          <p className="text-muted-foreground">
-                            This may take a moment. Do not close this page.
-                         </p>
-                     ) : (
-                        <>
-                            <p className="text-muted-foreground">
                             We've received and confirmed your order. A confirmation email has been sent to you with the order details.
-                            </p>
-                            <Button asChild className="mt-6">
-                            <Link href="/products">Continue Shopping</Link>
-                            </Button>
-                        </>
-                     )}
+                        </p>
+                    )}
+                    <Button asChild className="mt-6">
+                    <Link href="/products">Continue Shopping</Link>
+                    </Button>
                 </CardContent>
             </Card>
              <Card className="mt-6">
