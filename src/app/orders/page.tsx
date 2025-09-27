@@ -137,16 +137,16 @@ export default function OrdersPage() {
                     <div>
                         <h3 className="font-semibold mb-2">Shipping Details</h3>
                         <div className="text-sm text-muted-foreground">
-                            <p>{order.customer.firstName} {order.customer.lastName}</p>
-                            <p>{order.customer.email}</p>
-                            <p>{order.customer.address}</p>
+                            <p><strong>Name:</strong> {order.customer.firstName} {order.customer.lastName}</p>
+                            <p><strong>Email:</strong> {order.customer.email}</p>
+                            <p><strong>Address:</strong> {order.customer.address}</p>
                             <p>{order.customer.city}, {order.customer.postalCode}</p>
                         </div>
                         <h3 className="font-semibold mt-4 mb-2">Payment</h3>
                          <div className="text-sm text-muted-foreground">
-                            <p>Method: <span className="font-medium uppercase">{order.paymentMethod}</span></p>
-                            <p>Status: <span className="font-medium">{order.paymentStatus}</span></p>
-                            {order.walletId && <p>Wallet ID: {order.walletId}</p>}
+                            <p><strong>Method:</strong> <span className="font-medium uppercase">{order.paymentMethod}</span></p>
+                            <p><strong>Status:</strong> <span className="font-medium">{order.paymentStatus}</span></p>
+                            {order.walletId && <p><strong>Wallet ID:</strong> {order.walletId}</p>}
                         </div>
                     </div>
                     <div>
@@ -180,5 +180,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-
-    
