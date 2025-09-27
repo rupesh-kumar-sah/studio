@@ -1,5 +1,4 @@
 
-'use server';
 
 import { Product, Review } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -62,6 +61,7 @@ let productsDB: Product[] = [
     name: 'Women\'s Valley Tee',
     description: 'A soft, comfortable t-shirt featuring a minimalist design inspired by the temples of Kathmandu. Made from 100% organic cotton.',
     price: 29.99,
+    originalPrice: undefined,
     images: [getImage('clothing-2'), getImage('clothing-3'), getImage('clothing-4')],
     category: 'Women',
     rating: 4.8,
@@ -93,6 +93,7 @@ let productsDB: Product[] = [
     name: 'Junior\'s Lakeside Loafers',
     description: 'Casual yet stylish loafers for kids, perfect for a stroll by Phewa Lake. Handcrafted from premium Nepali materials.',
     price: 89.99,
+    originalPrice: undefined,
     images: [getImage('shoe-3'), getImage('shoe-2'), getImage('shoe-1')],
     category: 'Junior',
     rating: 4.6,
@@ -108,6 +109,7 @@ let productsDB: Product[] = [
     name: 'Artisan Crafted Backpack',
     description: 'A unique backpack made from locally sourced hemp and decorated with traditional patterns. Spacious and durable for everyday use.',
     price: 75.00,
+    originalPrice: undefined,
     images: [getImage('accessory-1'), getImage('accessory-3'), getImage('accessory-2')],
     category: 'Fashion',
     rating: 4.7,
@@ -139,6 +141,7 @@ let productsDB: Product[] = [
     name: 'Women\'s Circuit Sneakers',
     description: 'Lightweight and breathable sneakers for light trails and city walks. Inspired by the colors of the Annapurna range.',
     price: 119.99,
+    originalPrice: undefined,
     images: [getImage('shoe-1'), getImage('shoe-4'), getImage('shoe-3')],
     category: 'Women',
     rating: 4.4,
@@ -154,6 +157,7 @@ let productsDB: Product[] = [
     name: 'Sun-Kissed Pashmina Scarf',
     description: 'A beautifully woven pashmina scarf to keep you warm. The vibrant colors reflect a Himalayan sunrise.',
     price: 45.00,
+    originalPrice: undefined,
     images: [getImage('accessory-3'), getImage('accessory-2'), getImage('accessory-1')],
     category: 'Fashion',
     rating: 4.9,
@@ -185,6 +189,7 @@ let productsDB: Product[] = [
     name: 'Digital Smart Watch',
     description: 'A modern smart watch with fitness tracking and notification features. Long-lasting battery and water-resistant.',
     price: 159.99,
+    originalPrice: undefined,
     images: [getImage('accessory-4'), getImage('accessory-2'), getImage('accessory-1')],
     category: 'Electronics',
     rating: 4.7,
@@ -200,6 +205,7 @@ let productsDB: Product[] = [
     name: 'Classic Analog Watch',
     description: 'An elegant timepiece with a dial inspired by the intricate woodwork of Patan Durbar Square. A fusion of tradition and modernity.',
     price: 249.99,
+    originalPrice: undefined,
     images: [getImage('accessory-4'), getImage('accessory-2'), getImage('accessory-1')],
     category: 'Fashion',
     rating: 4.8,
@@ -228,15 +234,18 @@ let productsDB: Product[] = [
   }
 ];
 
-export async function getProducts(): Promise<Product[]> {
-    return Promise.resolve(productsDB);
-}
+// ************ DATABASE ACCESS FUNCTIONS ************
 
-export async function getProductById(id: string): Promise<Product | undefined> {
-    return Promise.resolve(productsDB.find(p => p.id === id));
-}
+// NOTE: In a real app, these would be calls to a database.
+// For this prototype, we're using an in-memory array.
+// We are also exporting the database itself for use in server actions,
+// which is NOT a real-world practice.
 
-const refreshProductCalculations = (product: Product): Product => {
+export let db = {
+  products: productsDB,
+};
+
+export const refreshProductCalculations = (product: Product): Product => {
     if (product.detailedReviews && product.detailedReviews.length > 0) {
       const totalRating = product.detailedReviews.reduce((acc, review) => acc + review.rating, 0);
       const newAverage = totalRating / product.detailedReviews.length;
@@ -245,52 +254,41 @@ const refreshProductCalculations = (product: Product): Product => {
     return { ...product, rating: 0, reviews: 0 };
   };
 
-export async function updateProduct(updatedProduct: Product): Promise<Product> {
-    const refreshedProduct = refreshProductCalculations(updatedProduct);
-    productsDB = productsDB.map(p => p.id === refreshedProduct.id ? refreshedProduct : p);
-    return Promise.resolve(refreshedProduct);
+export async function getProducts(): Promise<Product[]> {
+    return Promise.resolve(db.products);
 }
 
-export async function addProduct(newProductData: Omit<Product, 'id' | 'rating' | 'reviews' | 'detailedReviews'>): Promise<Product> {
-    const newProduct: Product = {
-      ...newProductData,
-      id: new Date().getTime().toString(),
-      rating: 0,
-      reviews: 0,
-      detailedReviews: [],
-      purchaseLimit: newProductData.purchaseLimit || 10,
-    };
-    productsDB = [newProduct, ...productsDB];
-    return Promise.resolve(newProduct);
-}
-
-export async function deleteProduct(productId: string): Promise<{ success: boolean }> {
-    productsDB = productsDB.filter(p => p.id !== productId);
-    return Promise.resolve({ success: true });
+export async function getProductById(id: string): Promise<Product | undefined> {
+    return Promise.resolve(db.products.find(p => p.id === id));
 }
 
 export async function updateReview(productId: string, reviewId: string, newComment: string, newRating: number): Promise<Product | undefined> {
-    let productToUpdate: Product | undefined = productsDB.find(p => p.id === productId);
-    if (productToUpdate) {
+    const productIndex = db.products.findIndex(p => p.id === productId);
+    if (productIndex !== -1) {
+        const productToUpdate = db.products[productIndex];
         const updatedReviews = productToUpdate.detailedReviews.map(r => 
             r.id === reviewId ? { ...r, comment: newComment, rating: newRating } : r
         );
         const updatedProduct = { ...productToUpdate, detailedReviews: updatedReviews };
         const refreshedProduct = refreshProductCalculations(updatedProduct);
-        productsDB = productsDB.map(p => p.id === productId ? refreshedProduct : p);
+        db.products[productIndex] = refreshedProduct;
         return Promise.resolve(refreshedProduct);
     }
     return Promise.resolve(undefined);
 }
 
 export async function deleteReview(productId: string, reviewId: string): Promise<Product | undefined> {
-    let productToUpdate: Product | undefined = productsDB.find(p => p.id === productId);
-    if (productToUpdate) {
+    const productIndex = db.products.findIndex(p => p.id === productId);
+    if (productIndex !== -1) {
+        const productToUpdate = db.products[productIndex];
         const updatedReviews = productToUpdate.detailedReviews.filter(r => r.id !== reviewId);
         const updatedProduct = { ...productToUpdate, detailedReviews: updatedReviews };
         const refreshedProduct = refreshProductCalculations(updatedProduct);
-        productsDB = productsDB.map(p => p.id === productId ? refreshedProduct : p);
+        db.products[productIndex] = refreshedProduct;
         return Promise.resolve(refreshedProduct);
     }
     return Promise.resolve(undefined);
 }
+
+// Renaming for clarity in server actions to avoid confusion
+export { updateReview as dbUpdateReview, deleteReview as dbDeleteReview };

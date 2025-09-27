@@ -14,24 +14,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
 import { useCategories } from '../categories/category-provider';
-
-const productSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().min(1, 'Description is required'),
-  price: z.number().min(0, 'Price must be positive'),
-  originalPrice: z.number().min(0, 'Price must be positive').optional(),
-  stock: z.number().int().min(0, 'Stock must be a positive integer'),
-  category: z.string().min(1, 'Category is required'),
-  colors: z.string().min(1, "Please enter at least one color."),
-  sizes: z.string().min(1, "Please enter at least one size."),
-  purchaseLimit: z.number().int().min(1, 'Limit must be at least 1').optional(),
-});
+import { addProduct, ProductFormData } from '@/app/actions/product-actions';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 interface AddProductSheetProps {
   isOpen: boolean;
@@ -40,6 +29,8 @@ interface AddProductSheetProps {
 
 export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) {
   const { categories } = useCategories();
+  const { toast } = useToast();
+  const router = useRouter();
   const [imagePreview1, setImagePreview1] = useState<string | null>(null);
   const [imagePreview2, setImagePreview2] = useState<string | null>(null);
   const [imagePreview3, setImagePreview3] = useState<string | null>(null);
@@ -50,8 +41,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof productSchema>>({
-    resolver: zodResolver(productSchema),
+  } = useForm<ProductFormData>({
     defaultValues: {
       name: '',
       description: '',
@@ -84,10 +74,22 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
     }
   }, [isOpen, reset, categories]);
 
-  const onSubmit = (data: z.infer<typeof productSchema>) => {
-    // This would be a server action in a real app
-    console.log('New product submitted. In a real app, this would trigger a server action.');
-    onOpenChange(false);
+  const onSubmit = async (data: ProductFormData) => {
+    const result = await addProduct(data);
+    if (result.success) {
+      toast({
+        title: 'Product Added',
+        description: `"${result.product?.name}" has been successfully added.`,
+      });
+      onOpenChange(false);
+      // No need to call router.refresh() here as revalidatePath is used in server action
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to add product',
+        description: result.message || 'An unexpected error occurred.',
+      });
+    }
   };
   
   const createImageChangeHandler = (setter: React.Dispatch<React.SetStateAction<string | null>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -234,53 +236,13 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
              
              <div className="space-y-4 border-t pt-4">
                 <Label>Product Images</Label>
-                <p className="text-xs text-muted-foreground">Upload images for the product. Changes are temporary for this session.</p>
-
-                <div className="space-y-2">
-                  <Label htmlFor="image1">Image 1 (Primary)</Label>
-                  <Input id="image1" type="file" accept="image/*" onChange={handleImageChange1} />
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview1}
-                      src={imagePreview1 || 'https://placehold.co/600x400'}
-                      alt="Product image 1 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="image2">Image 2</Label>
-                  <Input id="image2" type="file" accept="image/*" onChange={handleImageChange2} />
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview2}
-                      src={imagePreview2 || 'https://placehold.co/600x400'}
-                      alt="Product image 2 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="image3">Image 3</Label>
-                  <Input id="image3" type="file" accept="image/*" onChange={handleImageChange3} />
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview3}
-                      src={imagePreview3 || 'https://placehold.co/600x400'}
-                      alt="Product image 3 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
+                <p className="text-xs text-muted-foreground">Image uploads are not supported in this prototype. Placeholders will be used.</p>
              </div>
 
              <div className="pt-2">
-                <Button type="submit" disabled={isSubmitting} className="w-full">Save Product</Button>
+                <Button type="submit" disabled={isSubmitting} className="w-full">
+                    {isSubmitting ? 'Saving...' : 'Save Product'}
+                </Button>
              </div>
           </div>
           <SheetFooter className="pt-6 border-t">
