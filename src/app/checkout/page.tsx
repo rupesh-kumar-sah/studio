@@ -217,11 +217,16 @@ export default function CheckoutPage() {
                             <CardTitle>Payment</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="p-4 bg-secondary rounded-lg text-sm">
+                            <div className="p-4 bg-secondary rounded-lg text-sm text-center">
                                 <h3 className="font-semibold text-base mb-2">Pay with eSewa</h3>
+                                <p className="mb-2">Scan this QR to pay</p>
+                                <div className="flex justify-center mb-2">
+                                     <Image src="https://blog.esewa.com.np/wp-content/uploads/2022/10/esewa-scan-and-pay.png" alt="eSewa QR Code" width={200} height={200} className="rounded-md border p-1" />
+                                </div>
                                 <p>Wallet Number: <strong>9824812753</strong></p>
                                 <p>Account Name: <strong>Rupesh Kumar Sah</strong></p>
-                                <p className="mt-2 text-muted-foreground">After completing the payment on your eSewa app, please enter the Transaction ID below to confirm.</p>
+                                <Separator className="my-4" />
+                                <p className="mt-2 text-muted-foreground">After completing the payment, please enter the Transaction ID below to confirm.</p>
                             </div>
                             <FormField
                                 control={form.control}
