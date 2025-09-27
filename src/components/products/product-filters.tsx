@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -12,6 +13,8 @@ import { Input } from '../ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Checkbox } from '../ui/checkbox';
+import { Separator } from '../ui/separator';
 
 const newCategorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
@@ -56,6 +59,10 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
       : [...filters.sizes, size];
     setFilters({ ...filters, sizes: newSizes });
   };
+  
+  const handleStockChange = (checked: boolean) => {
+    setFilters({ ...filters, inStock: checked });
+  };
 
   const clearFilters = () => {
     setFilters({
@@ -65,6 +72,7 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
       rating: 0,
       colors: [],
       sizes: [],
+      inStock: true,
     });
   };
 
@@ -98,7 +106,7 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
                 <RadioGroupItem value="All" id="cat-All" />
                 <Label htmlFor="cat-All" className="font-normal">All</Label>
             </div>
-            {categories.map(cat => (
+            {categories.map((cat:string) => (
               <div key={cat} className="flex items-center space-x-2">
                 <RadioGroupItem value={cat} id={`cat-${cat}`} />
                 <Label htmlFor={`cat-${cat}`} className="font-normal">{cat}</Label>
@@ -106,6 +114,18 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
             ))}
           </RadioGroup>
         </div>
+        
+        <Separator />
+
+        <div>
+          <Label className="font-semibold text-base">Stock Status</Label>
+          <div className="flex items-center space-x-2 mt-2">
+            <Checkbox id="in-stock" checked={filters.inStock} onCheckedChange={handleStockChange} />
+            <Label htmlFor="in-stock" className="font-normal">In Stock</Label>
+          </div>
+        </div>
+
+        <Separator />
         
         <div>
           <Label htmlFor="price-range" className="font-semibold text-base">Price Range</Label>
@@ -124,6 +144,8 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
           </div>
         </div>
 
+        <Separator />
+
         <div>
           <Label className="font-semibold text-base">Colors</Label>
           <div className="mt-2 grid grid-cols-6 gap-2">
@@ -139,6 +161,8 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
           </div>
         </div>
         
+        <Separator />
+
         <div>
           <Label className="font-semibold text-base">Sizes</Label>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -149,6 +173,8 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
             ))}
           </div>
         </div>
+
+        <Separator />
 
         <div>
           <Label className="font-semibold text-base">Rating</Label>

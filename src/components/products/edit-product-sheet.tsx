@@ -30,6 +30,7 @@ const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
   price: z.number().min(0, 'Price must be positive'),
+  originalPrice: z.number().min(0, 'Price must be positive').optional(),
   stock: z.number().int().min(0, 'Stock must be a positive integer'),
   category: z.string().min(1, 'Category is required'),
   colors: z.string().min(1, "Please enter at least one color."),
@@ -63,6 +64,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
       name: product.name,
       description: product.description,
       price: product.price,
+      originalPrice: product.originalPrice,
       stock: product.stock,
       category: product.category,
       colors: product.colors.join(','),
@@ -77,6 +79,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
         name: product.name,
         description: product.description,
         price: product.price,
+        originalPrice: product.originalPrice,
         stock: product.stock,
         category: product.category,
         colors: product.colors.join(','),
@@ -100,6 +103,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
     const updatedProduct: Product = {
       ...product,
       ...data,
+      originalPrice: data.originalPrice || undefined,
       colors: data.colors.split(',').map(c => c.trim()).filter(Boolean),
       sizes: data.sizes.split(',').map(s => s.trim()).filter(Boolean),
       images: updatedImages,
@@ -175,7 +179,25 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="price">Price</Label>
+                <Label htmlFor="originalPrice">Original Price (Optional)</Label>
+                <Controller
+                    name="originalPrice"
+                    control={control}
+                    render={({ field }) => (
+                        <Input
+                        id="originalPrice"
+                        type="number"
+                        step="0.01"
+                        placeholder="e.g., 199.99"
+                        value={field.value || ''}
+                        onChange={e => field.onChange(parseFloat(e.target.value) || undefined)}
+                        />
+                    )}
+                />
+                {errors.originalPrice && <p className="text-sm text-destructive">{errors.originalPrice.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="price">Discounted Price</Label>
                 <Controller
                     name="price"
                     control={control}
@@ -191,41 +213,42 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                 />
                 {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="stock">Stock</Label>
-                 <Controller
-                    name="stock"
-                    control={control}
-                    render={({ field }) => (
-                        <Input
-                        id="stock"
-                        type="number"
-                        step="1"
-                        value={field.value}
-                        onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
-                        />
-                    )}
-                />
-                {errors.stock && <p className="text-sm text-destructive">{errors.stock.message}</p>}
-              </div>
             </div>
-             <div className="space-y-2">
-                <Label htmlFor="purchaseLimit">Purchase Limit</Label>
-                 <Controller
-                    name="purchaseLimit"
-                    control={control}
-                    render={({ field }) => (
-                        <Input
-                        id="purchaseLimit"
-                        type="number"
-                        step="1"
-                        value={field.value}
-                        onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
-                        />
-                    )}
-                />
-                <p className="text-xs text-muted-foreground">Max quantity per order for this product.</p>
-                {errors.purchaseLimit && <p className="text-sm text-destructive">{errors.purchaseLimit.message}</p>}
+            <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="stock">Stock</Label>
+                    <Controller
+                        name="stock"
+                        control={control}
+                        render={({ field }) => (
+                            <Input
+                            id="stock"
+                            type="number"
+                            step="1"
+                            value={field.value}
+                            onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
+                            />
+                        )}
+                    />
+                    {errors.stock && <p className="text-sm text-destructive">{errors.stock.message}</p>}
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="purchaseLimit">Purchase Limit</Label>
+                    <Controller
+                        name="purchaseLimit"
+                        control={control}
+                        render={({ field }) => (
+                            <Input
+                            id="purchaseLimit"
+                            type="number"
+                            step="1"
+                            value={field.value}
+                            onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
+                            />
+                        )}
+                    />
+                    {errors.purchaseLimit && <p className="text-sm text-destructive">{errors.purchaseLimit.message}</p>}
+                </div>
             </div>
              <div className="space-y-2">
                 <Label htmlFor="colors">Colors</Label>

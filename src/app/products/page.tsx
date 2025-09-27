@@ -32,6 +32,7 @@ export default function ProductsPage() {
     rating: 0,
     colors: [] as string[],
     sizes: [] as string[],
+    inStock: true,
   });
   const [sort, setSort] = useState('featured');
   const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
@@ -53,8 +54,9 @@ export default function ProductsPage() {
       const ratingMatch = product.rating >= filters.rating;
       const colorMatch = filters.colors.length === 0 || product.colors.some(c => filters.colors.includes(c));
       const sizeMatch = filters.sizes.length === 0 || product.sizes.some(s => filters.sizes.includes(s));
+      const stockMatch = !filters.inStock || product.stock > 0;
       
-      return searchMatch && categoryMatch && priceMatch && ratingMatch && colorMatch && sizeMatch;
+      return searchMatch && categoryMatch && priceMatch && ratingMatch && colorMatch && sizeMatch && stockMatch;
     });
 
     switch (sort) {
@@ -65,14 +67,23 @@ export default function ProductsPage() {
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
+        // Sort by rating, then by number of reviews as a tie-breaker
+        filtered.sort((a, b) => {
+            if (b.rating === a.rating) {
+                return b.reviews - a.reviews;
+            }
+            return b.rating - a.rating;
+        });
         break;
       case 'newest':
-        // Correctly sort by date of creation (using id as a proxy)
+        // Correctly sort by date of creation (using id as a proxy for timestamp)
         filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
-      default: // featured
-        // Keep existing logic for featured
+      case 'popularity':
+        // Popularity based on number of reviews
+        filtered.sort((a, b) => b.reviews - a.reviews);
+        break;
+      default: // featured (can be same as popularity or a custom logic)
         filtered.sort((a, b) => b.reviews - a.reviews);
         break;
     }
@@ -119,7 +130,8 @@ export default function ProductsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="featured">Featured</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="popularity">Popularity</SelectItem>
+                  <SelectItem value="newest">Latest</SelectItem>
                   <SelectItem value="price-asc">Price: Low to High</SelectItem>
                   <SelectItem value="price-desc">Price: High to Low</SelectItem>
                   <SelectItem value="rating">Avg. Customer Review</SelectItem>

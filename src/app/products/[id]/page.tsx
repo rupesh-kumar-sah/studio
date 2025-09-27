@@ -9,7 +9,7 @@ import { ProductImageGallery } from '@/components/products/product-image-gallery
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Star, Edit } from 'lucide-react';
+import { Star, Edit, BadgePercent } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -42,6 +42,8 @@ export default function ProductDetailPage() {
   
   const reviews = product.detailedReviews?.length || 0;
 
+  const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+
 
   return (
     <div className="container py-12">
@@ -58,9 +60,22 @@ export default function ProductDetailPage() {
                 </Button>
               )}
             </div>
-            <p className="text-2xl font-semibold mt-2">Rs.{product.price.toFixed(2)}</p>
+            <div className="flex items-baseline gap-3 mt-2">
+              <p className="text-2xl font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
+              {hasDiscount && (
+                  <p className="text-xl text-muted-foreground line-through">Rs.{product.originalPrice?.toFixed(2)}</p>
+              )}
+            </div>
+             {hasDiscount && (
+                <div className="flex items-center gap-2 mt-2 text-sm font-medium text-destructive">
+                    <BadgePercent className="h-4 w-4" />
+                    <span>
+                        {Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)}% off
+                    </span>
+                </div>
+            )}
             <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center text-primary">
+              <div className="flex items-center text-amber-500">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className={`h-5 w-5 ${i < Math.round(rating) ? 'fill-current' : 'fill-muted stroke-muted-foreground'}`}/>
                 ))}

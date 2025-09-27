@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Star, Award, Truck, Shield } from 'lucide-react';
+import { ArrowRight, Star, Award, Truck, Shield, ShoppingBag } from 'lucide-react';
 import { useProducts } from '@/components/products/product-provider';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
@@ -19,9 +19,11 @@ export default function Home() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
   const featuredProducts = products.slice(0, 4);
   const categoryImages = {
-    'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
-    'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
-    'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-1'),
+    'Men': PlaceHolderImages.find(p => p.id === 'clothing-1'),
+    'Women': PlaceHolderImages.find(p => p.id === 'clothing-2'),
+    'Junior': PlaceHolderImages.find(p => p.id === 'clothing-3'),
+    'Electronics': PlaceHolderImages.find(p => p.id === 'accessory-4'),
+    'Fashion': PlaceHolderImages.find(p => p.id === 'accessory-2'),
   } as Record<string, any>;
 
   const whyChooseUs = [
@@ -59,7 +61,7 @@ export default function Home() {
       name: 'Sunita M.',
       avatar: 'https://i.pravatar.cc/150?img=3',
       role: 'Happy Shopper',
-      comment: 'I love the artisan backpack! It\'s so unique and I get compliments on it all the time. It\'s great to support local artisans through Nepal E-Mart.',
+      comment: 'I love the artisan backpack! It\'s so unique and I get compliments on it all the time. It\'s great to support local artisans through Nepal eMart.',
     },
   ];
 
@@ -67,22 +69,10 @@ export default function Home() {
   return (
     <div className="space-y-16 md:space-y-24 pb-16">
       {/* Hero Section */}
-      <section className="relative w-full h-[60vh] md:h-[80vh]">
-        {heroImage && (
-            <Image
-                src={heroImage.imageUrl}
-                alt={heroImage.description}
-                fill
-                className="object-cover"
-                priority
-                data-ai-hint={heroImage.imageHint}
-            />
-        )}
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative container h-full flex flex-col items-center justify-center text-center text-white">
-          <Badge variant="secondary" className="mb-4 bg-white/20 text-white backdrop-blur-sm">New Arrivals</Badge>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">Discover Authentic Nepali Craft</h1>
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
+      <section className="relative w-full h-[60vh] md:h-[80vh] bg-gray-900 text-white">
+        <div className="container h-full flex flex-col items-center justify-center text-center">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">Made in Nepal – Shop Smart, Shop Local.</h1>
+          <p className="mt-4 max-w-2xl text-lg md:text-xl text-gray-300">
             From the Himalayas to your home. Explore our curated collection of clothing, shoes, and accessories.
           </p>
           <div className="mt-8 flex gap-4">
@@ -95,6 +85,29 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Festive Sale Banner */}
+      <section className="bg-primary/10 py-12">
+        <div className="container flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="text-center md:text-left">
+                <Badge>Limited Time Offer</Badge>
+                <h2 className="text-3xl font-bold tracking-tight mt-2">Festive Sale</h2>
+                <p className="mt-1 text-4xl font-extrabold text-primary">Up to 20% Off</p>
+                <p className="mt-2 text-muted-foreground max-w-lg">
+                    Celebrate the season with incredible deals on your favorite Nepali products. Don't miss out!
+                </p>
+            </div>
+            <div className="flex-shrink-0">
+                <Button asChild size="lg" className="px-10 py-6 text-lg">
+                    <Link href="/products">
+                        <ShoppingBag className="mr-3 h-6 w-6" />
+                        Shop the Sale
+                    </Link>
+                </Button>
+            </div>
+        </div>
+      </section>
+
 
       {/* Featured Products Section */}
       <section className="container">
@@ -147,7 +160,7 @@ export default function Home() {
       <section className="bg-secondary py-16">
         <div className="container">
           <div className="flex flex-col items-center text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight">Why Choose Nepal E-Mart?</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Why Choose Nepal eMart?</h2>
             <p className="mt-2 max-w-2xl text-muted-foreground">Experience the difference of authentic craftsmanship and dedicated service.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

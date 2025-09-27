@@ -44,6 +44,7 @@ export function Header() {
     } else {
       router.push('/products');
     }
+    if (isMobileMenuOpen) setMobileMenuOpen(false);
   };
 
   const handleLogout = () => {
@@ -97,9 +98,6 @@ export function Header() {
       <div className="container flex h-16 items-center">
         <Logo />
         <nav className="ml-6 hidden md:flex items-center space-x-4 lg:space-x-6">
-          <Link href="/products" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
-            Products
-          </Link>
           {categories.map(category => (
             <Link 
               key={category}
@@ -138,8 +136,21 @@ export function Header() {
                 <div className="py-4">
                     <Logo />
                 </div>
+
+                 <form onSubmit={handleSearch} className="relative w-full mb-6">
+                    <Input 
+                        type="search" 
+                        name="search" 
+                        placeholder="Search products..." 
+                        className="pl-10" 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                </form>
+
                 <nav className="flex flex-col space-y-4">
-                    <Link href="/products" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Products</Link>
+                    <Link href="/products" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>All Products</Link>
                     {categories.map(category => (
                        <Link 
                           key={category}
@@ -154,16 +165,16 @@ export function Header() {
                 <div className="mt-8 border-t pt-6">
                  {isMounted && !isOwner && !currentUser && (
                    <div className="flex flex-col space-y-2">
-                      <Button asChild variant="ghost">
+                      <Button asChild variant="ghost" className="w-full">
                           <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
                       </Button>
-                      <Button asChild>
+                      <Button asChild className="w-full">
                           <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
                       </Button>
                   </div>
                  )}
                  {isMounted && (isOwner || currentUser) && (
-                    <Button onClick={() => { handleLogout(); setMobileMenuOpen(false); }}>Log out</Button>
+                    <Button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full">Log out</Button>
                  )}
                 </div>
             </SheetContent>

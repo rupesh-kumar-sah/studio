@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { Category } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-const initialCategories: Category[] = ['Clothing', 'Shoes', 'Accessories'];
+const initialCategories: Category[] = ['Men', 'Women', 'Junior', 'Electronics', 'Fashion'];
 
 interface CategoryContextType {
   categories: Category[];
@@ -24,7 +24,14 @@ export function CategoryProvider({ children }: { children: React.ReactNode }) {
     try {
         const storedCategories = localStorage.getItem('categories');
         if (storedCategories) {
-            setCategories(JSON.parse(storedCategories));
+            const parsed = JSON.parse(storedCategories);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setCategories(parsed);
+            } else {
+              // Fallback to initial if stored is empty or invalid
+              localStorage.setItem('categories', JSON.stringify(initialCategories));
+              setCategories(initialCategories);
+            }
         } else {
             localStorage.setItem('categories', JSON.stringify(initialCategories));
             setCategories(initialCategories);
