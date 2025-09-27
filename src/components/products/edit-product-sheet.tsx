@@ -181,7 +181,7 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
           </div>
           <SheetFooter className="pt-6 border-t">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={!isDirty}>Save Changes</Button>
+            <Button type="submit" disabled={!isDirty}>Save Product Changes</Button>
           </SheetFooter>
         </form>
       </SheetContent>
