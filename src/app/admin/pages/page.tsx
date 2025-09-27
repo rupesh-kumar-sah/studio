@@ -48,6 +48,7 @@ export default function AdminPagesPage() {
                     const keys = path.split('.');
                     let current: any = newContent;
                     for (let i = 0; i < keys.length - 1; i++) {
+                        current[keys[i]] = current[keys[i]] || {};
                         current = current[keys[i]];
                     }
                     current[keys[keys.length - 1]] = value;
@@ -75,7 +76,7 @@ export default function AdminPagesPage() {
         setPages(currentPages =>
             currentPages.map(page => {
                 if (page.slug === slug) {
-                    const newSections = [...page.content.sections, { title: 'New Section', content: 'New content...' }];
+                    const newSections = [...(page.content.sections || []), { title: 'New Section', content: 'New content...' }];
                     return { ...page, content: { ...page.content, sections: newSections } };
                 }
                 return page;
@@ -112,7 +113,7 @@ export default function AdminPagesPage() {
         setPages(currentPages =>
             currentPages.map(page => {
                 if (page.slug === slug) {
-                    const newFaqs = [...page.content.faqs, { question: 'New Question', answer: 'New Answer' }];
+                    const newFaqs = [...(page.content.faqs || []), { question: 'New Question', answer: 'New Answer' }];
                     return { ...page, content: { ...page.content, faqs: newFaqs } };
                 }
                 return page;
@@ -166,8 +167,11 @@ export default function AdminPagesPage() {
     }
     
     const renderContentEditor = (page: PageContent) => {
+        const pageContent = page.content || {};
+
         switch (page.slug) {
             case 'faq':
+                const faqs = pageContent.faqs || [];
                 return (
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
@@ -178,10 +182,10 @@ export default function AdminPagesPage() {
                             </Button>
                         </div>
                         <Accordion type="single" collapsible className="w-full">
-                            {page.content.faqs.map((faq: {question: string, answer: string}, index: number) => (
+                            {faqs.map((faq: {question: string, answer: string}, index: number) => (
                                 <AccordionItem key={index} value={`item-${index}`}>
                                     <AccordionTrigger>
-                                        <span className="truncate pr-4">{faq.question}</span>
+                                        <span className="truncate pr-4">{faq.question || 'New Question'}</span>
                                     </AccordionTrigger>
                                     <AccordionContent className="space-y-4">
                                         <div className="space-y-2">
@@ -211,6 +215,8 @@ export default function AdminPagesPage() {
                     </div>
                 );
             case 'shipping-returns':
+                const shipping = pageContent.shipping || {};
+                const returns = pageContent.returns || {};
                 return (
                     <div className="space-y-6">
                         {/* Shipping Policy Section */}
@@ -218,27 +224,27 @@ export default function AdminPagesPage() {
                             <h3 className="font-semibold text-lg">Shipping Policy</h3>
                             <div className="space-y-2">
                                 <Label>Title</Label>
-                                <Input value={page.content.shipping.title} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.title', e.target.value)} />
+                                <Input value={shipping.title || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.title', e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Introduction</Label>
-                                <Textarea value={page.content.shipping.intro} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.intro', e.target.value)} />
+                                <Textarea value={shipping.intro || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.intro', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Delivery Times (Inside Valley)</Label>
-                                <Input value={page.content.shipping.deliveryTimes.insideValley} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.insideValley', e.target.value)} />
+                                <Input value={shipping.deliveryTimes?.insideValley || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.insideValley', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Delivery Times (Outside Valley)</Label>
-                                <Input value={page.content.shipping.deliveryTimes.outsideValley} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.outsideValley', e.target.value)} />
+                                <Input value={shipping.deliveryTimes?.outsideValley || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.deliveryTimes.outsideValley', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Shipping Costs</Label>
-                                <Textarea value={page.content.shipping.costs.content} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.costs.content', e.target.value)} />
+                                <Textarea value={shipping.costs?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.costs.content', e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Tracking</Label>
-                                <Textarea value={page.content.shipping.tracking.content} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.tracking.content', e.target.value)} />
+                                <Textarea value={shipping.tracking?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'shipping.tracking.content', e.target.value)} />
                             </div>
                         </div>
                         {/* Return Policy Section */}
@@ -246,25 +252,26 @@ export default function AdminPagesPage() {
                              <h3 className="font-semibold text-lg">Return Policy</h3>
                             <div className="space-y-2">
                                 <Label>Title</Label>
-                                <Input value={page.content.returns.title} onChange={(e) => handleNestedContentChange(page.slug, 'returns.title', e.target.value)} />
+                                <Input value={returns.title || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.title', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Introduction</Label>
-                                <Textarea value={page.content.returns.intro} onChange={(e) => handleNestedContentChange(page.slug, 'returns.intro', e.target.value)} />
+                                <Textarea value={returns.intro || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.intro', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Policy Details</Label>
-                                <Textarea value={page.content.returns.policy.content} onChange={(e) => handleNestedContentChange(page.slug, 'returns.policy.content', e.target.value)} />
+                                <Textarea value={returns.policy?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.policy.content', e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label>Refunds</Label>
-                                <Textarea value={page.content.returns.refunds.content} onChange={(e) => handleNestedContentChange(page.slug, 'returns.refunds.content', e.target.value)} />
+                                <Textarea value={returns.refunds?.content || ''} onChange={(e) => handleNestedContentChange(page.slug, 'returns.refunds.content', e.target.value)} />
                             </div>
                         </div>
                     </div>
                 );
             case 'terms-of-service':
             case 'privacy-policy':
+                 const sections = pageContent.sections || [];
                  return (
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
@@ -275,10 +282,10 @@ export default function AdminPagesPage() {
                             </Button>
                         </div>
                          <Accordion type="single" collapsible className="w-full">
-                            {page.content.sections.map((section: {title: string, content: string}, index: number) => (
+                            {sections.map((section: {title: string, content: string}, index: number) => (
                                 <AccordionItem key={index} value={`item-${index}`}>
                                     <AccordionTrigger>
-                                        <span className="truncate pr-4">{section.title}</span>
+                                        <span className="truncate pr-4">{section.title || 'New Section'}</span>
                                     </AccordionTrigger>
                                     <AccordionContent className="space-y-4">
                                         <div className="space-y-2">
@@ -308,7 +315,7 @@ export default function AdminPagesPage() {
                         </Accordion>
                         <div className="space-y-2 pt-4">
                             <Label htmlFor="last-updated">Last Updated</Label>
-                            <Input id="last-updated" value={page.content.lastUpdated} onChange={(e) => handleNestedContentChange(page.slug, 'lastUpdated', e.target.value)} />
+                            <Input id="last-updated" value={pageContent.lastUpdated || ''} onChange={(e) => handleNestedContentChange(page.slug, 'lastUpdated', e.target.value)} />
                         </div>
                     </div>
                 );
