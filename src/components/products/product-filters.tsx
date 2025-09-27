@@ -3,8 +3,33 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '../ui/button';
+import { useCategories } from '../categories/category-provider';
+import { useAuth } from '../auth/auth-provider';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
+import { Input } from '../ui/input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const newCategorySchema = z.object({
+  name: z.string().min(1, 'Category name is required'),
+});
 
 export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes }: any) {
+  const { categories, addCategory } = useCategories();
+  const { isOwner } = useAuth();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<{ name: string }>({
+    resolver: zodResolver(newCategorySchema),
+  });
 
   const handleCategoryChange = (category: string) => {
     setFilters({ ...filters, category });
@@ -43,7 +68,16 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
     });
   };
 
+  const handleAddCategory = (data: { name: string }) => {
+    if (addCategory(data.name)) {
+      reset();
+      setIsDialogOpen(false);
+    }
+  };
+
+
   return (
+    <>
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <CardTitle>Filters</CardTitle>
@@ -51,9 +85,20 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <Label className="font-semibold text-base">Category</Label>
+          <div className="flex justify-between items-center mb-2">
+            <Label className="font-semibold text-base">Category</Label>
+            {isOwner && (
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsDialogOpen(true)}>
+                    <Plus className="h-4 w-4" />
+                </Button>
+            )}
+          </div>
           <RadioGroup value={filters.category} onValueChange={handleCategoryChange} className="mt-2 space-y-1">
-            {['All', 'Clothing', 'Shoes', 'Accessories'].map(cat => (
+            <div className="flex items-center space-x-2">
+                <RadioGroupItem value="All" id="cat-All" />
+                <Label htmlFor="cat-All" className="font-normal">All</Label>
+            </div>
+            {categories.map(cat => (
               <div key={cat} className="flex items-center space-x-2">
                 <RadioGroupItem value={cat} id={`cat-${cat}`} />
                 <Label htmlFor={`cat-${cat}`} className="font-normal">{cat}</Label>
@@ -118,5 +163,29 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
         </div>
       </CardContent>
     </Card>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Category</DialogTitle>
+            <DialogDescription>
+              Enter the name for the new category.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit(handleAddCategory)}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Category Name</Label>
+                <Input id="name" {...register('name')} />
+                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+              <Button type="submit">Add Category</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

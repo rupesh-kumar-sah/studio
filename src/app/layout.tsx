@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/footer';
 import { CartProvider } from '@/components/cart/cart-provider';
 import { ProductProvider } from '@/components/products/product-provider';
 import { AuthProvider } from '@/components/auth/auth-provider';
+import { CategoryProvider } from '@/components/categories/category-provider';
 
 export const metadata: Metadata = {
   title: 'Nepal E-Mart',
@@ -26,16 +27,18 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <AuthProvider>
-          <ProductProvider>
-            <CartProvider>
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-              <Toaster />
-            </CartProvider>
-          </ProductProvider>
+          <CategoryProvider>
+            <ProductProvider>
+              <CartProvider>
+                <Header />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+                <Toaster />
+              </CartProvider>
+            </ProductProvider>
+          </CategoryProvider>
         </AuthProvider>
       </body>
     </html>

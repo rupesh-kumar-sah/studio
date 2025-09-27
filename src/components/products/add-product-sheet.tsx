@@ -21,13 +21,14 @@ import { useProducts } from './product-provider';
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
+import { useCategories } from '../categories/category-provider';
 
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
   price: z.number().min(0, 'Price must be positive'),
   stock: z.number().int().min(0, 'Stock must be a positive integer'),
-  category: z.enum(['Clothing', 'Shoes', 'Accessories']),
+  category: z.string().min(1, 'Category is required'),
   colors: z.string().min(1, "Please enter at least one color."),
   sizes: z.string().min(1, "Please enter at least one size."),
 });
@@ -39,6 +40,7 @@ interface AddProductSheetProps {
 
 export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) {
   const { addProduct } = useProducts();
+  const { categories } = useCategories();
   const [imagePreview1, setImagePreview1] = useState<string | null>(null);
   const [imagePreview2, setImagePreview2] = useState<string | null>(null);
   const [imagePreview3, setImagePreview3] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
       description: '',
       price: 0,
       stock: 0,
-      category: 'Clothing',
+      category: categories[0] || '',
       colors: '',
       sizes: '',
     },
@@ -64,12 +66,20 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
   
   React.useEffect(() => {
     if (isOpen) {
-      reset();
+      reset({
+        name: '',
+        description: '',
+        price: 0,
+        stock: 0,
+        category: categories[0] || '',
+        colors: '',
+        sizes: '',
+      });
       setImagePreview1(null);
       setImagePreview2(null);
       setImagePreview3(null);
     }
-  }, [isOpen, reset]);
+  }, [isOpen, reset, categories]);
 
   const onSubmit = (data: z.infer<typeof productSchema>) => {
     const placeholderUrl = 'https://placehold.co/600x800';
@@ -130,9 +140,9 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Clothing">Clothing</SelectItem>
-                      <SelectItem value="Shoes">Shoes</SelectItem>
-                      <SelectItem value="Accessories">Accessories</SelectItem>
+                      {categories.map(cat => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}

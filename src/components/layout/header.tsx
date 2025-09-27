@@ -23,6 +23,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth/auth-provider';
+import { useCategories } from '../categories/category-provider';
 
 export function Header() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isOwner, currentUser, isMounted, logout } = useAuth();
+  const { categories } = useCategories();
   
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');
@@ -98,15 +100,15 @@ export function Header() {
           <Link href="/products" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
             Products
           </Link>
-          <Link href="/products?category=Clothing" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
-            Clothing
-          </Link>
-          <Link href="/products?category=Shoes" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
-            Shoes
-          </Link>
-          <Link href="/products?category=Accessories" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
-            Accessories
-          </Link>
+          {categories.map(category => (
+            <Link 
+              key={category}
+              href={`/products?category=${category}`} 
+              className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80"
+            >
+              {category}
+            </Link>
+          ))}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
           <form onSubmit={handleSearch} className="relative hidden lg:block w-full max-w-sm">
@@ -138,9 +140,16 @@ export function Header() {
                 </div>
                 <nav className="flex flex-col space-y-4">
                     <Link href="/products" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Products</Link>
-                    <Link href="/products?category=Clothing" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Clothing</Link>
-                    <Link href="/products?category=Shoes" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Shoes</Link>
-                    <Link href="/products?category=Accessories" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Accessories</Link>
+                    {categories.map(category => (
+                       <Link 
+                          key={category}
+                          href={`/products?category=${category}`} 
+                          className="text-lg font-medium" 
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {category}
+                        </Link>
+                    ))}
                 </nav>
                 <div className="mt-8 border-t pt-6">
                  {isMounted && !isOwner && !currentUser && (

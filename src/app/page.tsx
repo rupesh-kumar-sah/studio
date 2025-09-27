@@ -9,16 +9,19 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/products/product-card';
+import { useCategories } from '@/components/categories/category-provider';
 
 export default function Home() {
   const { products } = useProducts();
+  const { categories } = useCategories();
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
   const featuredProducts = products.slice(0, 4);
-  const categories = [
-    { name: 'Clothing', href: '/products?category=Clothing', image: PlaceHolderImages.find(p => p.id === 'clothing-1') },
-    { name: 'Shoes', href: '/products?category=Shoes', image: PlaceHolderImages.find(p => p.id === 'shoe-1') },
-    { name: 'Accessories', href: '/products?category=Accessories', image: PlaceHolderImages.find(p => p.id === 'accessory-1') },
-  ];
+  const categoryImages = {
+    'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
+    'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
+    'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-1'),
+  } as Record<string, any>;
+
 
   return (
     <div className="space-y-16 md:space-y-24 pb-16">
@@ -72,22 +75,22 @@ export default function Home() {
             <p className="mt-2 max-w-2xl text-muted-foreground">Find what you're looking for with our curated categories.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {categories.map((category) => (
-                <Link href={category.href} key={category.name} className="group relative block">
+            {categories.slice(0, 3).map((category) => (
+                <Link href={`/products?category=${category}`} key={category} className="group relative block">
                     <div className="relative w-full h-80 overflow-hidden rounded-lg">
-                        {category.image && (
+                        
                             <Image
-                                src={category.image.imageUrl}
-                                alt={category.image.description}
+                                src={categoryImages[category]?.imageUrl || 'https://picsum.photos/seed/placeholder/600/800'}
+                                alt={categoryImages[category]?.description || category}
                                 fill
                                 className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                data-ai-hint={category.image.imageHint}
+                                data-ai-hint={categoryImages[category]?.imageHint || 'category'}
                             />
-                        )}
+                        
                         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <h3 className="text-3xl font-bold text-white">{category.name}</h3>
+                        <h3 className="text-3xl font-bold text-white">{category}</h3>
                     </div>
                 </Link>
             ))}

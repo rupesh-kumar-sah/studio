@@ -23,6 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useRouter } from 'next/navigation';
+import { useCategories } from '../categories/category-provider';
 
 
 const productSchema = z.object({
@@ -30,7 +31,7 @@ const productSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   price: z.number().min(0, 'Price must be positive'),
   stock: z.number().int().min(0, 'Stock must be a positive integer'),
-  category: z.enum(['Clothing', 'Shoes', 'Accessories']),
+  category: z.string().min(1, 'Category is required'),
   colors: z.string().min(1, "Please enter at least one color."),
   sizes: z.string().min(1, "Please enter at least one size."),
 });
@@ -43,6 +44,7 @@ interface EditProductSheetProps {
 
 export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductSheetProps) {
   const { updateProduct, deleteProduct } = useProducts();
+  const { categories } = useCategories();
   const router = useRouter();
   const [imagePreview1, setImagePreview1] = useState<string | null>(null);
   const [imagePreview2, setImagePreview2] = useState<string | null>(null);
@@ -154,9 +156,9 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Clothing">Clothing</SelectItem>
-                      <SelectItem value="Shoes">Shoes</SelectItem>
-                      <SelectItem value="Accessories">Accessories</SelectItem>
+                      {categories.map(cat => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}

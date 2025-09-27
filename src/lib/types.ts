@@ -4,7 +4,7 @@ export type Product = {
   description: string;
   price: number;
   images: { url: string; alt: string; hint: string }[];
-  category: 'Clothing' | 'Shoes' | 'Accessories';
+  category: string;
   rating: number;
   reviews: number;
   stock: number;
@@ -25,3 +25,5 @@ export type User = {
   email: string;
   password?: string; // Optional for social logins
 };
+
+export type Category = string;
