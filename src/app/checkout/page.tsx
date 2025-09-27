@@ -199,7 +199,7 @@ export default function CheckoutPage() {
                             <div className="p-4 bg-secondary rounded-lg text-sm">
                                 <h3 className="font-semibold text-base mb-2">Pay with eSewa</h3>
                                 <p>Wallet Number: <strong>9824812753</strong></p>
-                                <p>Account Name: <strong>Nepal E-Mart</strong></p>
+                                <p>Account Name: <strong>Rupesh Kumar Sah</strong></p>
                                 <p className="mt-2 text-muted-foreground">After completing the payment on your eSewa app, please enter the Transaction ID below to confirm.</p>
                             </div>
                             <FormField
