@@ -1,6 +1,7 @@
+
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { getProductRecommendations, ProductRecommendationsInput } from "@/ai/flows/product-recommendations-flow"
 import { ProductCard } from "@/components/products/product-card-server"
 import { Button } from "@/components/ui/button"
@@ -21,14 +22,27 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
   const [loading, setLoading] = useState(false)
   const [boostPopularity, setBoostPopularity] = useState(1)
   const [boostRecency, setBoostRecency] = useState(1)
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
 
-  useState(() => {
+  useEffect(() => {
     async function fetchProducts() {
       const products = await getProducts();
       setAllProducts(products);
     }
     fetchProducts();
-  });
+  }, []);
+
+  useEffect(() => {
+    async function fetchRecommendedProducts() {
+      if (recommendations.length > 0) {
+        const products = await Promise.all(recommendations.map(id => getProductById(id)));
+        setRecommendedProducts(products.filter((p): p is Product => Boolean(p)));
+      } else {
+        setRecommendedProducts([]);
+      }
+    }
+    fetchRecommendedProducts();
+  }, [recommendations]);
 
   const handleGetRecommendations = async () => {
     setLoading(true)
@@ -72,17 +86,6 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
       setLoading(false)
     }
   }
-
-  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
-
-  useState(() => {
-    async function fetchRecommendedProducts() {
-      const products = await Promise.all(recommendations.map(id => getProductById(id)));
-      setRecommendedProducts(products.filter(p => p) as Product[]);
-    }
-    fetchRecommendedProducts();
-  });
-
 
   return (
     <Card>
