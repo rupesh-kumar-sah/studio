@@ -8,9 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Product, Review } from '@/lib/types';
 import { useAuth } from '@/components/auth/auth-provider';
-import { useProducts } from './product-provider';
+import { updateReview, deleteReview } from '@/app/actions/product-actions';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star, Edit, Trash2, MessageSquare } from 'lucide-react';
@@ -32,7 +34,8 @@ interface ProductReviewsProps {
 
 export function ProductReviews({ product }: ProductReviewsProps) {
     const { isOwner } = useAuth();
-    const { updateReview, deleteReview } = useProducts();
+    const { toast } = useToast();
+    const router = useRouter();
     const [editingReview, setEditingReview] = useState<Review | null>(null);
     
     const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<z.infer<typeof reviewSchema>>({
@@ -44,15 +47,27 @@ export function ProductReviews({ product }: ProductReviewsProps) {
         reset({ comment: review.comment, rating: review.rating });
     };
 
-    const handleEditSubmit = (data: z.infer<typeof reviewSchema>) => {
+    const handleEditSubmit = async (data: z.infer<typeof reviewSchema>) => {
         if (editingReview) {
-            updateReview(product.id, editingReview.id, data.comment, data.rating);
-            setEditingReview(null);
+            const result = await updateReview(product.id, editingReview.id, data.comment, data.rating);
+            if (result.success) {
+                toast({ title: 'Review updated successfully' });
+                setEditingReview(null);
+                router.refresh();
+            } else {
+                toast({ variant: 'destructive', title: 'Failed to update review' });
+            }
         }
     };
     
-    const handleDelete = (reviewId: string) => {
-        deleteReview(product.id, reviewId);
+    const handleDelete = async (reviewId: string) => {
+        const result = await deleteReview(product.id, reviewId);
+        if (result.success) {
+            toast({ title: 'Review deleted successfully' });
+            router.refresh();
+        } else {
+            toast({ variant: 'destructive', title: 'Failed to delete review' });
+        }
     };
 
     const watchedRating = watch("rating", editingReview?.rating || 0);
@@ -114,7 +129,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                                         </div>
                                     )}
                                 </div>
-                                <Separator className="mt-6" />
+                                {product.detailedReviews.indexOf(review) < product.detailedReviews.length - 1 && <Separator className="mt-6" />}
                             </div>
                         ))}
                     </div>

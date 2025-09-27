@@ -6,7 +6,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Review } from '@/lib/types';
-import { useProducts } from './product-provider';
+import { updateReview, deleteReview } from '@/app/actions/product-actions';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Star, Edit, Trash2 } from 'lucide-react';
@@ -15,9 +17,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useToast } from '@/hooks/use-toast';
-import { updateReview, deleteReview } from '@/app/actions/product-actions';
-import { useRouter } from 'next/navigation';
 
 const reviewSchema = z.object({
     comment: z.string().min(10, "Review must be at least 10 characters long."),
@@ -131,4 +130,3 @@ export function EditReviewDialog({ review, productId }: EditReviewDialogProps) {
         </Dialog>
     );
 }
-

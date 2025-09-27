@@ -16,13 +16,21 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
-import { useProducts } from '@/components/products/product-provider';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { getProducts } from '@/lib/products-db';
 
 function ProductsPageContent() {
-  const { products: allProducts } = useProducts();
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    async function loadProducts() {
+      const products = await getProducts();
+      setAllProducts(products);
+    }
+    loadProducts();
+  }, []);
 
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
@@ -49,7 +57,7 @@ function ProductsPageContent() {
       const searchMatch = product.name.toLowerCase().includes(filters.search.toLowerCase()) || product.description.toLowerCase().includes(filters.search.toLowerCase());
       const categoryMatch = filters.category === 'All' || product.category === filters.category;
       const priceMatch = product.price >= filters.price[0] && product.price <= filters.price[1];
-      const ratingMatch = product.rating >= filters.rating;
+      const ratingMatch = (product.rating || 0) >= filters.rating;
       const colorMatch = filters.colors.length === 0 || product.colors.some(c => filters.colors.includes(c));
       const sizeMatch = filters.sizes.length === 0 || product.sizes.some(s => filters.sizes.includes(s));
       const stockMatch = !filters.inStock || product.stock > 0;
@@ -66,20 +74,22 @@ function ProductsPageContent() {
         break;
       case 'rating':
         filtered.sort((a, b) => {
-            if (b.rating === a.rating) {
-                return b.reviews - a.reviews;
+            const ratingA = a.rating || 0;
+            const ratingB = b.rating || 0;
+            if (ratingB === ratingA) {
+                return (b.reviews || 0) - (a.reviews || 0);
             }
-            return b.rating - a.rating;
+            return ratingB - ratingA;
         });
         break;
       case 'newest':
         filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
       case 'popularity':
-        filtered.sort((a, b) => b.reviews - a.reviews);
+        filtered.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
         break;
       default:
-        filtered.sort((a, b) => b.reviews - a.reviews);
+        filtered.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
         break;
     }
     
