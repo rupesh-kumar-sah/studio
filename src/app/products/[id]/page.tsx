@@ -3,6 +3,7 @@
 
 import { useState, useMemo } from 'react';
 import { notFound, useParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useProducts } from '@/components/products/product-provider';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
@@ -11,8 +12,15 @@ import { Separator } from '@/components/ui/separator';
 import { Star, Edit } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
-import { ProductRecommendations } from '@/components/products/product-recommendations';
-import { ProductReviews } from '@/components/products/product-reviews';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const ProductReviews = dynamic(() => import('@/components/products/product-reviews').then(mod => mod.ProductReviews), {
+  loading: () => <Skeleton className="h-48 w-full" />,
+});
+const ProductRecommendations = dynamic(() => import('@/components/products/product-recommendations').then(mod => mod.ProductRecommendations), {
+  loading: () => <Skeleton className="h-48 w-full" />,
+});
+
 
 export default function ProductDetailPage() {
   const params = useParams();
