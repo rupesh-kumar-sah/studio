@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Image from 'next/image';
@@ -26,8 +26,6 @@ import { isToday } from 'date-fns';
 import { EsewaQrCode } from '@/components/checkout/esewa-qr-code';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { KhaltiQrCode } from '@/components/checkout/khalti-qr-code';
 
 export type Order = {
   id: string;
@@ -54,7 +52,6 @@ const checkoutSchema = z.object({
   customer: customerInfoSchema,
   transactionId: z.string().min(1, 'Transaction ID is required'),
   message: z.string().optional(),
-  paymentMethod: z.enum(['eSewa', 'Khalti']),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -79,7 +76,6 @@ export default function CheckoutPage() {
       },
       transactionId: '',
       message: '',
-      paymentMethod: 'eSewa',
     },
   });
 
@@ -131,7 +127,7 @@ export default function CheckoutPage() {
             transactionId: data.transactionId,
             message: data.message,
             status: 'pending',
-            paymentMethod: data.paymentMethod,
+            paymentMethod: 'eSewa',
         };
         
         // Save order to localStorage
@@ -223,42 +219,14 @@ export default function CheckoutPage() {
                         </CardContent>
                     </Card>
 
-                    <Controller
-                        control={form.control}
-                        name="paymentMethod"
-                        render={({ field }) => (
-                        <Tabs
-                            defaultValue={field.value}
-                            onValueChange={(value) => field.onChange(value as 'eSewa' | 'Khalti')}
-                            className="w-full"
-                        >
-                            <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="eSewa">eSewa</TabsTrigger>
-                            <TabsTrigger value="Khalti">Khalti</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="eSewa">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Pay with eSewa</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <EsewaQrCode />
-                                    </CardContent>
-                                </Card>
-                            </TabsContent>
-                            <TabsContent value="Khalti">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Pay with Khalti</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <KhaltiQrCode />
-                                    </CardContent>
-                                </Card>
-                            </TabsContent>
-                        </Tabs>
-                        )}
-                    />
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Pay with eSewa</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <EsewaQrCode />
+                        </CardContent>
+                    </Card>
 
 
                     <Card>
@@ -373,5 +341,3 @@ export default function CheckoutPage() {
     </>
   );
 }
-
-    
