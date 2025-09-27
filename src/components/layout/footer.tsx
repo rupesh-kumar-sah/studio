@@ -16,7 +16,7 @@ export function Footer() {
              <div className="mt-2">
                 <h4 className="font-semibold mb-2">Contact Us</h4>
                 <a href="mailto:rsah0123456@gmail.com" className="text-sm text-muted-foreground hover:text-foreground">
-                  📧 rsah0123456@gmail.com
+                  <span>📧 rsah0123456@gmail.com</span>
                 </a>
             </div>
           </div>
@@ -24,12 +24,12 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Customer Support</h3>
             <ul className="space-y-2">
               <li><Link href="/faq" className="text-sm text-muted-foreground hover:text-foreground">FAQs</Link></li>
-              <li><Link href="/shipping-returns" className="text-sm text-muted-foreground hover:text-foreground">Shipping & Returns</Link></li>
+              <li><Link href="/shipping-returns" className="text-sm text-muted-foreground hover:text-foreground">Shipping &amp; Returns</Link></li>
               <li><Link href="/orders" className="text-sm text-muted-foreground hover:text-foreground">Orders</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Legal & Policies</h3>
+            <h3 className="font-semibold mb-4">Legal &amp; Policies</h3>
             <ul className="space-y-2">
               <li><Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
               <li><Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
