@@ -76,7 +76,7 @@ export default function OrdersPage() {
              <Card>
                 <AccordionTrigger className="p-6 text-left">
                     <div className="flex-1">
-                        <p className="font-bold text-lg">Order #{order.id.slice(-6)}</p>
+                        <p className="font-bold text-lg">Order #{order.id}</p>
                         <p className="text-sm text-muted-foreground">{order.customer.firstName} {order.customer.lastName} &bull; {format(new Date(order.date), "PPP p")}</p>
                     </div>
                      <div className="flex items-center gap-4">
@@ -124,6 +124,7 @@ export default function OrdersPage() {
                                         <div>
                                             <p className="font-medium">{item.product.name}</p>
                                             <p className="text-sm text-muted-foreground">Qty: {item.quantity} &bull; Rs.{item.product.price.toFixed(2)}</p>
+                                            <p className="text-sm text-muted-foreground">Size: {item.size} &bull; Color: {item.color}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -143,7 +144,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-
-    
-
-    
