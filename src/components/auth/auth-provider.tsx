@@ -10,6 +10,7 @@ interface AuthContextType {
   currentUser: User | null;
   isMounted: boolean;
   allUsers: User[];
+  reloadAllUsers: () => void;
   ownerLogin: (email: string, pass: string) => boolean;
   customerLogin: (email: string, pass: string) => boolean;
   signup: (name: string, email: string, pass: string) => boolean;
@@ -30,6 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const storedUsers = localStorage.getItem('users');
     return storedUsers ? JSON.parse(storedUsers) : [];
   }, []);
+
+  const reloadAllUsers = useCallback(() => {
+    setAllUsers(loadUsers());
+  }, [loadUsers]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -92,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(null);
   }, []);
 
-  const value = { isOwner, currentUser, isMounted, allUsers, ownerLogin, customerLogin, signup, logout };
+  const value = { isOwner, currentUser, isMounted, allUsers, reloadAllUsers, ownerLogin, customerLogin, signup, logout };
 
   return (
     <AuthContext.Provider value={value}>

@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import type { User } from "@/lib/types";
 
 export default function CustomersPage() {
-  const { isOwner, allUsers, isMounted } = useAuth();
+  const { isOwner, allUsers, isMounted, reloadAllUsers } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -20,6 +20,19 @@ export default function CustomersPage() {
       router.push('/');
     }
   }, [isOwner, isMounted, router]);
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'users' && event.newValue !== event.oldValue) {
+        reloadAllUsers();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [reloadAllUsers]);
 
   if (!isMounted) {
     return <div className="container py-12 text-center">Loading...</div>;
@@ -81,4 +94,3 @@ export default function CustomersPage() {
     </div>
   );
 }
-

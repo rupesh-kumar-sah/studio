@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import type { Order } from '@/app/checkout/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import Image from 'next/image';
@@ -20,14 +20,7 @@ export default function OrdersPage() {
   const [isMounted, setIsMounted] = useState(false);
   const { isOwner, currentUser, isMounted: authIsMounted } = useAuth();
 
-  useEffect(() => {
-    setIsMounted(true);
-    if (authIsMounted) {
-        loadAndFilterOrders();
-    }
-  }, [authIsMounted, currentUser, isOwner]);
-
-  const loadAndFilterOrders = () => {
+  const loadAndFilterOrders = useCallback(() => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setAllOrders(storedOrders);
@@ -40,7 +33,27 @@ export default function OrdersPage() {
     } else {
         setDisplayOrders([]);
     }
-  };
+  }, [isOwner, currentUser]);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (authIsMounted) {
+        loadAndFilterOrders();
+    }
+  }, [authIsMounted, loadAndFilterOrders]);
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'orders' && event.newValue !== event.oldValue) {
+        loadAndFilterOrders();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [loadAndFilterOrders]);
   
   const acceptOrder = (orderId: string) => {
     const updatedOrders = allOrders.map(order => {
