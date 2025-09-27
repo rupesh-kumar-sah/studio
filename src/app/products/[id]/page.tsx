@@ -15,8 +15,7 @@ import { useState }
 from 'react';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function ProductDetailPage({ params: { id } }: { params: { id: string } }) {
   const { getProductById } = useProducts();
   const { isOwner } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
