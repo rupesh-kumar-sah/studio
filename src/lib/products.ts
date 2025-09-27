@@ -54,6 +54,7 @@ export const products: Product[] = [
     stock: 50,
     colors: ['#2F3A4C', '#8B4513', '#556B2F'],
     sizes: ['S', 'M', 'L', 'XL'],
+    purchaseLimit: 10,
   },
   {
     id: '2',
@@ -68,6 +69,7 @@ export const products: Product[] = [
     stock: 100,
     colors: ['#FFFFFF', '#F0E68C', '#B0C4DE'],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    purchaseLimit: 10,
   },
   {
     id: '3',
@@ -82,6 +84,7 @@ export const products: Product[] = [
     stock: 30,
     colors: ['#A0522D', '#000000'],
     sizes: ['8', '9', '10', '11', '12'],
+    purchaseLimit: 10,
   },
   {
     id: '4',
@@ -96,6 +99,7 @@ export const products: Product[] = [
     stock: 60,
     colors: ['#D2B48C', '#8B4513'],
     sizes: ['7', '8', '9', '10'],
+    purchaseLimit: 10,
   },
   {
     id: '5',
@@ -110,6 +114,7 @@ export const products: Product[] = [
     stock: 40,
     colors: ['Natural'],
     sizes: ['One Size'],
+    purchaseLimit: 10,
   },
   {
     id: '6',
@@ -124,6 +129,7 @@ export const products: Product[] = [
     stock: 70,
     colors: ['#464646', '#800000'],
     sizes: ['S', 'M', 'L', 'XL'],
+    purchaseLimit: 10,
   },
   {
     id: '7',
@@ -138,6 +144,7 @@ export const products: Product[] = [
     stock: 80,
     colors: ['#ADD8E6', '#FFFFFF'],
     sizes: ['8', '9', '10', '11'],
+    purchaseLimit: 10,
   },
   {
     id: '8',
@@ -152,6 +159,7 @@ export const products: Product[] = [
     stock: 90,
     colors: ['#FF4500', '#FFD700', '#FF69B4'],
     sizes: ['One Size'],
+    purchaseLimit: 10,
   },
    {
     id: '9',
@@ -166,6 +174,7 @@ export const products: Product[] = [
     stock: 65,
     colors: ['#556B2F', '#D2B48C'],
     sizes: ['M', 'L', 'XL', 'XXL'],
+    purchaseLimit: 10,
   },
   {
     id: '10',
@@ -180,6 +189,7 @@ export const products: Product[] = [
     stock: 45,
     colors: ['#483D8B', '#FFA500'],
     sizes: ['9', '10', '11', '12'],
+    purchaseLimit: 10,
   },
   {
     id: '11',
@@ -194,6 +204,7 @@ export const products: Product[] = [
     stock: 25,
     colors: ['#8B4513', '#C0C0C0'],
     sizes: ['One Size'],
+    purchaseLimit: 10,
   },
   {
     id: '12',
@@ -208,6 +219,7 @@ export const products: Product[] = [
     stock: 120,
     colors: ['#A0522D', '#2E4053'],
     sizes: ['One Size'],
+    purchaseLimit: 10,
   }
 ];
 

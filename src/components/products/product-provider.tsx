@@ -77,6 +77,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       rating: 0,
       reviews: 0,
       detailedReviews: [],
+      purchaseLimit: newProductData.purchaseLimit || 10,
     };
     setProducts(prevProducts => [newProduct, ...prevProducts]);
     toast({

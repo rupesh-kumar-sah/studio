@@ -31,6 +31,7 @@ const productSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   colors: z.string().min(1, "Please enter at least one color."),
   sizes: z.string().min(1, "Please enter at least one size."),
+  purchaseLimit: z.number().int().min(1, 'Limit must be at least 1').optional(),
 });
 
 interface AddProductSheetProps {
@@ -61,6 +62,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
       category: categories[0] || '',
       colors: '',
       sizes: '',
+      purchaseLimit: 10,
     },
   });
   
@@ -74,6 +76,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         category: categories[0] || '',
         colors: '',
         sizes: '',
+        purchaseLimit: 10,
       });
       setImagePreview1(null);
       setImagePreview2(null);
@@ -83,7 +86,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
 
   const onSubmit = (data: z.infer<typeof productSchema>) => {
     const placeholderUrl = 'https://placehold.co/600x800';
-    const newProduct: Omit<Product, 'id' | 'rating' | 'reviews'> = {
+    const newProduct: Omit<Product, 'id' | 'rating' | 'reviews' | 'detailedReviews'> = {
       ...data,
       colors: data.colors.split(',').map(c => c.trim()).filter(Boolean),
       sizes: data.sizes.split(',').map(s => s.trim()).filter(Boolean),
@@ -189,6 +192,24 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                 />
                 {errors.stock && <p className="text-sm text-destructive">{errors.stock.message}</p>}
               </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="purchaseLimit">Purchase Limit</Label>
+                 <Controller
+                    name="purchaseLimit"
+                    control={control}
+                    render={({ field }) => (
+                        <Input
+                        id="purchaseLimit"
+                        type="number"
+                        step="1"
+                        value={field.value}
+                        onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
+                        />
+                    )}
+                />
+                <p className="text-xs text-muted-foreground">Max quantity per order for this product.</p>
+                {errors.purchaseLimit && <p className="text-sm text-destructive">{errors.purchaseLimit.message}</p>}
             </div>
              <div className="space-y-2">
                 <Label htmlFor="colors">Colors</Label>

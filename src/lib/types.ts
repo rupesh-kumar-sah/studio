@@ -20,6 +20,7 @@ export type Product = {
   stock: number;
   colors: string[];
   sizes: string[];
+  purchaseLimit?: number;
 };
 
 export type CartItem = {

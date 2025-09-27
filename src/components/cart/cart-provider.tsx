@@ -49,18 +49,41 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const existingItemIndex = prevItems.findIndex(
         (item) => item.product.id === product.id && item.size === size && item.color === color
       );
+      
+      const purchaseLimit = product.purchaseLimit || 10;
 
       if (existingItemIndex > -1) {
         const newItems = [...prevItems];
-        newItems[existingItemIndex].quantity += 1;
+        const newQuantity = newItems[existingItemIndex].quantity + 1;
+        if (newQuantity > purchaseLimit) {
+            toast({
+                variant: 'destructive',
+                title: "Purchase Limit Reached",
+                description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
+            });
+            return prevItems;
+        }
+        newItems[existingItemIndex].quantity = newQuantity;
+        toast({
+            title: "Added to cart",
+            description: `${product.name} has been added to your cart.`,
+        });
         return newItems;
       } else {
+        if (1 > purchaseLimit) {
+            toast({
+                variant: 'destructive',
+                title: "Purchase Limit Reached",
+                description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
+            });
+            return prevItems;
+        }
+        toast({
+            title: "Added to cart",
+            description: `${product.name} has been added to your cart.`,
+        });
         return [...prevItems, { product, quantity: 1, size, color }];
       }
-    });
-    toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
     });
   };
 
@@ -73,10 +96,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
   
   const updateQuantity = (productId: string, size: string, color: string, quantity: number) => {
+     const itemToUpdate = items.find(item => item.product.id === productId && item.size === size && item.color === color);
+     const purchaseLimit = itemToUpdate?.product.purchaseLimit || 10;
+
+     if (quantity > purchaseLimit) {
+        toast({
+            variant: 'destructive',
+            title: "Purchase Limit Reached",
+            description: `You can only purchase up to ${purchaseLimit} units of ${itemToUpdate?.product.name}.`,
+        });
+        return;
+    }
+
      if (quantity < 1) {
         removeItem(productId, size, color);
         return;
     }
+
     setItems((prevItems) =>
       prevItems.map((item) =>
         item.product.id === productId && item.size === size && item.color === color
