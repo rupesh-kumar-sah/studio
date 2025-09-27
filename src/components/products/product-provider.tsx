@@ -49,18 +49,20 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   const getProductById = useCallback((id: string) => {
     return products.find(p => p.id === id);
   }, [products]);
+  
+  const refreshProductCalculations = (product: Product): Product => {
+    if (product.detailedReviews && product.detailedReviews.length > 0) {
+      const totalRating = product.detailedReviews.reduce((acc, review) => acc + review.rating, 0);
+      const newAverage = totalRating / product.detailedReviews.length;
+      return { ...product, rating: newAverage, reviews: product.detailedReviews.length };
+    }
+    return { ...product, rating: 0, reviews: 0 };
+  };
 
   const updateProduct = useCallback((updatedProduct: Product) => {
     setProducts(prevProducts => {
-      const newProducts = prevProducts.map(p => p.id === updatedProduct.id ? updatedProduct : p);
-      return newProducts.map(p => {
-        if (p.detailedReviews && p.detailedReviews.length > 0) {
-          const totalRating = p.detailedReviews.reduce((acc, review) => acc + review.rating, 0);
-          const newAverage = totalRating / p.detailedReviews.length;
-          return { ...p, rating: newAverage, reviews: p.detailedReviews.length };
-        }
-        return p;
-      });
+      const refreshedProduct = refreshProductCalculations(updatedProduct);
+      return prevProducts.map(p => p.id === refreshedProduct.id ? refreshedProduct : p);
     });
     toast({
         title: "Product Updated",
@@ -94,49 +96,41 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   }, [products, toast]);
 
   const updateReview = useCallback((productId: string, reviewId: string, newComment: string, newRating: number) => {
-    setProducts(prevProducts => {
-        const newProducts = prevProducts.map(p => {
+    setProducts(prevProducts => 
+        prevProducts.map(p => {
             if (p.id === productId) {
                 const updatedReviews = p.detailedReviews.map(r => 
                     r.id === reviewId ? { ...r, comment: newComment, rating: newRating } : r
                 );
-                return { ...p, detailedReviews: updatedReviews };
+                const updatedProduct = { ...p, detailedReviews: updatedReviews };
+                return refreshProductCalculations(updatedProduct);
             }
             return p;
-        });
-        const productToUpdate = newProducts.find(p => p.id === productId);
-        if (productToUpdate) {
-            updateProduct(productToUpdate);
-        }
-        return newProducts;
-    });
+        })
+    );
      toast({
         title: "Review Updated",
         description: "The review has been successfully updated."
     });
-  }, [updateProduct, toast]);
+  }, [toast]);
 
   const deleteReview = useCallback((productId: string, reviewId: string) => {
-    setProducts(prevProducts => {
-        const newProducts = prevProducts.map(p => {
+    setProducts(prevProducts => 
+        prevProducts.map(p => {
             if (p.id === productId) {
                 const updatedReviews = p.detailedReviews.filter(r => r.id !== reviewId);
-                return { ...p, detailedReviews: updatedReviews };
+                const updatedProduct = { ...p, detailedReviews: updatedReviews };
+                return refreshProductCalculations(updatedProduct);
             }
             return p;
-        });
-        const productToUpdate = newProducts.find(p => p.id === productId);
-        if (productToUpdate) {
-            updateProduct(productToUpdate);
-        }
-        return newProducts;
-    });
+        })
+    );
     toast({
         variant: 'destructive',
         title: "Review Deleted",
         description: "The review has been successfully removed."
     });
-  }, [updateProduct, toast]);
+  }, [toast]);
 
   const value = { products, getProductById, updateProduct, addProduct, deleteProduct, updateReview, deleteReview };
 

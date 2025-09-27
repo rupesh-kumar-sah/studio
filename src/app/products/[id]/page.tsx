@@ -26,6 +26,14 @@ export default function ProductDetailPage() {
   if (!product) {
     notFound();
   }
+  
+  // Recalculate average rating and review count based on detailedReviews
+  const rating = product.detailedReviews && product.detailedReviews.length > 0 
+    ? product.detailedReviews.reduce((acc, review) => acc + review.rating, 0) / product.detailedReviews.length
+    : 0;
+  
+  const reviews = product.detailedReviews?.length || 0;
+
 
   return (
     <div className="container py-12">
@@ -46,10 +54,10 @@ export default function ProductDetailPage() {
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-center text-primary">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-5 w-5 ${i < Math.round(product.rating) ? 'fill-current' : 'fill-muted stroke-muted-foreground'}`}/>
+                  <Star key={i} className={`h-5 w-5 ${i < Math.round(rating) ? 'fill-current' : 'fill-muted stroke-muted-foreground'}`}/>
                 ))}
               </div>
-              <span className="text-sm text-muted-foreground">({product.reviews} reviews)</span>
+              <span className="text-sm text-muted-foreground">({reviews} reviews)</span>
             </div>
           </div>
 

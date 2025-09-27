@@ -165,4 +165,3 @@ export function ProductReviews({ product }: ProductReviewsProps) {
         </Card>
     );
 }
-
