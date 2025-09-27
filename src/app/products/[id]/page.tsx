@@ -1,20 +1,17 @@
 
-
 'use client';
 
-import { notFound } from 'next/navigation';
+import { useProducts } from '@/components/products/product-provider';
+import { useAuth } from '@/components/auth/auth-provider';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { EditProductSheet } from '@/components/products/edit-product-sheet';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { Star, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { ProductRecommendations } from '@/components/products/product-recommendations';
 import { Separator } from '@/components/ui/separator';
-import { useProducts } from '@/components/products/product-provider';
-import { useAuth } from '@/components/auth/auth-provider';
-import { Button } from '@/components/ui/button';
-import { useState }
-from 'react';
-import { EditProductSheet } from '@/components/products/edit-product-sheet';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -25,10 +22,6 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const product = getProductById(id);
 
   if (!product) {
-    // We call notFound() here. Since we are in a client component, 
-    // this will throw an error that the nearest not-found boundary will catch.
-    // To make this work as expected, we would need a not-found.tsx file.
-    // For this prototype, we'll just show a simple message.
     return (
         <div className="container py-12 text-center">
             <h1 className="text-2xl font-bold">Product not found</h1>
