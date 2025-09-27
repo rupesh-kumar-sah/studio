@@ -271,6 +271,3 @@ export function EditProductSheet({ product, isOpen, onOpenChange }: EditProductS
     </Sheet>
   );
 }
-    
-
-    
