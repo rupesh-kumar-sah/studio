@@ -37,6 +37,7 @@ export type User = {
   email: string;
   password?: string;
   avatar?: string;
+  phone?: string;
 };
 
 export type Category = string;

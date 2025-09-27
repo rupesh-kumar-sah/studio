@@ -6,7 +6,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, ShoppingBag, LogIn, Users, Edit } from "lucide-react";
+import { User, Mail, ShoppingBag, LogIn, Users, Edit, Phone } from "lucide-react";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -71,6 +71,7 @@ export default function ProfilePage() {
     id: owner!.id,
     name: owner!.name,
     email: owner!.email,
+    phone: owner!.phone,
     avatar: owner!.avatar,
     title: 'Owner Profile',
     description: 'Account details for the site administrator.',
@@ -79,6 +80,7 @@ export default function ProfilePage() {
     id: currentUser!.id,
     name: currentUser!.name,
     email: currentUser!.email,
+    phone: currentUser!.phone,
     avatar: currentUser!.avatar || `https://ui-avatars.com/api/?name=${currentUser?.name?.replace(' ', '+')}&background=random`,
     title: 'My Profile',
     description: 'View and manage your account details.',
@@ -142,6 +144,12 @@ export default function ProfilePage() {
                             <Mail className="h-5 w-5 text-muted-foreground" />
                             <span className="text-foreground">{user.email}</span>
                         </div>
+                        {isOwner && user.phone && (
+                            <div className="flex items-center gap-4 p-3 bg-secondary rounded-lg">
+                                <Phone className="h-5 w-5 text-muted-foreground" />
+                                <span className="text-foreground">{user.phone}</span>
+                            </div>
+                        )}
                     </div>
                      <div className="border-t pt-6 space-y-4">
                         <Button asChild className="w-full" size="lg">

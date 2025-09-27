@@ -10,6 +10,7 @@ const ownerDetails = {
     id: '1',
     name: "Rupesh Kumar Sah",
     email: "rsah0123456@gmail.com",
+    phone: "9812345678",
     avatar: "https://firebasestorage.googleapis.com/v0/b/app-rune-beta.appspot.com/o/rupesh-sah.jpg?alt=media&token=c97480a7-459f-431c-9391-7c9b33c37326"
 };
 
