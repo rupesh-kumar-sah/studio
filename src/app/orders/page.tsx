@@ -90,7 +90,7 @@ export default function OrdersPage() {
   };
   
   const handleDeleteConfirm = () => {
-    if (deletePassword === '1234') {
+    if (deletePassword === 'rupesh@0123456') {
         if (orderToDelete) {
             const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
             const updatedOrders = storedOrders.filter(o => o.id !== orderToDelete);
