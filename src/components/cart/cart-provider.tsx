@@ -56,32 +56,40 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const newItems = [...prevItems];
         const newQuantity = newItems[existingItemIndex].quantity + 1;
         if (newQuantity > purchaseLimit) {
-            toast({
-                variant: 'destructive',
-                title: "Purchase Limit Reached",
-                description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
-            });
+            setTimeout(() => {
+              toast({
+                  variant: 'destructive',
+                  title: "Purchase Limit Reached",
+                  description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
+              });
+            }, 0);
             return prevItems;
         }
         newItems[existingItemIndex].quantity = newQuantity;
-        toast({
-            title: "Added to cart",
-            description: `${product.name} has been added to your cart.`,
-        });
+        setTimeout(() => {
+          toast({
+              title: "Added to cart",
+              description: `${product.name} has been added to your cart.`,
+          });
+        }, 0);
         return newItems;
       } else {
         if (1 > purchaseLimit) {
-            toast({
-                variant: 'destructive',
-                title: "Purchase Limit Reached",
-                description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
-            });
+            setTimeout(() => {
+              toast({
+                  variant: 'destructive',
+                  title: "Purchase Limit Reached",
+                  description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
+              });
+            }, 0);
             return prevItems;
         }
-        toast({
-            title: "Added to cart",
-            description: `${product.name} has been added to your cart.`,
-        });
+        setTimeout(() => {
+          toast({
+              title: "Added to cart",
+              description: `${product.name} has been added to your cart.`,
+          });
+        }, 0);
         return [...prevItems, { product, quantity: 1, size, color }];
       }
     });
@@ -100,11 +108,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
      const purchaseLimit = itemToUpdate?.product.purchaseLimit || 10;
 
      if (quantity > purchaseLimit) {
-        toast({
-            variant: 'destructive',
-            title: "Purchase Limit Reached",
-            description: `You can only purchase up to ${purchaseLimit} units of ${itemToUpdate?.product.name}.`,
-        });
+        setTimeout(() => {
+          toast({
+              variant: 'destructive',
+              title: "Purchase Limit Reached",
+              description: `You can only purchase up to ${purchaseLimit} units of ${itemToUpdate?.product.name}.`,
+          });
+        }, 0);
         return;
     }
 
