@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, CheckCircle, Clock, Trash2, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { MessageSquare, CheckCircle, Clock, Trash2, ArrowLeft, AlertTriangle, XCircle } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -23,7 +23,7 @@ import { Footer } from '@/components/layout/footer';
 export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const { isOwner } = useAuth();
+  const { isOwner, currentUser } = useAuth();
   const { toast } = useToast();
   const params = useParams();
   const router = useRouter();
@@ -31,6 +31,7 @@ export default function OrderDetailPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -41,18 +42,24 @@ export default function OrderDetailPage() {
     }
   }, [id]);
 
-  const acceptOrder = (orderId: string) => {
+  const updateOrderStatus = (orderId: string, status: Order['status'], toastTitle: string, toastDescription: string) => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     const updatedOrders = storedOrders.map(o => 
-        o.id === orderId ? { ...o, status: 'confirmed' as const } : o
+        o.id === orderId ? { ...o, status } : o
     );
     localStorage.setItem('orders', JSON.stringify(updatedOrders));
     setOrder(updatedOrders.find(o => o.id === orderId) || null);
     window.dispatchEvent(new CustomEvent('orders-updated'));
-    toast({
-        title: "Order Confirmed",
-        description: `Order #${orderId} has been marked as confirmed.`
-    });
+    toast({ title: toastTitle, description: toastDescription });
+  };
+  
+  const acceptOrder = (orderId: string) => {
+    updateOrderStatus(orderId, 'confirmed', 'Order Confirmed', `Order #${orderId} has been marked as confirmed.`);
+  };
+
+  const cancelOrder = (orderId: string) => {
+    updateOrderStatus(orderId, 'cancelled', 'Order Cancelled', `Order #${orderId} has been cancelled.`);
+    setIsCancelDialogOpen(false);
   };
 
   const handleDeleteConfirm = () => {
@@ -108,6 +115,9 @@ export default function OrderDetailPage() {
     );
   }
 
+  const isOrderOwner = currentUser?.email === order.customer.email;
+  const canCancel = (isOwner || isOrderOwner) && order.status === 'pending';
+
   return (
     <>
     <Header />
@@ -131,10 +141,15 @@ export default function OrderDetailPage() {
                     <p className="font-bold text-2xl">Rs.{order.total.toFixed(2)}</p>
                     <div className={cn(
                         "flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium",
-                        order.status === 'confirmed' ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
+                        order.status === 'confirmed' ? "bg-green-100 text-green-800" :
+                        order.status === 'pending' ? "bg-amber-100 text-amber-800" :
+                        "bg-red-100 text-red-800"
                         )}>
-                        {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
-                        {order.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                        {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : 
+                         order.status === 'pending' ? <Clock className="h-4 w-4" /> :
+                         <XCircle className="h-4 w-4" />
+                        }
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                     </div>
                 </div>
             </CardHeader>
@@ -188,18 +203,42 @@ export default function OrderDetailPage() {
                     </div>
                 </div>
             </CardContent>
-            {isOwner && (
+            {(isOwner || canCancel) && (
                 <CardFooter className="gap-2 bg-secondary p-4 rounded-b-lg">
-                    {order.status === 'pending' && (
+                    {isOwner && order.status === 'pending' && (
                         <Button onClick={() => acceptOrder(order.id)}>
                             <CheckCircle className="mr-2 h-4 w-4" />
                             Accept Order
                         </Button>
                     )}
-                     <Button variant="destructive" onClick={openDeleteDialog}>
-                       <Trash2 className="mr-2 h-4 w-4" />
-                       Delete Order
-                    </Button>
+                    {canCancel && (
+                         <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline">
+                                    <XCircle className="mr-2 h-4 w-4" />
+                                    Cancel Order
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Cancel Order</DialogTitle>
+                                    <DialogDescription>
+                                        Are you sure you want to cancel this order? This action cannot be undone.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button variant="ghost" onClick={() => setIsCancelDialogOpen(false)}>Back</Button>
+                                    <Button variant="destructive" onClick={() => cancelOrder(order.id)}>Confirm Cancellation</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    )}
+                     {isOwner && (
+                        <Button variant="destructive" onClick={openDeleteDialog}>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Order
+                        </Button>
+                     )}
                 </CardFooter>
             )}
         </Card>

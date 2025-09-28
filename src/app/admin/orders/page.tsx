@@ -6,7 +6,7 @@ import type { Order } from '@/app/checkout/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, CheckCircle, Clock, Trash2, ArrowRight } from 'lucide-react';
+import { ShoppingBag, CheckCircle, Clock, Trash2, ArrowRight, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -145,10 +145,15 @@ export default function AdminOrdersPage() {
                      <p className="font-bold text-xl">Rs.{order.total.toFixed(2)}</p>
                       <div className={cn(
                         "flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium",
-                        order.status === 'confirmed' ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
+                        order.status === 'confirmed' ? "bg-green-100 text-green-800" :
+                        order.status === 'pending' ? "bg-amber-100 text-amber-800" :
+                        "bg-red-100 text-red-800"
                         )}>
-                        {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
-                        {order.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                        {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : 
+                         order.status === 'pending' ? <Clock className="h-4 w-4" /> :
+                         <XCircle className="h-4 w-4" />
+                        }
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                      </div>
                 </div>
             </CardHeader>
