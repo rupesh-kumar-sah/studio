@@ -1,4 +1,5 @@
 
+'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,36 +9,15 @@ import { Button } from '../ui/button';
 import { useCategories } from '../categories/category-provider';
 import { useAuth } from '../auth/auth-provider';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
-import { Input } from '../ui/input';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Checkbox } from '../ui/checkbox';
 import { Separator } from '../ui/separator';
 import { useRouter } from 'next/navigation';
-import { AddProductSheet } from './add-product-sheet';
-
-const newCategorySchema = z.object({
-  name: z.string().min(1, 'Category name is required'),
-});
 
 export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes }: any) {
-  const { categories, addCategory } = useCategories();
+  const { categories } = useCategories();
   const { isOwner } = useAuth();
-  const [isCategoryDialogOpen, setCategoryDialogOpen] = useState(false);
-  const [isAddProductSheetOpen, setAddProductSheetOpen] = useState(false);
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<{ name: string }>({
-    resolver: zodResolver(newCategorySchema),
-  });
 
   const handleCategoryChange = (category: string) => {
     setFilters({ ...filters, category });
@@ -79,13 +59,6 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
       sizes: [],
       inStock: true,
     });
-  };
-
-  const handleAddCategory = (data: { name: string }) => {
-    if (addCategory(data.name)) {
-      reset();
-      setCategoryDialogOpen(false);
-    }
   };
 
 
@@ -194,31 +167,6 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
         </div>
       </CardContent>
     </Card>
-    
-    <Dialog open={isCategoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Category</DialogTitle>
-            <DialogDescription>
-              Enter the name for the new category.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit(handleAddCategory)}>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Category Name</Label>
-                <Input id="name" {...register('name')} />
-                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setCategoryDialogOpen(false)}>Cancel</Button>
-              <Button type="submit">Add Category</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-      <AddProductSheet isOpen={isAddProductSheetOpen} onOpenChange={setAddProductSheetOpen} />
     </>
   );
 }

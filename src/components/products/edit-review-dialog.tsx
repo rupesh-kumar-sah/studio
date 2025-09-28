@@ -70,12 +70,14 @@ export function EditReviewDialog({ review, productId }: EditReviewDialogProps) {
                 <DialogTrigger asChild>
                     <Button variant="ghost" size="icon" onClick={() => reset({ comment: review.comment, rating: review.rating })}>
                         <Edit className="h-4 w-4" />
+                        <span className="sr-only">Edit Review</span>
                     </Button>
                 </DialogTrigger>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
                             <Trash2 className="h-4 w-4" />
+                             <span className="sr-only">Delete Review</span>
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>

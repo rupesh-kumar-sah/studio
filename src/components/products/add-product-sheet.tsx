@@ -259,7 +259,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="image3">Image 3</Label>
-                    <Input id="image3" type="file" accept="image-/*" onChange={e => handleImageChange(e, setImagePreview3, 'image3')} />
+                    <Input id="image3" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview3, 'image3')} />
                     {imagePreview3 && <Image src={imagePreview3} alt="Preview 3" width={100} height={100} className="mt-2 rounded-md object-cover" />}
                      {errors.image3 && <p className="text-sm text-destructive">{errors.image3.message}</p>}
                 </div>

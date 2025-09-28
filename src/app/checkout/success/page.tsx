@@ -14,7 +14,6 @@ import { Footer } from '@/components/layout/footer';
 
 
 function CheckoutSuccessContent() {
-    const { clearCart } = useCart();
     const [order, setOrder] = useState<Order | null>(null);
     const searchParams = useSearchParams();
     const orderId = searchParams.get('orderId');
@@ -26,11 +25,6 @@ function CheckoutSuccessContent() {
             const orders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
             const foundOrder = orders.find(o => o.id === orderId);
             setOrder(foundOrder || null);
-            
-            // Only clear cart if the order is confirmed
-            if (foundOrder?.status === 'confirmed') {
-                clearCart();
-            }
         };
 
         findOrder();
@@ -48,7 +42,7 @@ function CheckoutSuccessContent() {
             window.removeEventListener('orders-updated', findOrder);
         }
 
-    }, [orderId, clearCart]);
+    }, [orderId]);
 
     if (!order) {
         return (
