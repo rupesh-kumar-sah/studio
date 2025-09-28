@@ -149,6 +149,9 @@ export default function ForgotPasswordPage() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+            <CardHeader>
+              <CardTitle>Waiting</CardTitle>
+            </CardHeader>
             <CardContent><p className="text-center text-muted-foreground">Waiting for code confirmation...</p></CardContent>
           </>
         );
@@ -193,6 +196,10 @@ export default function ForgotPasswordPage() {
           );
         case 'complete':
             return (
+              <>
+                <CardHeader>
+                  <CardTitle>Password Reset</CardTitle>
+                </CardHeader>
                 <CardContent className="text-center">
                     <p className="text-lg font-semibold">Password Reset!</p>
                     <p className="text-muted-foreground mt-2">You can now log in with your new password.</p>
@@ -200,6 +207,7 @@ export default function ForgotPasswordPage() {
                         <Link href="/login">Go to Login</Link>
                     </Button>
                 </CardContent>
+              </>
             )
     }
   }
