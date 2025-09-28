@@ -14,6 +14,9 @@ const ownerDetails = {
     avatar: "https://firebasestorage.googleapis.com/v0/b/app-rune-beta.appspot.com/o/rupesh-sah.jpg?alt=media&token=c97480a7-459f-431c-9391-7c9b33c37326"
 };
 
+const OWNER_PASS = "rupesh@0123456";
+const OWNER_PIN = "12345";
+
 interface AuthContextType {
   isOwner: boolean;
   currentUser: User | null;
@@ -21,7 +24,9 @@ interface AuthContextType {
   isMounted: boolean;
   allUsers: User[];
   reloadAllUsers: () => void;
-  ownerLogin: (email: string, pass: string) => boolean;
+  isOwnerCredentials: (email: string, pass: string) => boolean;
+  verifyOwnerPin: (pin: string) => boolean;
+  completeOwnerLogin: () => void;
   customerLogin: (email: string, pass: string) => boolean;
   signup: (name: string, email: string, pass: string) => boolean;
   logout: () => void;
@@ -74,18 +79,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAllUsers(loadUsers());
   }, [loadUsers, loadOwner]);
 
-  const ownerLogin = useCallback((email: string, pass: string) => {
-    if (email === ownerDetails.email && (pass === "rupesh@0123456" || pass === "12345")) {
-      localStorage.setItem('isOwnerLoggedIn', 'true');
-      const ownerData = loadOwner();
-      setOwner(ownerData);
-      setIsOwner(true);
-      setCurrentUser(null);
-      localStorage.removeItem('currentUser');
-      return true;
-    }
-    return false;
-  }, [loadOwner]);
+  const isOwnerCredentials = (email: string, pass: string) => {
+    return email === ownerDetails.email && pass === OWNER_PASS;
+  };
+  
+  const verifyOwnerPin = (pin: string) => {
+      return pin === OWNER_PIN;
+  }
+
+  const completeOwnerLogin = () => {
+    localStorage.setItem('isOwnerLoggedIn', 'true');
+    const ownerData = loadOwner();
+    setOwner(ownerData);
+    setIsOwner(true);
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+  };
 
   const customerLogin = useCallback((email: string, pass: string) => {
     const users = loadUsers();
@@ -153,7 +162,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return users.find(u => u.email === email);
   }, [loadUsers]);
 
-  const value = { isOwner, currentUser, owner, isMounted, allUsers, reloadAllUsers, ownerLogin, customerLogin, signup, logout, updateAvatar, findUserByEmail };
+  const value = { 
+      isOwner, 
+      currentUser, 
+      owner, 
+      isMounted, 
+      allUsers, 
+      reloadAllUsers, 
+      isOwnerCredentials,
+      verifyOwnerPin,
+      completeOwnerLogin,
+      customerLogin, 
+      signup, 
+      logout, 
+      updateAvatar, 
+      findUserByEmail 
+  };
 
   return (
     <AuthContext.Provider value={value}>

@@ -14,10 +14,17 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(1, "Password is required"),
+});
+
+const pinSchema = z.object({
+    pin: z.string().min(1, "PIN is required"),
 });
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -52,27 +59,44 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { ownerLogin, customerLogin } = useAuth();
+  const { isOwnerCredentials, verifyOwnerPin, completeOwnerLogin, customerLogin } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [pinError, setPinError] = useState('');
+  const [pinValue, setPinValue] = useState('');
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
-    // Try owner login first
-    if (ownerLogin(data.email, data.password)) {
-      toast({ title: "Owner Login Successful", description: "Welcome back, Rupesh!" });
-      router.push("/admin");
+  async function onSubmit(data: z.infer<typeof loginSchema>) {
+    setIsSubmitting(true);
+    
+    if (isOwnerCredentials(data.email, data.password)) {
+      setShowPinDialog(true);
+      setIsSubmitting(false);
       return;
     }
     
-    // If owner login fails, try customer login
     if (customerLogin(data.email, data.password)) {
       toast({ title: "Login Successful", description: "Welcome back!" });
       router.push("/");
     } else {
         toast({ variant: 'destructive', title: "Login Failed", description: "Invalid email or password." });
+        setIsSubmitting(false);
+    }
+  }
+
+  const handlePinSubmit = () => {
+    if (verifyOwnerPin(pinValue)) {
+        setPinError('');
+        completeOwnerLogin();
+        toast({ title: "Owner Login Successful", description: "Welcome back, Rupesh!" });
+        router.push("/admin");
+        setShowPinDialog(false);
+    } else {
+        setPinError('Incorrect PIN. Please try again.');
     }
   }
 
@@ -129,7 +153,9 @@ export default function LoginPage() {
                   <FormMessage />
                 </FormItem>
               )} />
-              <Button type="submit" className="w-full">Log In</Button>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? <Loader2 className="animate-spin" /> : 'Log In'}
+              </Button>
             </form>
           </Form>
           <div className="mt-6 text-center text-sm">
@@ -142,6 +168,33 @@ export default function LoginPage() {
       </Card>
     </div>
     <Footer />
+    
+     <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Owner Verification</DialogTitle>
+                <DialogDescription>
+                    For your security, please enter your owner PIN to continue.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+                <FormLabel htmlFor="pin">Owner PIN</FormLabel>
+                <Input 
+                    id="pin" 
+                    type="password" 
+                    maxLength={5}
+                    value={pinValue}
+                    onChange={(e) => setPinValue(e.target.value)}
+                    onKeyPress={(e) => { if (e.key === 'Enter') handlePinSubmit(); }}
+                />
+                 {pinError && <p className="text-sm text-destructive">{pinError}</p>}
+            </div>
+            <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setShowPinDialog(false)}>Cancel</Button>
+                <Button type="button" onClick={handlePinSubmit}>Confirm</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
     </>
   );
 }
