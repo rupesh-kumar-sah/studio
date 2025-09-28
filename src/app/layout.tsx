@@ -11,6 +11,7 @@ import { ThemeProvider } from '@/components/theme/theme-provider';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
