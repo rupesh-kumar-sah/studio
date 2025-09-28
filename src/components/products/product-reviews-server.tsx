@@ -1,7 +1,7 @@
 
 import { format } from 'date-fns';
 import type { Review } from '@/lib/types';
-import { getProductById } from '@/lib/products-db';
+import { getProductById } from '@/app/actions/product-actions';
 import { getIsOwner } from '@/lib/auth-db';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -66,11 +66,4 @@ export async function ProductReviewsServer({ productId }: ProductReviewsProps) {
                 ) : (
                     <div className="text-center text-muted-foreground py-8">
                         <MessageSquare className="h-12 w-12 mx-auto" />
-                        <p className="mt-4">No reviews yet for this product.</p>
-                    </div>
-                )}
-            </CardContent>
-        </Card>
-    );
-}
-
+                        <p className

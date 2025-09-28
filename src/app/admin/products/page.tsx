@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, Suspense, useEffect, useCallback } from 'react';
@@ -15,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { AddProductSheet } from '@/components/products/add-product-sheet';
 import { Input } from '@/components/ui/input';
-import { getProducts } from '@/lib/products-db';
+import { getProducts } from '@/app/actions/product-actions';
 
 function AdminProductsPageContent() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -9,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Loader2 } from "lucide-react"
-import { getProducts, getProductById } from "@/lib/products-db"
+import { getProducts, getProductById } from "@/app/actions/product-actions"
 import { Product } from "@/lib/types"
 
 interface ProductRecommendationsProps {

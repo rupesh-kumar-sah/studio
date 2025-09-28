@@ -1,6 +1,5 @@
-
 import { ArrowRight, Star, Award, Truck, Shield, ShoppingBag } from 'lucide-react';
-import { getProducts } from '@/lib/products-db';
+import { getProducts } from '@/app/actions/product-actions';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

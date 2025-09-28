@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { getProducts } from '@/lib/products-db';
+import { getProducts } from '@/app/actions/product-actions';
 import { useAuth } from '@/components/auth/auth-provider';
 import { AddProductSheet } from '@/components/products/add-product-sheet';
 import { PlusCircle } from 'lucide-react';
@@ -200,7 +200,7 @@ function ProductsPageContent() {
 export default function ProductsPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-        <ProductsPageContent />
+      <ProductsPageContent />
     </Suspense>
-  )
+  );
 }

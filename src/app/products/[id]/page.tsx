@@ -2,7 +2,7 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { getProductById } from '@/lib/products-db';
+import { getProductById } from '@/app/actions/product-actions';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { Button } from '@/components/ui/button';

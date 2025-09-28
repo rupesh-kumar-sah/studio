@@ -1,0 +1,600 @@
+
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Men's Explorer Jacket",
+      "description": "A durable, waterproof jacket designed for the adventurous spirit. Perfect for trekking in the Himalayas or navigating the urban jungle.",
+      "price": 119.99,
+      "originalPrice": 149.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1688981533900-20bef00e353b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxqYWNrZXQlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwOTQ5OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Modern jacket",
+          "hint": "jacket fashion"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1700177421832-9815a92029be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0LXNoaXJ0JTIwbW9kZWx8ZW58MHx8fHwxNzU4OTI3NTY4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Stylish t-shirt",
+          "hint": "t-shirt model"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1732475530118-0db47f851736?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxob29kaWUlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwNDU2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Comfortable hoodie",
+          "hint": "hoodie fashion"
+        }
+      ],
+      "category": "Clothing",
+      "rating": 4.5,
+      "reviews": 5,
+      "detailedReviews": [
+        {
+          "id": "1-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.111Z"
+        },
+        {
+          "id": "1-review-2",
+          "author": "Bikram T.",
+          "rating": 5,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.111Z"
+        },
+        {
+          "id": "1-review-3",
+          "author": "Sunita M.",
+          "rating": 4,
+          "comment": "Exceeded my expectations. Highly recommended!",
+          "date": "2024-07-21T12:38:09.111Z"
+        },
+        {
+          "id": "1-review-4",
+          "author": "Ramesh P.",
+          "rating": 5,
+          "comment": "Decent for the price. Does the job.",
+          "date": "2024-07-18T12:38:09.111Z"
+        },
+        {
+          "id": "1-review-5",
+          "author": "Sita G.",
+          "rating": 4,
+          "comment": "Not what I expected. The color looks different in person.",
+          "date": "2024-07-15T12:38:09.111Z"
+        }
+      ],
+      "stock": 50,
+      "colors": [
+        "#2F3A4C",
+        "#8B4513",
+        "#556B2F"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "2",
+      "name": "Women's Valley Tee",
+      "description": "A soft, comfortable t-shirt featuring a minimalist design inspired by the temples of Kathmandu. Made from 100% organic cotton.",
+      "price": 29.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1700177421832-9815a92029be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0LXNoaXJ0JTIwbW9kZWx8ZW58MHx8fHwxNzU4OTI3NTY4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Stylish t-shirt",
+          "hint": "t-shirt model"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1732475530118-0db47f851736?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxob29kaWUlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwNDU2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Comfortable hoodie",
+          "hint": "hoodie fashion"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1675388436299-6a6b272a83a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0cmFkaXRpb25hbCUyMGNsb3RoaW5nfGVufDB8fHx8MTc1ODkyNzU2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Traditional Kurta",
+          "hint": "traditional clothing"
+        }
+      ],
+      "category": "Clothing",
+      "rating": 4.8,
+      "reviews": 3,
+      "detailedReviews": [
+        {
+          "id": "2-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "2-review-2",
+          "author": "Bikram T.",
+          "rating": 5,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        },
+        {
+          "id": "2-review-3",
+          "author": "Sunita M.",
+          "rating": 5,
+          "comment": "Exceeded my expectations. Highly recommended!",
+          "date": "2024-07-21T12:38:09.112Z"
+        }
+      ],
+      "stock": 100,
+      "colors": [
+        "#FFFFFF",
+        "#F0E68C",
+        "#B0C4DE"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "3",
+      "name": "Unisex Trekking Boots",
+      "description": "High-performance trekking boots with superior grip and ankle support. Waterproof and breathable for maximum comfort on long hikes.",
+      "price": 159.99,
+      "originalPrice": 199.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1562183241-b937e95585b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxydW5uaW5nJTIwc2hvZXN8ZW58MHx8fHwxNzU4OTE5MjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Running sneakers",
+          "hint": "running shoes"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1639270602419-6392f0723174?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsZWF0aGVyJTIwYm9vdHN8ZW58MHx8fHwxNzU4OTE3OTk5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Leather boots",
+          "hint": "leather boots"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1663000126027-489944d0086b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0cmVra2luZyUyMGJvb3RzfGVufDB8fHx8MTc1ODkyNzU2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Trekking boots",
+          "hint": "trekking boots"
+        }
+      ],
+      "category": "Shoes",
+      "rating": 4.9,
+      "reviews": 4,
+      "detailedReviews": [
+        {
+          "id": "3-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "3-review-2",
+          "author": "Bikram T.",
+          "rating": 5,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        },
+        {
+          "id": "3-review-3",
+          "author": "Sunita M.",
+          "rating": 5,
+          "comment": "Exceeded my expectations. Highly recommended!",
+          "date": "2024-07-21T12:38:09.112Z"
+        },
+        {
+          "id": "3-review-4",
+          "author": "Ramesh P.",
+          "rating": 5,
+          "comment": "Decent for the price. Does the job.",
+          "date": "2024-07-18T12:38:09.112Z"
+        }
+      ],
+      "stock": 30,
+      "colors": [
+        "#A0522D",
+        "#000000"
+      ],
+      "sizes": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "4",
+      "name": "Junior's Lakeside Loafers",
+      "description": "Casual yet stylish loafers for kids, perfect for a stroll by Phewa Lake. Handcrafted from premium Nepali materials.",
+      "price": 89.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1659724526263-703be37cd1d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXN1YWwlMjBzaG9lc3xlbnwwfHx8fDE3NTg5Mjc1Njh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Casual loafers",
+          "hint": "casual shoes"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1639270602419-6392f0723174?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsZWF0aGVyJTIwYm9vdHN8ZW58MHx8fHwxNzU4OTE3OTk5fDA&ixlibrb-4.1.0&q=80&w=1080",
+          "alt": "Leather boots",
+          "hint": "leather boots"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1562183241-b937e95585b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxydW5uaW5nJTIwc2hvZXN8ZW58MHx8fHwxNzU4OTE5MjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Running sneakers",
+          "hint": "running shoes"
+        }
+      ],
+      "category": "Shoes",
+      "rating": 4.6,
+      "reviews": 2,
+      "detailedReviews": [
+        {
+          "id": "4-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "4-review-2",
+          "author": "Bikram T.",
+          "rating": 5,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        }
+      ],
+      "stock": 60,
+      "colors": [
+        "#D2B48C",
+        "#8B4513"
+      ],
+      "sizes": [
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "5",
+      "name": "Artisan Crafted Backpack",
+      "description": "A unique backpack made from locally sourced hemp and decorated with traditional patterns. Spacious and durable for everyday use.",
+      "price": 75,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1617179918913-f4e099813fb5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsZWF0aGVyJTIwYmFja3BhY2t8ZW58MHx8fHwxNzU4ODQxNDE0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Leather backpack",
+          "hint": "leather backpack"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1672330202782-94b93d2ba6fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b3ZlbiUyMHNjYXJmfGVufDB8fHx8MTc1ODg5MTQyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Woven scarf",
+          "hint": "woven scarf"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1662091131946-338d213f4a39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdW5nbGFzc2VzJTIwZmFzaGlvbnxlbnwwfHx8fDE3NTg4NDc3OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Stylish sunglasses",
+          "hint": "sunglasses fashion"
+        }
+      ],
+      "category": "Accessories",
+      "rating": 4.7,
+      "reviews": 5,
+      "detailedReviews": [
+        {
+          "id": "5-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "5-review-2",
+          "author": "Bikram T.",
+          "rating": 5,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        },
+        {
+          "id": "5-review-3",
+          "author": "Sunita M.",
+          "rating": 5,
+          "comment": "Exceeded my expectations. Highly recommended!",
+          "date": "2024-07-21T12:38:09.112Z"
+        },
+        {
+          "id": "5-review-4",
+          "author": "Ramesh P.",
+          "rating": 4,
+          "comment": "Decent for the price. Does the job.",
+          "date": "2024-07-18T12:38:09.112Z"
+        },
+        {
+          "id": "5-review-5",
+          "author": "Sita G.",
+          "rating": 5,
+          "comment": "Not what I expected. The color looks different in person.",
+          "date": "2024-07-15T12:38:09.112Z"
+        }
+      ],
+      "stock": 40,
+      "colors": [
+        "Natural"
+      ],
+      "sizes": [
+        "One Size"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "6",
+      "name": "Men's Courage Hoodie",
+      "description": "A warm and cozy hoodie that embodies the spirit of the Gorkhas. Features a subtle khukuri emblem.",
+      "price": 49.99,
+      "originalPrice": 59.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1732475530118-0db47f851736?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxob29kaWUlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwNDU2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Comfortable hoodie",
+          "hint": "hoodie fashion"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1688981533900-20bef00e353b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxqYWNrZXQlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwOTQ5OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Modern jacket",
+          "hint": "jacket fashion"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1675388436299-6a6b272a83a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0cmFkaXRpb25hbCUyMGNsb3RoaW5nfGVufDB8fHx8MTc1ODkyNzU2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Traditional Kurta",
+          "hint": "traditional clothing"
+        }
+      ],
+      "category": "Clothing",
+      "rating": 4.8,
+      "reviews": 3,
+      "detailedReviews": [
+        {
+          "id": "6-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "6-review-2",
+          "author": "Bikram T.",
+          "rating": 5,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        },
+        {
+          "id": "6-review-3",
+          "author": "Sunita M.",
+          "rating": 5,
+          "comment": "Exceeded my expectations. Highly recommended!",
+          "date": "2024-07-21T12:38:09.112Z"
+        }
+      ],
+      "stock": 70,
+      "colors": [
+        "#464646",
+        "#800000"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "7",
+      "name": "Women's Circuit Sneakers",
+      "description": "Lightweight and breathable sneakers for light trails and city walks. Inspired by the colors of the Annapurna range.",
+      "price": 119.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1562183241-b937e95585b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxydW5uaW5nJTIwc2hvZXN8ZW58MHx8fHwxNzU4OTE5MjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Running sneakers",
+          "hint": "running shoes"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1663000126027-489944d0086b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0cmVra2luZyUyMGJvb3RzfGVufDB8fHx8MTc1ODkyNzU2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Trekking boots",
+          "hint": "trekking boots"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1659724526263-703be37cd1d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXN1YWwlMjBzaG9lc3xlbnwwfHx8fDE3NTg5Mjc1Njh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Casual loafers",
+          "hint": "casual shoes"
+        }
+      ],
+      "category": "Shoes",
+      "rating": 4.4,
+      "reviews": 4,
+      "detailedReviews": [
+        {
+          "id": "7-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "7-review-2",
+          "author": "Bikram T.",
+          "rating": 4,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        },
+        {
+          "id": "7-review-3",
+          "author": "Sunita M.",
+          "rating": 5,
+          "comment": "Exceeded my expectations. Highly recommended!",
+          "date": "2024-07-21T12:38:09.112Z"
+        },
+        {
+          "id": "7-review-4",
+          "author": "Ramesh P.",
+          "rating": 4,
+          "comment": "Decent for the price. Does the job.",
+          "date": "2024-07-18T12:38:09.112Z"
+        }
+      ],
+      "stock": 80,
+      "colors": [
+        "#ADD8E6",
+        "#FFFFFF"
+      ],
+      "sizes": [
+        "8",
+        "9",
+        "10",
+        "11"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "8",
+      "name": "Sun-Kissed Pashmina Scarf",
+      "description": "A beautifully woven pashmina scarf to keep you warm. The vibrant colors reflect a Himalayan sunrise.",
+      "price": 45,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1672330202782-94b93d2ba6fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b3ZlbiUyMHNjYXJmfGVufDB8fHx8MTc1ODg5MTQyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Woven scarf",
+          "hint": "woven scarf"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1662091131946-338d213f4a39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdW5nbGFzc2VzJTIwZmFzaGlvbnxlbnwwfHx8fDE3NTg4NDc3OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Stylish sunglasses",
+          "hint": "sunglasses fashion"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1617179918913-f4e099813fb5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsZWF0aGVyJTIwYmFja3BhY2t8ZW58MHx8fHwxNzU4ODQxNDE0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Leather backpack",
+          "hint": "leather backpack"
+        }
+      ],
+      "category": "Accessories",
+      "rating": 4.9,
+      "reviews": 2,
+      "detailedReviews": [
+        {
+          "id": "8-review-1",
+          "author": "Anjali S.",
+          "rating": 5,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "8-review-2",
+          "author": "Bikram T.",
+          "rating": 5,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        }
+      ],
+      "stock": 90,
+      "colors": [
+        "#FF4500",
+        "#FFD700",
+        "#FF69B4"
+      ],
+      "sizes": [
+        "One Size"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "9",
+      "name": "Junior's Jungle Trousers",
+      "description": "Comfortable and rugged trousers for kids, perfect for adventures or casual wear. Made from durable cotton twill.",
+      "price": 59.99,
+      "originalPrice": 69.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1675388436299-6a6b272a83a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0cmFkaXRpb25hbCUyMGNsb3RoaW5nfGVufDB8fHx8MTc1ODkyNzU2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Traditional Kurta",
+          "hint": "traditional clothing"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1700177421832-9815a92029be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0LXNoaXJ0JTIwbW9kZWx8ZW58MHx8fHwxNzU4OTI3NTY4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Stylish t-shirt",
+          "hint": "t-shirt model"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1688981533900-20bef00e353b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxqYWNrZXQlMjBmYXNoaW9ufGVufDB8fHx8MTc1ODkwOTQ5OHww&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Modern jacket",
+          "hint": "jacket fashion"
+        }
+      ],
+      "category": "Clothing",
+      "rating": 4.3,
+      "reviews": 3,
+      "detailedReviews": [
+        {
+          "id": "9-review-1",
+          "author": "Anjali S.",
+          "rating": 4,
+          "comment": "Absolutely love it! The quality is outstanding.",
+          "date": "2024-07-27T12:38:09.112Z"
+        },
+        {
+          "id": "9-review-2",
+          "author": "Bikram T.",
+          "rating": 4,
+          "comment": "Good product, but could be better.",
+          "date": "2024-07-24T12:38:09.112Z"
+        },
+        {
+          "id": "9-review-3",
+          "author": "Sunita M.",
+          "rating": 5,
+          "comment": "Exceeded my expectations. Highly recommended!",
+          "date": "2024-07-21T12:38:09.112Z"
+        }
+      ],
+      "stock": 0,
+      "colors": [
+        "#556B2F",
+        "#D2B48C"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "purchaseLimit": 10
+    },
+    {
+      "id": "10",
+      "name": "Digital Smart Watch",
+      "description": "A modern smart watch with fitness tracking and notification features. Long-lasting battery and water-resistant.",
+      "price": 159.99,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1551816230-ef5deaed4a26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c21hcnQlMjB3YXRjaHxlbnwwfHx8fDE3NTg4MjIzOTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Smart watch",
+          "hint": "smart watch"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1662091131946-338d213f4a39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdW5nbGFzc2VzJTIwZmFzaGlvbnxlbnwwfHx8fDE3NTg4NDc3OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+          "alt": "Stylish sunglasses",
+          "hint": "sunglasses fashion"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1617179
