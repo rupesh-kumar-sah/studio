@@ -34,7 +34,7 @@ export async function ProductReviewsServer({ productId }: ProductReviewsProps) {
             <CardContent>
                 {detailedReviews && detailedReviews.length > 0 ? (
                     <div className="space-y-6">
-                        {detailedReviews.map((review) => (
+                        {detailedReviews.map((review, index) => (
                             <div key={review.id}>
                                 <div className="flex gap-4">
                                     <Avatar>
@@ -59,11 +59,17 @@ export async function ProductReviewsServer({ productId }: ProductReviewsProps) {
                                        <EditReviewDialog review={review} productId={productId} />
                                     )}
                                 </div>
-                                {detailedReviews.indexOf(review) < detailedReviews.length - 1 && <Separator className="mt-6" />}
+                                {index < detailedReviews.length - 1 && <Separator className="mt-6" />}
                             </div>
                         ))}
                     </div>
                 ) : (
                     <div className="text-center text-muted-foreground py-8">
                         <MessageSquare className="h-12 w-12 mx-auto" />
-                        <p className
+                        <p className="mt-4">No reviews yet for this product.</p>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
