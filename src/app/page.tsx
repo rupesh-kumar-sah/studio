@@ -4,11 +4,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
-import { placeholderImages } from "@/lib/placeholder-images";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { CategoryShowcase } from "./_components/category-showcase";
 
 export default function Home() {
-    const heroImage = placeholderImages.find(p => p.id === 'hero-image');
+    const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
     
     return (
         <>
@@ -37,7 +37,7 @@ export default function Home() {
                     className={cn(
                       buttonVariants({ size: "lg" }),
                       "bg-white text-gray-900 hover:bg-gray-200"
-                    )>
+                    )}>
                     Shop Now
                   </Link>
                   <Link
