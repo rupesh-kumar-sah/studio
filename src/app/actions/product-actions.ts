@@ -163,6 +163,30 @@ const refreshProductCalculations = (product: Product): Product => {
     return { ...product, rating: 0, reviews: 0 };
 };
 
+export async function addReview(productId: string, author: string, rating: number, comment: string) {
+    const db = await readDb();
+    const productIndex = db.products.findIndex(p => p.id === productId);
+
+    if (productIndex !== -1) {
+        const newReview: Review = {
+            id: new Date().getTime().toString(),
+            author,
+            rating,
+            comment,
+            date: new Date().toISOString(),
+        };
+
+        const productToUpdate = db.products[productIndex];
+        productToUpdate.detailedReviews.unshift(newReview);
+        db.products[productIndex] = refreshProductCalculations(productToUpdate);
+        
+        await writeDb(db);
+        revalidatePath(`/products/${productId}`);
+        return { success: true };
+    }
+    return { success: false, message: 'Product not found.' };
+}
+
 export async function updateReview(productId: string, reviewId: string, comment: string, rating: number) {
     const db = await readDb();
     const productIndex = db.products.findIndex(p => p.id === productId);
