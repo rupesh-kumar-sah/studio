@@ -10,6 +10,9 @@ import path from 'path';
 // Path to the JSON file that acts as our database
 const dbPath = path.join(process.cwd(), 'src', 'lib', 'products.json');
 
+// --- In-memory cache for products ---
+let productsCache: Product[] | null = null;
+
 // --- Helper Functions to Read/Write from JSON file ---
 
 async function readDb(): Promise<{ products: Product[] }> {
@@ -26,6 +29,8 @@ async function readDb(): Promise<{ products: Product[] }> {
 async function writeDb(data: { products: Product[] }): Promise<void> {
   try {
     await fs.writeFile(dbPath, JSON.stringify(data, null, 2), 'utf-8');
+    // Invalidate the cache whenever we write to the db
+    productsCache = null;
   } catch (error) {
     console.error("Error writing to products DB:", error);
   }
@@ -205,11 +210,15 @@ export async function deleteReview(productId: string, reviewId: string) {
 // --- Functions to get product data ---
 
 export async function getProducts(): Promise<Product[]> {
+    if (productsCache) {
+      return productsCache;
+    }
     const db = await readDb();
+    productsCache = db.products;
     return db.products;
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
-    const db = await readDb();
-    return db.products.find(p => p.id === id);
+    const products = await getProducts();
+    return products.find(p => p.id === id);
 }

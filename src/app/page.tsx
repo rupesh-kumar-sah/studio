@@ -1,41 +1,22 @@
 
-'use client';
-
 import { ArrowRight, Star, Award, Truck, Shield, ShoppingBag } from 'lucide-react';
+import { Suspense } from 'react';
 import { getProducts } from '@/app/actions/product-actions';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ProductCard } from '@/components/products/product-card';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCategories } from '@/components/categories/category-provider';
-import { useEffect, useState } from 'react';
-import type { Product } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ProductCardServer } from '@/components/products/product-card-server';
+import { FeaturedProducts } from './_components/featured-products';
 
 
-export default function Home() {
-    const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-    const { categories } = useCategories();
-    const categoryImages = {
-        'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
-        'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
-        'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-2'),
-        'Electronics': PlaceHolderImages.find(p => p.id === 'accessory-4'),
-    } as Record<string, any>;
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const products = await getProducts();
-            setFeaturedProducts(products.slice(0, 4));
-        };
-        fetchProducts();
-    }, []);
-
+export default async function Home() {
   const whyChooseUs = [
     {
       icon: Award,
@@ -127,11 +108,13 @@ export default function Home() {
               <h2 className="text-3xl font-bold tracking-tight">Featured Products</h2>
               <p className="mt-2 max-w-2xl text-muted-foreground">Hand-picked selections that our customers love.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <Suspense fallback={
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-96" />)}
+              </div>
+          }>
+              <FeaturedProducts />
+          </Suspense>
            <div className="mt-12 text-center">
               <Button asChild size="lg" variant="outline">
                   <Link href="/products">View All Products <ArrowRight className="ml-2 h-5 w-5" /></Link>
@@ -139,34 +122,7 @@ export default function Home() {
           </div>
         </section>
         
-        {/* Categories Section */}
-        <section id="categories" className="container scroll-mt-20">
-          <div className="flex flex-col items-center text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight">Shop by Category</h2>
-              <p className="mt-2 max-w-2xl text-muted-foreground">Find what you're looking for with our curated categories.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {categories.slice(0, 3).map((category) => (
-                  <Link href={`/products?category=${category}`} key={category} className="group relative block">
-                      <div className="relative w-full h-80 overflow-hidden rounded-lg">
-                          
-                              <Image
-                                  src={categoryImages[category]?.imageUrl || 'https://picsum.photos/seed/placeholder/600/800'}
-                                  alt={categoryImages[category]?.description || category}
-                                  fill
-                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                  data-ai-hint={categoryImages[category]?.imageHint || 'category'}
-                              />
-                          
-                          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                          <h3 className="text-3xl font-bold text-white">{category}</h3>
-                      </div>
-                  </Link>
-              ))}
-          </div>
-        </section>
+        {/* Categories Section is now part of the FeaturedProducts component */}
         
         {/* Why Choose Us Section */}
         <section className="bg-secondary py-16">

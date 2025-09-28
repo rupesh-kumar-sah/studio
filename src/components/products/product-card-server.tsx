@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { EditProductSheet } from './edit-product-sheet';
 import { Button } from '../ui/button';
@@ -46,10 +46,10 @@ export async function ProductCardServer({ product }: ProductCardProps) {
         </div>
         <div className="mt-4">
              <div className="flex justify-center items-baseline gap-2">
-                <p className="text-lg font-bold text-primary">NPR{product.price.toFixed(2)}</p>
+                <p className="text-lg font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
                 {product.originalPrice && (
                     <p className="text-sm text-muted-foreground line-through">
-                        NPR{product.originalPrice.toFixed(2)}
+                        Rs.{product.originalPrice.toFixed(2)}
                     </p>
                 )}
             </div>
@@ -68,4 +68,3 @@ export async function ProductCardServer({ product }: ProductCardProps) {
     </Card>
   );
 }
-
