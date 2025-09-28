@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -45,6 +46,9 @@ export function SearchDialog() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Search Products</DialogTitle>
+          <DialogDescription>
+            Search for products by name or description.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSearch} className="flex items-center space-x-2">
           <div className="relative flex-1">
