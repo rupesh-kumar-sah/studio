@@ -19,17 +19,31 @@ import { Filter } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { getProducts } from '@/lib/products-db';
+import { useAuth } from '@/components/auth/auth-provider';
+import { AddProductSheet } from '@/components/products/add-product-sheet';
+import { PlusCircle } from 'lucide-react';
 
 function ProductsPageContent() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const searchParams = useSearchParams();
+  const { isOwner } = useAuth();
+  const [isAddSheetOpen, setAddSheetOpen] = useState(false);
+
+  const loadProducts = async () => {
+    const products = await getProducts();
+    setAllProducts(products);
+  }
 
   useEffect(() => {
-    async function loadProducts() {
-      const products = await getProducts();
-      setAllProducts(products);
-    }
     loadProducts();
+
+    const handleProductUpdate = () => {
+        loadProducts();
+    }
+    window.addEventListener('product-updated', handleProductUpdate);
+    return () => {
+        window.removeEventListener('product-updated', handleProductUpdate);
+    }
   }, []);
 
   const [filters, setFilters] = useState({
@@ -124,6 +138,12 @@ function ProductsPageContent() {
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-muted-foreground">{filteredAndSortedProducts.length} products found</p>
             <div className="flex items-center gap-4">
+              {isOwner && (
+                <Button onClick={() => setAddSheetOpen(true)}>
+                    <PlusCircle className="mr-2 h-5 w-5" />
+                    Add Product
+                </Button>
+              )}
               <Select value={sort} onValueChange={setSort}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Sort by" />
@@ -172,6 +192,7 @@ function ProductsPageContent() {
       </div>
     </div>
     <Footer />
+    <AddProductSheet isOpen={isAddSheetOpen} onOpenChange={setAddSheetOpen} />
     </>
   );
 }

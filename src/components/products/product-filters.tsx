@@ -16,6 +16,7 @@ import { z } from 'zod';
 import { Checkbox } from '../ui/checkbox';
 import { Separator } from '../ui/separator';
 import { useRouter } from 'next/navigation';
+import { AddProductSheet } from './add-product-sheet';
 
 const newCategorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
@@ -24,7 +25,8 @@ const newCategorySchema = z.object({
 export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes }: any) {
   const { categories, addCategory } = useCategories();
   const { isOwner } = useAuth();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCategoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [isAddProductSheetOpen, setAddProductSheetOpen] = useState(false);
   const router = useRouter();
 
   const {
@@ -81,7 +83,7 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
   const handleAddCategory = (data: { name: string }) => {
     if (addCategory(data.name)) {
       reset();
-      setIsDialogOpen(false);
+      setCategoryDialogOpen(false);
     }
   };
 
@@ -98,7 +100,7 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
           <div className="flex justify-between items-center mb-2">
             <Label className="font-semibold text-base">Category</Label>
             {isOwner && (
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsDialogOpen(true)}>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCategoryDialogOpen(true)}>
                     <Plus className="h-4 w-4" />
                 </Button>
             )}
@@ -192,12 +194,12 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
       </CardContent>
     </Card>
     {isOwner && (
-        <Button className="w-full mt-4" onClick={() => router.push('/admin/products')}>
+        <Button className="w-full mt-4" onClick={() => setAddProductSheetOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add/Edit Products
+          Add New Product
         </Button>
     )}
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+    <Dialog open={isCategoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Category</DialogTitle>
@@ -214,12 +216,13 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setCategoryDialogOpen(false)}>Cancel</Button>
               <Button type="submit">Add Category</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
+      <AddProductSheet isOpen={isAddProductSheetOpen} onOpenChange={setAddProductSheetOpen} />
     </>
   );
 }
