@@ -3,7 +3,6 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { useAuth } from '@/components/auth/auth-provider';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,23 +10,6 @@ import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes, Palette, Fi
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { Skeleton } from '@/components/ui/skeleton';
-
-
-const AdminSidebar = dynamic(() => import('@/components/ui/sidebar').then(mod => mod.Sidebar), {
-  loading: () => (
-    <div className="hidden md:flex flex-col gap-4 p-2 border-r h-screen w-64">
-      <Skeleton className="h-10 w-full" />
-      <Skeleton className="h-8 w-full" />
-      <Skeleton className="h-8 w-full" />
-      <Skeleton className="h-8 w-full" />
-      <div className="flex-1" />
-      <Skeleton className="h-12 w-full" />
-    </div>
-  ),
-  ssr: false
-});
-
 
 export default function AdminLayout({
   children,
@@ -75,7 +57,7 @@ export default function AdminLayout({
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <AdminSidebar>
+        <Sidebar>
           <SidebarHeader>
             <Logo />
           </SidebarHeader>
@@ -169,7 +151,7 @@ export default function AdminLayout({
                 </SidebarMenu>
               </div>
           </SidebarFooter>
-        </AdminSidebar>
+        </Sidebar>
         <main className="flex-1">
              <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 md:hidden">
                 <SidebarTrigger />
@@ -181,5 +163,3 @@ export default function AdminLayout({
     </SidebarProvider>
   );
 }
-
-    
