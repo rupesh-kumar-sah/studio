@@ -13,67 +13,204 @@ import { useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { generatePasswordResetCode } from "@/ai/flows/forgot-password-flow";
+import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const forgotPasswordSchema = z.object({
+const emailSchema = z.object({
   email: z.string().email(),
 });
 
+const resetSchema = z.object({
+  code: z.string().length(6, "Code must be 6 digits"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+
 export default function ForgotPasswordPage() {
-  const [submitted, setSubmitted] = useState(false);
-  const { findUserByEmail } = useAuth();
-  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
-    resolver: zodResolver(forgotPasswordSchema),
+  const [step, setStep] = useState('enter-email'); // 'enter-email', 'show-code', 'reset-password'
+  const [isLoading, setIsLoading] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState('');
+  const [emailToReset, setEmailToReset] = useState('');
+  const { findUserByEmail, resetPassword } = useAuth();
+  const { toast } = useToast();
+
+  const emailForm = useForm<z.infer<typeof emailSchema>>({
+    resolver: zodResolver(emailSchema),
     defaultValues: { email: "" },
   });
 
-  function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
-    // In a real app, this would trigger an email service.
-    // Here, we just check if the user exists and show a message.
+  const resetForm = useForm<z.infer<typeof resetSchema>>({
+    resolver: zodResolver(resetSchema),
+    defaultValues: { code: "", password: "", confirmPassword: "" },
+  });
+
+  async function onEmailSubmit(data: z.infer<typeof emailSchema>) {
+    setIsLoading(true);
     const userExists = findUserByEmail(data.email);
+
+    if (userExists) {
+        try {
+            const result = await generatePasswordResetCode({ email: data.email });
+            setGeneratedCode(result.resetCode);
+            setEmailToReset(data.email);
+            setStep('show-code');
+        } catch (error) {
+            console.error("Failed to generate reset code:", error);
+            toast({ variant: 'destructive', title: "Error", description: "Could not generate a reset code. Please try again." });
+        }
+    } else {
+        // To prevent email enumeration, we show the same flow, but won't show a code.
+        setStep('show-code');
+        setGeneratedCode(''); // No code for non-existent users
+    }
     
-    // We show the same message whether the user exists or not
-    // to avoid leaking information about registered emails.
-    console.log(`Password reset requested for: ${data.email}. User exists: ${!!userExists}`);
-    setSubmitted(true);
+    setIsLoading(false);
   }
+
+  function onResetSubmit(data: z.infer<typeof resetSchema>) {
+    setIsLoading(true);
+    // In a real app, you'd re-verify the code with the backend. Here we use the stored one.
+    if (data.code === generatedCode) {
+        if (resetPassword(emailToReset, data.password)) {
+            toast({ title: "Success", description: "Your password has been reset. Please log in." });
+            setStep('complete');
+        } else {
+            toast({ variant: 'destructive', title: "Error", description: "Could not reset password." });
+        }
+    } else {
+        resetForm.setError("code", { type: "manual", message: "Invalid reset code." });
+    }
+    setIsLoading(false);
+  }
+  
+  const renderStep = () => {
+    switch (step) {
+      case 'enter-email':
+        return (
+          <>
+            <CardHeader className="text-center">
+              <CardTitle>Forgot Password</CardTitle>
+              <CardDescription>Enter your email to reset your password.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...emailForm}>
+                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-6">
+                  <FormField control={emailForm.control} name="email" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? <Loader2 className="animate-spin" /> : "Send Reset Code"}
+                  </Button>
+                </form>
+              </Form>
+              <div className="mt-6 text-center text-sm">
+                Remembered your password?{" "}
+                <Link href="/login" className="font-medium text-primary hover:underline">
+                    Log in
+                </Link>
+              </div>
+            </CardContent>
+          </>
+        );
+      case 'show-code':
+        return (
+          <>
+          <AlertDialog open={true} onOpenChange={() => setStep('reset-password')}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Check Your Inbox (Simulation)</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {generatedCode 
+                      ? "In a real app, an email would be sent. For this demo, your password reset code is:" 
+                      : "If an account with that email exists, a password reset link has been sent."
+                    }
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                {generatedCode && (
+                  <div className="my-4 text-center">
+                    <p className="text-sm text-muted-foreground">Reset Code</p>
+                    <p className="text-3xl font-bold tracking-widest">{generatedCode}</p>
+                  </div>
+                )}
+                <AlertDialogFooter>
+                  <AlertDialogAction onClick={() => setStep('reset-password')}>
+                    Enter Code & Reset Password
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <CardContent><p className="text-center text-muted-foreground">Waiting for code confirmation...</p></CardContent>
+          </>
+        );
+      case 'reset-password':
+          return (
+             <>
+                <CardHeader className="text-center">
+                  <CardTitle>Reset Your Password</CardTitle>
+                  <CardDescription>Enter the code and your new password.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Form {...resetForm}>
+                    <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className="space-y-6">
+                       <FormField control={resetForm.control} name="code" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Reset Code</FormLabel>
+                          <FormControl><Input placeholder="123456" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                       <FormField control={resetForm.control} name="password" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>New Password</FormLabel>
+                          <FormControl><Input type="password" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={resetForm.control} name="confirmPassword" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm New Password</FormLabel>
+                          <FormControl><Input type="password" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                         {isLoading ? <Loader2 className="animate-spin" /> : "Reset Password"}
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+             </>
+          );
+        case 'complete':
+            return (
+                <CardContent className="text-center">
+                    <p className="text-lg font-semibold">Password Reset!</p>
+                    <p className="text-muted-foreground mt-2">You can now log in with your new password.</p>
+                    <Button asChild className="mt-4">
+                        <Link href="/login">Go to Login</Link>
+                    </Button>
+                </CardContent>
+            )
+    }
+  }
+
 
   return (
     <>
     <Header />
     <div className="container flex items-center justify-center py-20">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>Forgot Password</CardTitle>
-          <CardDescription>
-            {submitted ? "Check your email inbox" : "Enter your email to reset your password."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!submitted ? (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <Button type="submit" className="w-full">Send Reset Link</Button>
-              </form>
-            </Form>
-          ) : (
-             <div className="text-center">
-                <p className="text-muted-foreground">If an account with that email exists, we've sent a password reset link to your inbox. Please check your spam folder if you don't see it.</p>
-            </div>
-          )}
-           <div className="mt-6 text-center text-sm">
-            Remembered your password?{" "}
-            <Link href="/login" className="font-medium text-primary hover:underline">
-                Log in
-            </Link>
-          </div>
-        </CardContent>
+        {renderStep()}
       </Card>
     </div>
     <Footer />

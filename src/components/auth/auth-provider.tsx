@@ -32,6 +32,7 @@ interface AuthContextType {
   logout: () => void;
   updateAvatar: (userId: string, avatar: string) => void;
   findUserByEmail: (email: string) => User | undefined;
+  resetPassword: (email: string, newPass: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -162,6 +163,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return users.find(u => u.email === email);
   }, [loadUsers]);
 
+  const resetPassword = useCallback((email: string, newPass: string) => {
+    const users = loadUsers();
+    let userFound = false;
+    const updatedUsers = users.map(u => {
+        if (u.email === email) {
+            userFound = true;
+            return { ...u, password: newPass };
+        }
+        return u;
+    });
+
+    if (userFound) {
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        setAllUsers(updatedUsers);
+    }
+    
+    // Note: We don't handle owner password reset here for security.
+    // It is assumed to be a manual process.
+
+    return userFound;
+  }, [loadUsers]);
+
   const value = { 
       isOwner, 
       currentUser, 
@@ -176,7 +199,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signup, 
       logout, 
       updateAvatar, 
-      findUserByEmail 
+      findUserByEmail,
+      resetPassword
   };
 
   return (
