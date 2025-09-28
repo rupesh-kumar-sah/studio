@@ -4,12 +4,17 @@ import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { EditProductSheet } from './edit-product-sheet';
+import { Button } from '../ui/button';
+import { Edit } from 'lucide-react';
+import { getIsOwner } from '@/lib/auth-db';
 
 interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export async function ProductCardServer({ product }: ProductCardProps) {
+  const isOwner = await getIsOwner();
   const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
 
   return (
@@ -50,6 +55,17 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
         </div>
       </CardContent>
+       {isOwner && (
+            <CardFooter className="p-2 border-t">
+                <EditProductSheet product={product}>
+                    <Button variant="ghost" className="w-full">
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Product
+                    </Button>
+                </EditProductSheet>
+            </CardFooter>
+        )}
     </Card>
   );
 }
+

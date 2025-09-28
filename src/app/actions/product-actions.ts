@@ -212,3 +212,4 @@ export async function getProducts(): Promise<Product[]> {
 export async function getProductById(id: string): Promise<Product | undefined> {
     const db = await readDb();
     return db.products.find(p => p.id === id);
+}

@@ -3,7 +3,7 @@ import { getProducts } from '@/app/actions/product-actions';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ProductCard } from '@/components/products/product-card-server';
+import { ProductCard } from '@/components/products/product-card';
 import { getCategories } from '@/lib/categories-db';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';

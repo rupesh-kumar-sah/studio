@@ -17,7 +17,7 @@ import { useForm, Controller } from 'react-hook-form';
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCategories } from '../categories/category-provider';
-import { addProduct, ProductFormData } from '@/app/actions/product-actions';
+import { addProduct, type ProductFormData } from '@/app/actions/product-actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -69,6 +69,9 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         colors: '',
         sizes: '',
         purchaseLimit: 10,
+        image1: '',
+        image2: '',
+        image3: '',
       });
       setImagePreview1(null);
       setImagePreview2(null);
