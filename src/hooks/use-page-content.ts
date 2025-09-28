@@ -38,7 +38,7 @@ export function usePageContent(slug: string) {
       window.removeEventListener('page-content-updated', handleStorageChange);
     };
 
-  }, [loadContent]);
+  }, [loadContent, slug]);
 
   return { content, loading };
 }

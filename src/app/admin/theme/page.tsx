@@ -63,6 +63,11 @@ export default function AdminThemePage() {
   
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const root = document.documentElement;
     const primary = getComputedStyle(root).getPropertyValue('--primary').trim();
     const background = getComputedStyle(root).getPropertyValue('--background').trim();
@@ -72,7 +77,25 @@ export default function AdminThemePage() {
     if (background) setBackgroundColor(hslToHex(...background.split(' ').map(parseFloat)));
     if (accent) setAccentColor(hslToHex(...accent.split(' ').map(parseFloat)));
 
-  }, []);
+    const savedTheme = localStorage.getItem('storeTheme');
+    if (savedTheme) {
+      try {
+        const theme = JSON.parse(savedTheme);
+        root.style.setProperty('--primary', theme.primary);
+        root.style.setProperty('--background', theme.background);
+        root.style.setProperty('--accent', theme.accent);
+        root.style.setProperty('--muted', theme.accent);
+        root.style.setProperty('--secondary', theme.accent);
+        root.style.setProperty('--ring', theme.ring);
+        
+        setPrimaryColor(hslToHex(...theme.primary.split(' ').map(parseFloat)));
+        setBackgroundColor(hslToHex(...theme.background.split(' ').map(parseFloat)));
+        setAccentColor(hslToHex(...theme.accent.split(' ').map(parseFloat)));
+      } catch (error) {
+        console.error("Failed to parse theme from localStorage", error);
+      }
+    }
+  }, [isMounted]);
 
   const handlePrimaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrimaryColor(e.target.value);
@@ -112,24 +135,6 @@ export default function AdminThemePage() {
     });
   };
   
-   useEffect(() => {
-    const savedTheme = localStorage.getItem('storeTheme');
-    if (savedTheme) {
-      const theme = JSON.parse(savedTheme);
-      const root = document.documentElement;
-      root.style.setProperty('--primary', theme.primary);
-      root.style.setProperty('--background', theme.background);
-      root.style.setProperty('--accent', theme.accent);
-      root.style.setProperty('--muted', theme.accent);
-      root.style.setProperty('--secondary', theme.accent);
-      root.style.setProperty('--ring', theme.ring);
-      
-      setPrimaryColor(hslToHex(...theme.primary.split(' ').map(parseFloat)));
-      setBackgroundColor(hslToHex(...theme.background.split(' ').map(parseFloat)));
-      setAccentColor(hslToHex(...theme.accent.split(' ').map(parseFloat)));
-    }
-  }, []);
-
   if (!isMounted) {
     return (
         <div className="p-4 sm:p-6 text-center">

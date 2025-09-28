@@ -58,7 +58,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart, isCartMounted } = useCart();
-  const { currentUser, isOwner } = useAuth();
+  const { currentUser } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -97,26 +97,27 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutFormValues) => {
     setIsProcessing(true);
     
-    const DAILY_PURCHASE_LIMIT = 100;
-    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-    const customerOrders = existingOrders.filter(o => o.customer.email === data.customer.email);
-    
-    const itemsPurchasedToday = customerOrders
-      .filter(o => isToday(new Date(o.date)))
-      .reduce((acc, order) => acc + order.items.reduce((sum, item) => sum + item.quantity, 0), 0);
-
-    if (itemsPurchasedToday + totalItems > DAILY_PURCHASE_LIMIT) {
-      toast({
-        variant: 'destructive',
-        title: 'Daily Limit Exceeded',
-        description: `You can only purchase up to ${DAILY_PURCHASE_LIMIT} items per day. You have already purchased ${itemsPurchasedToday} items today.`,
-      });
-      setIsProcessing(false);
-      return;
-    }
-
-    // Simulate API call
+    // Logic is executed inside a timeout to simulate an API call,
+    // so we can use localStorage without causing hydration issues.
     setTimeout(() => {
+        const DAILY_PURCHASE_LIMIT = 100;
+        const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+        const customerOrders = existingOrders.filter(o => o.customer.email === data.customer.email);
+        
+        const itemsPurchasedToday = customerOrders
+          .filter(o => isToday(new Date(o.date)))
+          .reduce((acc, order) => acc + order.items.reduce((sum, item) => sum + item.quantity, 0), 0);
+
+        if (itemsPurchasedToday + totalItems > DAILY_PURCHASE_LIMIT) {
+          toast({
+            variant: 'destructive',
+            title: 'Daily Limit Exceeded',
+            description: `You can only purchase up to ${DAILY_PURCHASE_LIMIT} items per day. You have already purchased ${itemsPurchasedToday} items today.`,
+          });
+          setIsProcessing(false);
+          return;
+        }
+
         const orderId = `NEm-${Date.now().toString().slice(-6)}`;
         const newOrder: Order = {
             id: orderId,
@@ -130,10 +131,8 @@ export default function CheckoutPage() {
             paymentMethod: 'eSewa',
         };
         
-        // Save order to localStorage
         localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
 
-        // Dispatch a custom event to notify other components (like admin pages)
         window.dispatchEvent(new CustomEvent('orders-updated'));
         window.dispatchEvent(new CustomEvent('new-order-alert', { detail: { orderId } }));
 

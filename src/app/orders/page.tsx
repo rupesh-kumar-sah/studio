@@ -21,12 +21,9 @@ export default function OrdersPage() {
 
 
   const loadAndFilterOrders = useCallback(() => {
-    if (typeof window === 'undefined') return;
-
-    const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-    storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    if (currentUser) {
+    if (typeof window !== 'undefined' && currentUser) {
+        const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+        storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         const customerOrders = storedOrders.filter(order => order.customer.email === currentUser.email);
         setDisplayOrders(customerOrders);
     } else {
@@ -42,6 +39,8 @@ export default function OrdersPage() {
   }, [authIsMounted, loadAndFilterOrders]);
 
   useEffect(() => {
+    if (!isMounted) return;
+
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'orders') {
         loadAndFilterOrders();
@@ -59,7 +58,7 @@ export default function OrdersPage() {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('orders-updated', handleCustomOrderUpdate);
     };
-  }, [loadAndFilterOrders]); 
+  }, [isMounted, loadAndFilterOrders]); 
 
   
   if (!isMounted || !authIsMounted) {

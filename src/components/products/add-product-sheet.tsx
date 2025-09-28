@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm, Controller } from 'react-hook-form';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCategories } from '../categories/category-provider';
 import { addProduct, type ProductFormData } from '@/app/actions/product-actions';
@@ -57,7 +57,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
     },
   });
   
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       reset({
         name: '',
@@ -73,6 +73,9 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         image2: '',
         image3: '',
       });
+      setImagePreview1(null);
+      setImagePreview2(null);
+      setImagePreview3(null);
     }
   }, [isOpen, reset, categories]);
 
@@ -181,7 +184,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                         id="originalPrice"
                         type="number"
                         step="0.01"
-                        value={field.value || ''}
+                        value={field.value ?? ''}
                         onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                         placeholder="e.g. 199.99"
                         />

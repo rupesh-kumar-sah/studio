@@ -34,7 +34,7 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
 
   useEffect(() => {
     async function fetchRecommendedProducts() {
-      if (recommendations.length > 0) {
+      if (recommendations.length > 0 && allProducts.length > 0) {
         const products = await Promise.all(recommendations.map(id => getProductById(id)));
         setRecommendedProducts(products.filter((p): p is Product => Boolean(p)));
       } else {
@@ -42,14 +42,14 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
       }
     }
     fetchRecommendedProducts();
-  }, [recommendations]);
+  }, [recommendations, allProducts]);
 
   const handleGetRecommendations = async () => {
     setLoading(true)
     setRecommendations([])
 
     const currentProduct = await getProductById(currentProductId)
-    if (!currentProduct) {
+    if (!currentProduct || allProducts.length === 0) {
       setLoading(false)
       return
     }

@@ -25,10 +25,11 @@ export default function AdminOrdersPage() {
   const [deleteError, setDeleteError] = useState('');
 
   const loadOrders = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
-    storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    setDisplayOrders(storedOrders);
+    if (typeof window !== 'undefined') {
+      const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
+      storedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setDisplayOrders(storedOrders);
+    }
   }, []);
 
   useEffect(() => {
@@ -37,6 +38,8 @@ export default function AdminOrdersPage() {
   }, [loadOrders]);
 
   useEffect(() => {
+    if (!isMounted) return;
+    
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'orders') {
         loadOrders();
@@ -54,7 +57,7 @@ export default function AdminOrdersPage() {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('orders-updated', handleCustomOrderUpdate);
     };
-  }, [loadOrders]); 
+  }, [isMounted, loadOrders]); 
 
   const updateOrderStatus = (orderId: string, status: Order['status'], toastTitle: string, toastDescription: string) => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];

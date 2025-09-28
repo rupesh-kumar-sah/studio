@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, Suspense, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Product } from '@/lib/types';
 import { AdminProductCard } from '@/components/products/admin-product-card';
 import {

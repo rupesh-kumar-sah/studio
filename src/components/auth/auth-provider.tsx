@@ -53,11 +53,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   const loadOwner = useCallback(() => {
     if (typeof window === 'undefined') return null;
-    const storedOwner = localStorage.getItem('owner');
-    if (storedOwner) {
-        return JSON.parse(storedOwner);
+    try {
+        const storedOwner = localStorage.getItem('owner');
+        if (storedOwner) {
+            return JSON.parse(storedOwner);
+        }
+    } catch (e) {
+        console.error("Failed to parse owner from localStorage", e);
     }
-    // If no owner in local storage, initialize with default
+    // If no owner in local storage or parsing fails, initialize with default
     localStorage.setItem('owner', JSON.stringify(ownerDetails));
     return ownerDetails;
   }, []);
@@ -67,7 +71,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers]);
 
   useEffect(() => {
-    setIsMounted(true);
     const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
     if (ownerLoggedIn) {
       setIsOwner(true);
@@ -78,6 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setCurrentUser(JSON.parse(storedUser));
     }
     setAllUsers(loadUsers());
+    setIsMounted(true);
   }, [loadUsers, loadOwner]);
 
   const isOwnerCredentials = (email: string, pass: string) => {
