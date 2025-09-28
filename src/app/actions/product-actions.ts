@@ -78,7 +78,7 @@ export async function addProduct(data: ProductFormData) {
       purchaseLimit: newProduct.purchaseLimit || 10,
     };
 
-    db.products.unshift(createdProduct);
+    db.products = [createdProduct, ...db.products];
 
     revalidatePath('/products');
     revalidatePath('/admin/products');
