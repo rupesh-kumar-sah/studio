@@ -20,6 +20,7 @@ import { useCategories } from '../categories/category-provider';
 import { addProduct, ProductFormData } from '@/app/actions/product-actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface AddProductSheetProps {
   isOpen: boolean;
@@ -30,12 +31,17 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
   const { categories } = useCategories();
   const { toast } = useToast();
   const router = useRouter();
+
+  const [imagePreview1, setImagePreview1] = useState<string | null>(null);
+  const [imagePreview2, setImagePreview2] = useState<string | null>(null);
+  const [imagePreview3, setImagePreview3] = useState<string | null>(null);
   
   const {
     register,
     handleSubmit,
     control,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ProductFormData>({
     defaultValues: {
@@ -64,8 +70,31 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         sizes: '',
         purchaseLimit: 10,
       });
+      setImagePreview1(null);
+      setImagePreview2(null);
+      setImagePreview3(null);
     }
   }, [isOpen, reset, categories]);
+
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<string | null>>,
+    fieldName: 'image1' | 'image2' | 'image3'
+    ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setter(result);
+        setValue(fieldName, result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+        setter(null);
+        setValue(fieldName, '');
+    }
+  };
 
   const onSubmit = async (data: ProductFormData) => {
     const result = await addProduct(data);
@@ -210,10 +239,29 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                 {errors.sizes && <p className="text-sm text-destructive">{errors.sizes.message}</p>}
             </div>
              
-             <div className="space-y-4 border-t pt-4">
+            <div className="space-y-4 border-t pt-4">
                 <Label>Product Images</Label>
-                <p className="text-xs text-muted-foreground">Image uploads are not supported in this prototype. Placeholders will be used.</p>
+                
+                <div className="space-y-2">
+                    <Label htmlFor="image1">Image 1</Label>
+                    <Input id="image1" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview1, 'image1')} />
+                    {imagePreview1 && <Image src={imagePreview1} alt="Preview 1" width={100} height={100} className="mt-2 rounded-md object-cover" />}
+                    {errors.image1 && <p className="text-sm text-destructive">{errors.image1.message}</p>}
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="image2">Image 2</Label>
+                    <Input id="image2" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview2, 'image2')} />
+                    {imagePreview2 && <Image src={imagePreview2} alt="Preview 2" width={100} height={100} className="mt-2 rounded-md object-cover" />}
+                     {errors.image2 && <p className="text-sm text-destructive">{errors.image2.message}</p>}
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="image3">Image 3</Label>
+                    <Input id="image3" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview3, 'image3')} />
+                    {imagePreview3 && <Image src={imagePreview3} alt="Preview 3" width={100} height={100} className="mt-2 rounded-md object-cover" />}
+                     {errors.image3 && <p className="text-sm text-destructive">{errors.image3.message}</p>}
+                </div>
              </div>
+
 
              <div className="pt-2">
                 <Button type="submit" disabled={isSubmitting} className="w-full">

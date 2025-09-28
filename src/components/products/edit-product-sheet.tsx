@@ -37,17 +37,16 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
-  // NOTE: Image uploads are not supported in this prototype.
-  // The state logic is here as a placeholder for a real implementation.
-  const [imagePreview1, setImagePreview1] = useState<string | null>(null);
-  const [imagePreview2, setImagePreview2] = useState<string | null>(null);
-  const [imagePreview3, setImagePreview3] = useState<string | null>(null);
+  const [imagePreview1, setImagePreview1] = useState<string | null>(product.images[0]?.url);
+  const [imagePreview2, setImagePreview2] = useState<string | null>(product.images[1]?.url);
+  const [imagePreview3, setImagePreview3] = useState<string | null>(product.images[2]?.url);
 
   const {
     register,
     handleSubmit,
     control,
     reset,
+    setValue,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<ProductFormData>({
     defaultValues: {
@@ -61,6 +60,9 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
       colors: product.colors.join(','),
       sizes: product.sizes.join(','),
       purchaseLimit: product.purchaseLimit || 10,
+      image1: product.images[0]?.url || '',
+      image2: product.images[1]?.url || '',
+      image3: product.images[2]?.url || '',
     },
   });
   
@@ -77,10 +79,13 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
         colors: product.colors.join(','),
         sizes: product.sizes.join(','),
         purchaseLimit: product.purchaseLimit || 10,
+        image1: product.images[0]?.url || '',
+        image2: product.images[1]?.url || '',
+        image3: product.images[2]?.url || '',
       });
-      setImagePreview1(null);
-      setImagePreview2(null);
-      setImagePreview3(null);
+      setImagePreview1(product.images[0]?.url);
+      setImagePreview2(product.images[1]?.url);
+      setImagePreview3(product.images[2]?.url);
     }
   }, [product, isOpen, reset]);
 
@@ -93,7 +98,7 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
         description: `"${result.product?.name}" has been successfully updated.`,
       });
       setIsOpen(false);
-      // No need to call router.refresh() here as revalidatePath is used in server action
+      window.dispatchEvent(new Event('product-updated'));
     } else {
        toast({
         variant: 'destructive',
@@ -103,22 +108,22 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
     }
   };
   
-  const createImageChangeHandler = (setter: React.Dispatch<React.SetStateAction<string | null>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<string | null>>,
+    fieldName: 'image1' | 'image2' | 'image3'
+    ) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setter(reader.result as string);
+        const result = reader.result as string;
+        setter(result);
+        setValue(fieldName, result, { shouldDirty: true });
       };
       reader.readAsDataURL(file);
-    } else {
-      setter(null);
     }
   };
-
-  const handleImageChange1 = createImageChangeHandler(setImagePreview1);
-  const handleImageChange2 = createImageChangeHandler(setImagePreview2);
-  const handleImageChange3 = createImageChangeHandler(setImagePreview3);
 
   const handleDelete = async () => {
     const result = await deleteProduct(product.id);
@@ -128,6 +133,7 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
         description: `"${product.name}" has been deleted.`,
       });
       setIsOpen(false);
+      window.dispatchEvent(new Event('product-updated'));
       router.push('/admin/products');
     } else {
       toast({
@@ -137,8 +143,6 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
       });
     }
   };
-
-  const hasImagePreviews = imagePreview1 || imagePreview2 || imagePreview3;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -268,48 +272,38 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
              
              <div className="space-y-4 border-t pt-4">
                 <Label>Product Images</Label>
-                <p className="text-xs text-muted-foreground">Image uploads are not supported in this prototype. Existing images will be retained.</p>
 
-                {/* Image 1 */}
                 <div className="space-y-2">
                   <Label htmlFor="image1">Image 1 (Primary)</Label>
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview1 || product.images[0]?.url}
-                      src={imagePreview1 || product.images[0]?.url || 'https://placehold.co/600x400'}
-                      alt="Product image 1 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                  <Input id="image1" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview1, 'image1')} />
+                  {imagePreview1 && (
+                    <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
+                      <Image src={imagePreview1} alt="Product image 1 preview" fill className="object-cover" />
+                    </div>
+                  )}
+                  {errors.image1 && <p className="text-sm text-destructive">{errors.image1.message}</p>}
                 </div>
 
-                {/* Image 2 */}
                 <div className="space-y-2">
                   <Label htmlFor="image2">Image 2</Label>
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview2 || product.images[1]?.url}
-                      src={imagePreview2 || product.images[1]?.url || 'https://placehold.co/600x400'}
-                      alt="Product image 2 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                  <Input id="image2" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview2, 'image2')} />
+                   {imagePreview2 && (
+                    <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
+                      <Image src={imagePreview2} alt="Product image 2 preview" fill className="object-cover" />
+                    </div>
+                  )}
+                   {errors.image2 && <p className="text-sm text-destructive">{errors.image2.message}</p>}
                 </div>
 
-                {/* Image 3 */}
                 <div className="space-y-2">
                   <Label htmlFor="image3">Image 3</Label>
-                  <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
-                    <Image
-                      key={imagePreview3 || product.images[2]?.url}
-                      src={imagePreview3 || product.images[2]?.url || 'https://placehold.co/600x400'}
-                      alt="Product image 3 preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                  <Input id="image3" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview3, 'image3')} />
+                  {imagePreview3 && (
+                    <div className="relative w-full aspect-square mt-2 rounded-md overflow-hidden border">
+                      <Image src={imagePreview3} alt="Product image 3 preview" fill className="object-cover" />
+                    </div>
+                  )}
+                   {errors.image3 && <p className="text-sm text-destructive">{errors.image3.message}</p>}
                 </div>
              </div>
           </div>

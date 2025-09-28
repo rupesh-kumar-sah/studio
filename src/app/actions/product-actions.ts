@@ -23,7 +23,9 @@ const productSchema = z.object({
   colors: z.string().min(1, "Please enter at least one color."),
   sizes: z.string().min(1, "Please enter at least one size."),
   purchaseLimit: z.number().int().min(1, 'Limit must be at least 1').optional(),
-  // images are handled separately
+  image1: z.string().min(1, 'First image is required.'),
+  image2: z.string().min(1, 'Second image is required.'),
+  image3: z.string().min(1, 'Third image is required.'),
 });
 export type ProductFormData = z.infer<typeof productSchema>;
 
@@ -54,18 +56,16 @@ export async function addProduct(data: ProductFormData) {
         return { success: false, message: 'Invalid product data.', errors: validation.error.flatten().fieldErrors };
     }
 
-    const { colors, sizes, ...rest } = validation.data;
+    const { colors, sizes, image1, image2, image3, ...rest } = validation.data;
 
-    // In a real app, you would handle image uploads and get URLs here.
-    // For now, we'll use placeholder images.
     const newProduct: Omit<Product, 'id' | 'rating' | 'reviews' | 'detailedReviews'> = {
         ...rest,
         colors: colors.split(',').map(s => s.trim()),
         sizes: sizes.split(',').map(s => s.trim()),
         images: [
-            { url: 'https://placehold.co/600x400', alt: 'Placeholder', hint: 'placeholder' },
-            { url: 'https://placehold.co/600x400', alt: 'Placeholder', hint: 'placeholder' },
-            { url: 'https://placehold.co/600x400', alt: 'Placeholder', hint: 'placeholder' },
+            { url: image1, alt: rest.name, hint: 'product photo' },
+            { url: image2, alt: rest.name, hint: 'product photo' },
+            { url: image3, alt: rest.name, hint: 'product photo' },
         ],
     };
     
@@ -78,7 +78,7 @@ export async function addProduct(data: ProductFormData) {
       purchaseLimit: newProduct.purchaseLimit || 10,
     };
 
-    db.products = [createdProduct, ...db.products];
+    db.products.unshift(createdProduct);
 
     revalidatePath('/products');
     revalidatePath('/admin/products');
@@ -95,7 +95,7 @@ export async function updateProduct(data: ProductFormData) {
         return { success: false, message: 'Invalid product data.', errors: validation.error.flatten().fieldErrors };
     }
     
-    const { id, colors, sizes, ...rest } = validation.data;
+    const { id, colors, sizes, image1, image2, image3, ...rest } = validation.data;
 
     const existingProduct = db.products.find(p => p.id === id);
     if (!existingProduct) {
@@ -107,6 +107,11 @@ export async function updateProduct(data: ProductFormData) {
         ...rest,
         colors: colors.split(',').map(s => s.trim()),
         sizes: sizes.split(',').map(s => s.trim()),
+        images: [
+            { url: image1, alt: rest.name, hint: 'product photo' },
+            { url: image2, alt: rest.name, hint: 'product photo' },
+            { url: image3, alt: rest.name, hint: 'product photo' },
+        ],
     };
 
     const refreshedProduct = refreshProductCalculations(updatedProductData);
