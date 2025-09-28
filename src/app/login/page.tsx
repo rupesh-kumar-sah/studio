@@ -17,6 +17,7 @@ import { Footer } from "@/components/layout/footer";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -178,7 +179,7 @@ export default function LoginPage() {
                 </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-2">
-                <FormLabel htmlFor="pin">Owner PIN</FormLabel>
+                <Label htmlFor="pin">Owner PIN</Label>
                 <Input 
                     id="pin" 
                     type="password" 
