@@ -62,7 +62,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       if (existingItemIndex > -1) {
         const newItems = [...prevItems];
-        const newQuantity = newItems[existingItemIndex].quantity + 1;
+        const currentItem = newItems[existingItemIndex];
+        const newQuantity = currentItem.quantity + 1;
+
         if (newQuantity > stockLimit) {
             setTimeout(() => {
               toast({
@@ -101,7 +103,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prevItems, { product, quantity: 1, size, color }];
       }
     });
-  }, [toast]);
+  }, [toast, items]);
 
   const removeItem = (productId: string, size: string, color: string) => {
     setItems((prevItems) =>
