@@ -8,14 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Ban } from 'lucide-react';
 
 interface AddToCartFormProps {
   product: Product;
 }
 
 export function AddToCartForm({ product }: AddToCartFormProps) {
-  const { addItem } = useCart();
+  const { addItem, getItemQuantity } = useCart();
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
 
@@ -23,6 +23,22 @@ export function AddToCartForm({ product }: AddToCartFormProps) {
     e.preventDefault();
     addItem(product, selectedSize, selectedColor);
   };
+
+  const isOutOfStock = product.stock <= 0;
+  const currentCartQuantity = getItemQuantity(product.id, selectedSize, selectedColor);
+  const canAddToCart = product.stock > currentCartQuantity;
+
+
+  if (isOutOfStock) {
+    return (
+        <div className="space-y-6">
+            <Button disabled size="lg" className="w-full">
+                <Ban className="mr-2 h-5 w-5" />
+                Out of Stock
+            </Button>
+        </div>
+    )
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -69,9 +85,18 @@ export function AddToCartForm({ product }: AddToCartFormProps) {
         </div>
       )}
       
-      <Button type="submit" size="lg" className="w-full">
-        <ShoppingCart className="mr-2 h-5 w-5" />
-        Add to Cart
+      <Button type="submit" size="lg" className="w-full" disabled={!canAddToCart}>
+        {canAddToCart ? (
+            <>
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Add to Cart
+            </>
+        ) : (
+            <>
+                <Ban className="mr-2 h-5 w-5" />
+                No More in Stock
+            </>
+        )}
       </Button>
     </form>
   );

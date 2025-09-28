@@ -11,6 +11,7 @@ interface CartContextType {
   removeItem: (productId: string, size: string, color: string) => void;
   updateQuantity: (productId: string, size: string, color: string, quantity: number) => void;
   clearCart: () => void;
+  getItemQuantity: (productId: string, size: string, color: string) => number;
   totalItems: number;
   totalPrice: number;
   isCartMounted: boolean;
@@ -43,6 +44,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('cart', JSON.stringify(items));
     }
   }, [items, isCartMounted]);
+  
+  const getItemQuantity = useCallback((productId: string, size: string, color: string) => {
+    const existingItem = items.find(
+      (item) => item.product.id === productId && item.size === size && item.color === color
+    );
+    return existingItem ? existingItem.quantity : 0;
+  }, [items]);
 
   const addItem = useCallback((product: Product, size: string, color: string) => {
     setItems((prevItems) => {
@@ -50,17 +58,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         (item) => item.product.id === product.id && item.size === size && item.color === color
       );
       
-      const purchaseLimit = product.purchaseLimit || 10;
+      const stockLimit = product.stock;
 
       if (existingItemIndex > -1) {
         const newItems = [...prevItems];
         const newQuantity = newItems[existingItemIndex].quantity + 1;
-        if (newQuantity > purchaseLimit) {
+        if (newQuantity > stockLimit) {
             setTimeout(() => {
               toast({
                   variant: 'destructive',
-                  title: "Purchase Limit Reached",
-                  description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
+                  title: "Stock Limit Reached",
+                  description: `You cannot add more of ${product.name} to the cart.`,
               });
             }, 0);
             return prevItems;
@@ -74,12 +82,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }, 0);
         return newItems;
       } else {
-        if (1 > purchaseLimit) {
+        if (1 > stockLimit) {
             setTimeout(() => {
               toast({
                   variant: 'destructive',
-                  title: "Purchase Limit Reached",
-                  description: `You can only purchase up to ${purchaseLimit} units of ${product.name}.`,
+                  title: "Out of Stock",
+                  description: `${product.name} is currently out of stock.`,
               });
             }, 0);
             return prevItems;
@@ -105,16 +113,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   
   const updateQuantity = (productId: string, size: string, color: string, quantity: number) => {
      const itemToUpdate = items.find(item => item.product.id === productId && item.size === size && item.color === color);
-     const purchaseLimit = itemToUpdate?.product.purchaseLimit || 10;
+     const stockLimit = itemToUpdate?.product.stock || 0;
 
-     if (quantity > purchaseLimit) {
+     if (quantity > stockLimit) {
         setTimeout(() => {
           toast({
               variant: 'destructive',
-              title: "Purchase Limit Reached",
-              description: `You can only purchase up to ${purchaseLimit} units of ${itemToUpdate?.product.name}.`,
+              title: "Stock Limit Reached",
+              description: `You can only purchase up to ${stockLimit} units of ${itemToUpdate?.product.name}.`,
           });
         }, 0);
+        // Reset to max available stock
+        setItems((prevItems) =>
+            prevItems.map((item) =>
+                item.product.id === productId && item.size === size && item.color === color
+                ? { ...item, quantity: stockLimit }
+                : item
+            )
+        );
         return;
     }
 
@@ -142,7 +158,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return { totalItems, totalPrice };
   }, [items]);
   
-  const value = { items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, isCartMounted };
+  const value = { items, addItem, removeItem, updateQuantity, clearCart, getItemQuantity, totalItems, totalPrice, isCartMounted };
 
   return (
     <CartContext.Provider value={value}>

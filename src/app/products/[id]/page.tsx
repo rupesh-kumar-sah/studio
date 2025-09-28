@@ -58,7 +58,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
                   </EditProductSheet>
                 )}
               </div>
-              <div className="flex items-baseline gap-3 mt-2">
+              <div className="flex items-center flex-wrap gap-3 mt-2">
                 <p className="text-2xl font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
                  {product.originalPrice && (
                     <p className="text-xl text-muted-foreground line-through">
@@ -67,6 +67,12 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
                 )}
                  {discount > 0 && (
                     <Badge variant="destructive">{discount}% OFF</Badge>
+                )}
+                {product.stock > 0 && product.stock <= 10 && (
+                    <Badge variant="outline" className="text-amber-600 border-amber-500">Low Stock</Badge>
+                )}
+                 {product.stock === 0 && (
+                    <Badge variant="destructive">Out of Stock</Badge>
                 )}
               </div>
               <div className="flex items-center gap-2 mt-2">
