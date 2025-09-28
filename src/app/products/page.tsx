@@ -15,19 +15,30 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
+import { Filter, PlusCircle } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { getProducts } from '@/app/actions/product-actions';
 import { useAuth } from '@/components/auth/auth-provider';
 import { AddProductSheet } from '@/components/products/add-product-sheet';
-import { PlusCircle } from 'lucide-react';
 
 function ProductsPageContent() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const searchParams = useSearchParams();
   const { isOwner } = useAuth();
   const [isAddSheetOpen, setAddSheetOpen] = useState(false);
+
+  const [filters, setFilters] = useState({
+    search: searchParams.get('search') || '',
+    category: searchParams.get('category') || 'All',
+    price: [0, 300],
+    rating: 0,
+    colors: [] as string[],
+    sizes: [] as string[],
+    inStock: true,
+  });
+  const [sort, setSort] = useState('featured');
+  const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
 
   const loadProducts = useCallback(async () => {
     const products = await getProducts();
@@ -45,18 +56,6 @@ function ProductsPageContent() {
         window.removeEventListener('product-updated', handleProductUpdate);
     }
   }, [loadProducts]);
-
-  const [filters, setFilters] = useState({
-    search: searchParams.get('search') || '',
-    category: searchParams.get('category') || 'All',
-    price: [0, 300],
-    rating: 0,
-    colors: [] as string[],
-    sizes: [] as string[],
-    inStock: true,
-  });
-  const [sort, setSort] = useState('featured');
-  const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
   
   useEffect(() => {
     setFilters(f => ({
