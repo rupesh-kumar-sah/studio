@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Product } from '@/lib/types';
-import { ProductCard } from '@/components/products/product-card';
+import { ProductCard } from '@/components/products/product-card-server';
 import { ProductFilters } from '@/components/products/product-filters';
 import {
   Select,

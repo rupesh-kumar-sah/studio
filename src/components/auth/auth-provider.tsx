@@ -128,13 +128,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return true;
   }, [loadUsers, toast]);
 
-  const logout = useCallback(() => {
+  const logout = () => {
     localStorage.removeItem('isOwnerLoggedIn');
     localStorage.removeItem('currentUser');
     setIsOwner(false);
     setCurrentUser(null);
     setOwner(null);
-  }, []);
+  };
 
   const updateAvatar = useCallback((userId: string, avatar: string) => {
     if (isOwner && userId === owner?.id) {
