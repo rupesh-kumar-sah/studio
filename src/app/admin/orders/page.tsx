@@ -6,7 +6,7 @@ import type { Order } from '@/app/checkout/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, CheckCircle, Clock, Trash2, ArrowRight, XCircle } from 'lucide-react';
+import { ShoppingBag, CheckCircle, Clock, Trash2, ArrowRight, XCircle, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -56,17 +56,22 @@ export default function AdminOrdersPage() {
     };
   }, [loadOrders]); 
 
-  const acceptOrder = (orderId: string) => {
+  const updateOrderStatus = (orderId: string, status: Order['status'], toastTitle: string, toastDescription: string) => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
     const updatedOrders = storedOrders.map(order => 
-        order.id === orderId ? { ...order, status: 'confirmed' as const } : order
+        order.id === orderId ? { ...order, status } : order
     );
     localStorage.setItem('orders', JSON.stringify(updatedOrders));
     window.dispatchEvent(new CustomEvent('orders-updated'));
-    toast({
-        title: "Order Confirmed",
-        description: `Order #${orderId} has been marked as confirmed.`
-    });
+    toast({ title: toastTitle, description: toastDescription });
+  };
+
+  const acceptOrder = (orderId: string) => {
+    updateOrderStatus(orderId, 'confirmed', 'Order Confirmed', `Order #${orderId} has been marked as confirmed.`);
+  };
+
+  const rejectPayment = (orderId: string) => {
+    updateOrderStatus(orderId, 'payment-issue', 'Payment Rejected', `Order #${orderId} has been marked with a payment issue.`);
   };
 
   const openDeleteDialog = (orderId: string) => {
@@ -147,13 +152,15 @@ export default function AdminOrdersPage() {
                         "flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium",
                         order.status === 'confirmed' ? "bg-green-100 text-green-800" :
                         order.status === 'pending' ? "bg-amber-100 text-amber-800" :
+                        order.status === 'payment-issue' ? "bg-orange-100 text-orange-800" :
                         "bg-red-100 text-red-800"
                         )}>
                         {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : 
                          order.status === 'pending' ? <Clock className="h-4 w-4" /> :
+                         order.status === 'payment-issue' ? <AlertTriangle className="h-4 w-4" /> :
                          <XCircle className="h-4 w-4" />
                         }
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ')}
                      </div>
                 </div>
             </CardHeader>
@@ -169,10 +176,16 @@ export default function AdminOrdersPage() {
             </CardContent>
             <CardFooter className="gap-2 bg-secondary p-4 rounded-b-lg">
                 {order.status === 'pending' && (
-                    <Button onClick={() => acceptOrder(order.id)} size="sm">
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Accept Order
-                    </Button>
+                    <>
+                        <Button onClick={() => acceptOrder(order.id)} size="sm">
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Accept Order
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => rejectPayment(order.id)}>
+                            <XCircle className="mr-2 h-4 w-4" />
+                            Reject Payment
+                        </Button>
+                    </>
                 )}
                 <Button variant="destructive" onClick={() => openDeleteDialog(order.id)} size="sm">
                    <Trash2 className="mr-2 h-4 w-4" />

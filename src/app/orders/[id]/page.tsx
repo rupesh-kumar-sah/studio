@@ -57,6 +57,10 @@ export default function OrderDetailPage() {
     updateOrderStatus(orderId, 'confirmed', 'Order Confirmed', `Order #${orderId} has been marked as confirmed.`);
   };
 
+  const rejectPayment = (orderId: string) => {
+    updateOrderStatus(orderId, 'payment-issue', 'Payment Rejected', `Order #${orderId} has been marked with a payment issue.`);
+  };
+
   const cancelOrder = (orderId: string) => {
     updateOrderStatus(orderId, 'cancelled', 'Order Cancelled', `Order #${orderId} has been cancelled.`);
     setIsCancelDialogOpen(false);
@@ -143,13 +147,15 @@ export default function OrderDetailPage() {
                         "flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium",
                         order.status === 'confirmed' ? "bg-green-100 text-green-800" :
                         order.status === 'pending' ? "bg-amber-100 text-amber-800" :
+                        order.status === 'payment-issue' ? "bg-orange-100 text-orange-800" :
                         "bg-red-100 text-red-800"
                         )}>
                         {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : 
                          order.status === 'pending' ? <Clock className="h-4 w-4" /> :
+                         order.status === 'payment-issue' ? <AlertTriangle className="h-4 w-4" /> :
                          <XCircle className="h-4 w-4" />
                         }
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ')}
                     </div>
                 </div>
             </CardHeader>
@@ -206,10 +212,16 @@ export default function OrderDetailPage() {
             {(isOwner || canCancel) && (
                 <CardFooter className="gap-2 bg-secondary p-4 rounded-b-lg">
                     {isOwner && order.status === 'pending' && (
-                        <Button onClick={() => acceptOrder(order.id)}>
-                            <CheckCircle className="mr-2 h-4 w-4" />
-                            Accept Order
-                        </Button>
+                        <>
+                            <Button onClick={() => acceptOrder(order.id)}>
+                                <CheckCircle className="mr-2 h-4 w-4" />
+                                Accept Order
+                            </Button>
+                            <Button variant="outline" onClick={() => rejectPayment(order.id)}>
+                                <XCircle className="mr-2 h-4 w-4" />
+                                Reject Payment
+                            </Button>
+                        </>
                     )}
                     {canCancel && (
                          <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>

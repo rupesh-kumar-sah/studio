@@ -6,7 +6,7 @@ import type { Order } from '@/app/checkout/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { LogIn, ShoppingBag, CheckCircle, Clock, ArrowRight, XCircle } from 'lucide-react';
+import { LogIn, ShoppingBag, CheckCircle, Clock, ArrowRight, XCircle, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -142,13 +142,15 @@ export default function OrdersPage() {
                         "flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium",
                         order.status === 'confirmed' ? "bg-green-100 text-green-800" :
                         order.status === 'pending' ? "bg-amber-100 text-amber-800" :
+                        order.status === 'payment-issue' ? "bg-orange-100 text-orange-800" :
                         "bg-red-100 text-red-800"
                         )}>
                         {order.status === 'confirmed' ? <CheckCircle className="h-4 w-4" /> : 
                          order.status === 'pending' ? <Clock className="h-4 w-4" /> :
+                         order.status === 'payment-issue' ? <AlertTriangle className="h-4 w-4" /> :
                          <XCircle className="h-4 w-4" />
                         }
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ')}
                      </div>
                 </div>
             </CardHeader>
