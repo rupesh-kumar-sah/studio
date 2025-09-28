@@ -29,9 +29,10 @@ const reviewSchema = z.object({
 
 interface AddReviewFormProps {
   productId: string;
+  onReviewSubmit: () => void;
 }
 
-function AddReviewForm({ productId }: AddReviewFormProps) {
+function AddReviewForm({ productId, onReviewSubmit }: AddReviewFormProps) {
     const { currentUser } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
@@ -53,7 +54,7 @@ function AddReviewForm({ productId }: AddReviewFormProps) {
         if (result.success) {
             toast({ title: 'Review submitted successfully!' });
             reset();
-            router.refresh();
+            onReviewSubmit(); // Refresh the product page to show the new review
         } else {
             toast({ variant: 'destructive', title: 'Failed to submit review.' });
         }
@@ -117,6 +118,7 @@ interface ProductReviewsProps {
 
 export function ProductReviews({ product }: ProductReviewsProps) {
     const { isOwner } = useAuth();
+    const router = useRouter();
     
     return (
         <div className="space-y-8">
@@ -166,7 +168,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                     )}
                 </CardContent>
             </Card>
-            <AddReviewForm productId={product.id} />
+            <AddReviewForm productId={product.id} onReviewSubmit={() => router.refresh()} />
         </div>
     );
 }
