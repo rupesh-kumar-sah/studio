@@ -56,13 +56,15 @@ export default function ForgotPasswordPage() {
   async function onEmailSubmit(data: z.infer<typeof emailSchema>) {
     setIsLoading(true);
     const userExists = findUserByEmail(data.email);
+    let code = '';
 
     if (userExists) {
-        const code = createRandomCode();
+        code = createRandomCode();
         setGeneratedCode(code);
         setEmailToReset(data.email);
     } 
     // To prevent email enumeration, we always proceed to the next step
+    // and only show the code if the user exists.
     setStep('show-code');
     setIsLoading(false);
   }
@@ -70,7 +72,7 @@ export default function ForgotPasswordPage() {
   function onResetSubmit(data: z.infer<typeof resetSchema>) {
     setIsLoading(true);
     // In a real app, you'd re-verify the code with the backend. Here we use the stored one.
-    if (data.code === generatedCode) {
+    if (data.code === generatedCode && generatedCode !== '') {
         if (resetPassword(emailToReset, data.password)) {
             toast({ title: "Success", description: "Your password has been reset. Please log in." });
             setStep('complete');
@@ -126,7 +128,7 @@ export default function ForgotPasswordPage() {
                   <AlertDialogDescription>
                     {generatedCode 
                       ? "In a real app, an email would be sent. For this demo, your password reset code is:" 
-                      : "If an account with that email exists, a password reset link has been sent."
+                      : "If an account with that email exists, a password reset code has been sent. For this demo, we show a popup."
                     }
                   </AlertDialogDescription>
                 </AlertDialogHeader>

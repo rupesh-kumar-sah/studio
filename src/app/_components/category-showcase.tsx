@@ -28,7 +28,7 @@ export function CategoryShowcase() {
                         <Card className="overflow-hidden">
                             <div className="relative aspect-[4/3] w-full">
                                 <Image
-                                    src={categoryImages[category] || 'https://placehold.co/600x400'}
+                                    src={categoryImages[category] || 'https://picsum.photos/seed/1/600/400'}
                                     alt={`Image for ${category} category`}
                                     fill
                                     className="object-cover transition-transform duration-300 group-hover:scale-105"
