@@ -1,8 +1,9 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
 import { getProductRecommendations, ProductRecommendationsInput } from "@/ai/flows/product-recommendations-flow"
-import { ProductCard } from "@/components/products/product-card-server"
+import { ProductCardServer } from "@/components/products/product-card-server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -127,7 +128,7 @@ export function ProductRecommendations({ currentProductId }: ProductRecommendati
             <h3 className="text-lg font-semibold mb-4">Our Suggestions:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {recommendedProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCardServer key={product.id} product={product} />
               ))}
             </div>
           </div>
