@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, Suspense, useEffect } from 'react';
+import { useState, useMemo, Suspense, useEffect, useCallback } from 'react';
 import type { Product } from '@/lib/types';
 import { AdminProductCard } from '@/components/products/admin-product-card';
 import {
@@ -23,13 +23,22 @@ function AdminProductsPageContent() {
   const [sort, setSort] = useState('featured');
   const [isAddSheetOpen, setAddSheetOpen] = useState(false);
 
-  useEffect(() => {
-    async function loadProducts() {
-        const products = await getProducts();
-        setAllProducts(products);
-    }
-    loadProducts();
+  const loadProducts = useCallback(async () => {
+    const products = await getProducts();
+    setAllProducts(products);
   }, []);
+
+  useEffect(() => {
+    loadProducts();
+    
+    const handleProductUpdate = () => {
+        loadProducts();
+    }
+    window.addEventListener('product-updated', handleProductUpdate);
+    return () => {
+        window.removeEventListener('product-updated', handleProductUpdate);
+    }
+  }, [loadProducts]);
   
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = allProducts.filter((product: Product) => {

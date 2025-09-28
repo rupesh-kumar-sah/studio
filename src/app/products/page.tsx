@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useState, useMemo, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Product } from '@/lib/types';
 import { ProductCard } from '@/components/products/product-card';
@@ -29,10 +29,10 @@ function ProductsPageContent() {
   const { isOwner } = useAuth();
   const [isAddSheetOpen, setAddSheetOpen] = useState(false);
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     const products = await getProducts();
     setAllProducts(products);
-  }
+  }, []);
 
   useEffect(() => {
     loadProducts();
@@ -44,7 +44,7 @@ function ProductsPageContent() {
     return () => {
         window.removeEventListener('product-updated', handleProductUpdate);
     }
-  }, []);
+  }, [loadProducts]);
 
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
