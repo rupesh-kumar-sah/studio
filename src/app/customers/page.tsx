@@ -5,7 +5,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { LogIn, ShieldAlert } from "lucide-react";
+import { LogIn, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -19,7 +19,7 @@ export default function CustomersPage() {
 
   useEffect(() => {
     if (isMounted && !isOwner) {
-      router.push('/admin');
+      router.push('/login');
     }
   }, [isOwner, isMounted, router]);
 
@@ -70,9 +70,11 @@ export default function CustomersPage() {
                             </TableRow>
                         ))
                     ) : (
-                        <TableRow>
-                            <TableCell colSpan={3} className="text-center text-muted-foreground py-10">
-                                No customers have signed up yet.
+                         <TableRow>
+                            <TableCell colSpan={3} className="h-48 text-center">
+                                <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                                <h3 className="mt-4 text-lg font-semibold">No Customers Yet</h3>
+                                <p className="mt-1 text-muted-foreground">When customers sign up, they will appear here.</p>
                             </TableCell>
                         </TableRow>
                     )}

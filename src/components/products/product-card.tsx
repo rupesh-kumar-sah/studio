@@ -48,10 +48,10 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
         <div className="mt-4">
              <div className="flex justify-center items-baseline gap-2">
-                <p className="text-lg font-bold text-primary">NPR{product.price.toFixed(2)}</p>
+                <p className="text-lg font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
                 {product.originalPrice && (
                     <p className="text-sm text-muted-foreground line-through">
-                        NPR{product.originalPrice.toFixed(2)}
+                        Rs.{product.originalPrice.toFixed(2)}
                     </p>
                 )}
             </div>

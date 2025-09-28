@@ -24,10 +24,6 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-const pinSchema = z.object({
-    pin: z.string().min(1, "PIN is required"),
-});
-
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
       <svg
@@ -80,7 +76,9 @@ export default function LoginPage() {
       return;
     }
     
-    if (customerLogin(data.email, data.password)) {
+    const loginSuccess = customerLogin(data.email, data.password);
+    
+    if (loginSuccess) {
       toast({ title: "Login Successful", description: "Welcome back!" });
       router.push("/");
     } else {

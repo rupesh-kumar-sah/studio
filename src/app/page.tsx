@@ -1,27 +1,40 @@
+
+'use client';
+
 import { ArrowRight, Star, Award, Truck, Shield, ShoppingBag } from 'lucide-react';
 import { getProducts } from '@/app/actions/product-actions';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/products/product-card';
-import { getCategories } from '@/lib/categories-db';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCategories } from '@/components/categories/category-provider';
+import { useEffect, useState } from 'react';
+import type { Product } from '@/lib/types';
 
-export default async function Home() {
-  const products = await getProducts();
-  const categories = await getCategories();
-  const featuredProducts = products.slice(0, 4);
-  const categoryImages = {
-    'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
-    'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
-    'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-2'),
-    'Electronics': PlaceHolderImages.find(p => p.id === 'accessory-4'),
-  } as Record<string, any>;
+
+export default function Home() {
+    const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+    const { categories } = useCategories();
+    const categoryImages = {
+        'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
+        'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
+        'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-2'),
+        'Electronics': PlaceHolderImages.find(p => p.id === 'accessory-4'),
+    } as Record<string, any>;
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const products = await getProducts();
+            setFeaturedProducts(products.slice(0, 4));
+        };
+        fetchProducts();
+    }, []);
 
   const whyChooseUs = [
     {

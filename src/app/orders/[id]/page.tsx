@@ -79,7 +79,7 @@ export default function OrderDetailPage() {
                 description: `Order #${order.id} has been successfully deleted.`
             });
             setIsDeleteDialogOpen(false);
-            router.push('/orders');
+            router.push(isOwner ? '/admin/orders' : '/orders');
         }
     } else {
         setDeleteError('Incorrect password. Please try again.');
