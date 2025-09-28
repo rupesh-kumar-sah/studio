@@ -83,8 +83,10 @@ export function EsewaQrCode() {
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Update eSewa QR Code</DialogTitle>
-                            <DialogDescription>Upload a new QR code image to replace the current one.</DialogDescription>
+                            <DialogTitle>Update QR Code</DialogTitle>
+                            <DialogDescription>
+                                Upload a new QR code image for eSewa payments.
+                            </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                             <div>
