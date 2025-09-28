@@ -1,4 +1,5 @@
 
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -100,7 +101,7 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
           <div className="flex justify-between items-center mb-2">
             <Label className="font-semibold text-base">Category</Label>
             {isOwner && (
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCategoryDialogOpen(true)}>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => router.push('/admin/categories')}>
                     <Plus className="h-4 w-4" />
                 </Button>
             )}
@@ -193,12 +194,7 @@ export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes 
         </div>
       </CardContent>
     </Card>
-    {isOwner && (
-        <Button className="w-full mt-4" onClick={() => setAddProductSheetOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Product
-        </Button>
-    )}
+    
     <Dialog open={isCategoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
         <DialogContent>
           <DialogHeader>

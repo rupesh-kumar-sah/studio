@@ -73,9 +73,6 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         image2: '',
         image3: '',
       });
-      setImagePreview1(null);
-      setImagePreview2(null);
-      setImagePreview3(null);
     }
   }, [isOpen, reset, categories]);
 
@@ -107,7 +104,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
         description: `"${result.product?.name}" has been successfully added.`,
       });
       onOpenChange(false);
-      window.dispatchEvent(new Event('product-updated'));
+      window.dispatchEvent(new CustomEvent('product-updated'));
     } else {
       toast({
         variant: 'destructive',
@@ -185,7 +182,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                         type="number"
                         step="0.01"
                         value={field.value || ''}
-                        onChange={e => field.onChange(parseFloat(e.target.value) || undefined)}
+                        onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                         placeholder="e.g. 199.99"
                         />
                     )}
@@ -221,8 +218,8 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                         id="purchaseLimit"
                         type="number"
                         step="1"
-                        value={field.value}
-                        onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
+                        value={field.value || ''}
+                        onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))}
                         />
                     )}
                 />
@@ -259,7 +256,7 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="image3">Image 3</Label>
-                    <Input id="image3" type="file" accept="image/*" onChange={e => handleImageChange(e, setImagePreview3, 'image3')} />
+                    <Input id="image3" type="file" accept="image-/*" onChange={e => handleImageChange(e, setImagePreview3, 'image3')} />
                     {imagePreview3 && <Image src={imagePreview3} alt="Preview 3" width={100} height={100} className="mt-2 rounded-md object-cover" />}
                      {errors.image3 && <p className="text-sm text-destructive">{errors.image3.message}</p>}
                 </div>

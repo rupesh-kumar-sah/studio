@@ -17,7 +17,7 @@ import { AddProductSheet } from '@/components/products/add-product-sheet';
 import { Input } from '@/components/ui/input';
 import { getProducts } from '@/app/actions/product-actions';
 
-function AdminProductsPageContent() {
+export default function AdminProductsPage() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('featured');
@@ -56,12 +56,13 @@ function AdminProductsPageContent() {
         filtered.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
         break;
       case 'newest':
+        // Assuming IDs are sortable timestamps/numbers
         filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
       case 'popularity':
          filtered.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0));
         break;
-      default: // featured
+      default: // featured (e.g., by popularity)
         filtered.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0));
         break;
     }
@@ -124,12 +125,4 @@ function AdminProductsPageContent() {
 
     </div>
   );
-}
-
-export default function AdminProductsPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-        <AdminProductsPageContent />
-    </Suspense>
-  )
 }
