@@ -22,6 +22,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { EditReviewDialog } from './edit-review-dialog';
 
 const reviewSchema = z.object({
     comment: z.string().min(10, "Review must be at least 10 characters long."),
@@ -34,44 +35,7 @@ interface ProductReviewsProps {
 
 export function ProductReviews({ product }: ProductReviewsProps) {
     const { isOwner } = useAuth();
-    const { toast } = useToast();
-    const router = useRouter();
-    const [editingReview, setEditingReview] = useState<Review | null>(null);
     
-    const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<z.infer<typeof reviewSchema>>({
-        resolver: zodResolver(reviewSchema),
-    });
-
-    const handleEditClick = (review: Review) => {
-        setEditingReview(review);
-        reset({ comment: review.comment, rating: review.rating });
-    };
-
-    const handleEditSubmit = async (data: z.infer<typeof reviewSchema>) => {
-        if (editingReview) {
-            const result = await updateReview(product.id, editingReview.id, data.comment, data.rating);
-            if (result.success) {
-                toast({ title: 'Review updated successfully' });
-                setEditingReview(null);
-                router.refresh();
-            } else {
-                toast({ variant: 'destructive', title: 'Failed to update review' });
-            }
-        }
-    };
-    
-    const handleDelete = async (reviewId: string) => {
-        const result = await deleteReview(product.id, reviewId);
-        if (result.success) {
-            toast({ title: 'Review deleted successfully' });
-            router.refresh();
-        } else {
-            toast({ variant: 'destructive', title: 'Failed to delete review' });
-        }
-    };
-
-    const watchedRating = watch("rating", editingReview?.rating || 0);
-
     return (
         <Card>
             <CardHeader>
@@ -81,7 +45,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
             <CardContent>
                 {product.detailedReviews && product.detailedReviews.length > 0 ? (
                     <div className="space-y-6">
-                        {product.detailedReviews.map((review) => (
+                        {product.detailedReviews.map((review, index) => (
                             <div key={review.id}>
                                 <div className="flex gap-4">
                                     <Avatar>
@@ -103,33 +67,10 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                                         <p className="mt-2 text-muted-foreground">{review.comment}</p>
                                     </div>
                                     {isOwner && (
-                                        <div className="flex gap-1">
-                                            <Button variant="ghost" size="icon" onClick={() => handleEditClick(review)}>
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            This action cannot be undone. This will permanently delete this review.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={() => handleDelete(review.id)}>Delete</AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </div>
+                                       <EditReviewDialog review={review} productId={product.id} />
                                     )}
                                 </div>
-                                {product.detailedReviews.indexOf(review) < product.detailedReviews.length - 1 && <Separator className="mt-6" />}
+                                {index < product.detailedReviews.length - 1 && <Separator className="mt-6" />}
                             </div>
                         ))}
                     </div>
@@ -140,43 +81,6 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                     </div>
                 )}
             </CardContent>
-
-            <Dialog open={!!editingReview} onOpenChange={(isOpen) => !isOpen && setEditingReview(null)}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Edit Review</DialogTitle>
-                        <DialogDescription>Make changes to the review below.</DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleSubmit(handleEditSubmit)} className="space-y-4">
-                        <div>
-                            <Label htmlFor="comment">Comment</Label>
-                            <Textarea id="comment" {...register('comment')} className="mt-1" />
-                            {errors.comment && <p className="text-sm text-destructive mt-1">{errors.comment.message}</p>}
-                        </div>
-                        <div>
-                            <Label>Rating</Label>
-                            <RadioGroup
-                                value={String(watchedRating)}
-                                onValueChange={(val) => setValue('rating', parseInt(val))}
-                                className="flex items-center gap-2 mt-2"
-                            >
-                                {[1, 2, 3, 4, 5].map(star => (
-                                    <div key={star}>
-                                        <RadioGroupItem value={String(star)} id={`rating-${star}`} className="sr-only" />
-                                        <Label htmlFor={`rating-${star}`} className="cursor-pointer">
-                                            <Star className={`h-6 w-6 transition-colors ${star <= watchedRating ? 'text-primary fill-primary' : 'text-muted-foreground'}`} />
-                                        </Label>
-                                    </div>
-                                ))}
-                            </RadioGroup>
-                        </div>
-                        <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setEditingReview(null)}>Cancel</Button>
-                            <Button type="submit">Save Changes</Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
         </Card>
     );
 }

@@ -2,21 +2,21 @@
 import { ArrowRight, Star, Award, Truck, Shield, ShoppingBag } from 'lucide-react';
 import { Suspense } from 'react';
 import { getProducts } from '@/app/actions/product-actions';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import Image from 'next/image';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ProductCardServer } from '@/components/products/product-card-server';
-import { FeaturedProducts } from './_components/featured-products';
+import { ProductCard } from '@/components/products/product-card';
+import { CategoryShowcase } from './_components/category-showcase';
 
 
 export default async function Home() {
+  const products = await getProducts();
+  const featuredProducts = products.slice(0, 4);
+
   const whyChooseUs = [
     {
       icon: Award,
@@ -108,13 +108,11 @@ export default async function Home() {
               <h2 className="text-3xl font-bold tracking-tight">Featured Products</h2>
               <p className="mt-2 max-w-2xl text-muted-foreground">Hand-picked selections that our customers love.</p>
           </div>
-          <Suspense fallback={
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-96" />)}
-              </div>
-          }>
-              <FeaturedProducts />
-          </Suspense>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {featuredProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+              ))}
+          </div>
            <div className="mt-12 text-center">
               <Button asChild size="lg" variant="outline">
                   <Link href="/products">View All Products <ArrowRight className="ml-2 h-5 w-5" /></Link>
@@ -122,7 +120,7 @@ export default async function Home() {
           </div>
         </section>
         
-        {/* Categories Section is now part of the FeaturedProducts component */}
+        <CategoryShowcase />
         
         {/* Why Choose Us Section */}
         <section className="bg-secondary py-16">
