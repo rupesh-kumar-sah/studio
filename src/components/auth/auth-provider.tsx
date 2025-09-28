@@ -27,7 +27,7 @@ interface AuthContextType {
   isOwnerCredentials: (email: string, pass: string) => boolean;
   verifyOwnerPin: (pin: string) => boolean;
   completeOwnerLogin: () => void;
-  customerLogin: (email: string, pass: string) => boolean;
+  customerLogin: (email: string, pass: string) => 'success' | 'not-found' | 'wrong-password';
   signup: (name: string, email: string, pass: string) => boolean;
   logout: () => void;
   updateAvatar: (userId: string, avatar: string) => void;
@@ -103,16 +103,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const customerLogin = useCallback((email: string, pass: string) => {
     const users = loadUsers();
-    const user = users.find(u => u.email === email && u.password === pass);
-    if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      setCurrentUser(user);
-      setIsOwner(false);
-      setOwner(null);
-      localStorage.removeItem('isOwnerLoggedIn');
-      return true;
+    const user = users.find(u => u.email === email);
+    if (!user) {
+      return 'not-found';
     }
-    return false;
+    if (user.password !== pass) {
+      return 'wrong-password';
+    }
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    setCurrentUser(user);
+    setIsOwner(false);
+    setOwner(null);
+    localStorage.removeItem('isOwnerLoggedIn');
+    return 'success';
   }, [loadUsers]);
 
   const signup = useCallback((name: string, email: string, pass: string) => {

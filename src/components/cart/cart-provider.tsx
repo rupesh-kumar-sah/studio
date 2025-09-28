@@ -59,6 +59,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
       
       const stockLimit = product.stock;
+      const purchaseLimit = product.purchaseLimit || 10;
 
       if (existingItemIndex > -1) {
         const newItems = [...prevItems];
@@ -75,6 +76,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             }, 0);
             return prevItems;
         }
+        if (newQuantity > purchaseLimit) {
+           setTimeout(() => {
+              toast({
+                variant: 'destructive',
+                title: 'Purchase Limit Exceeded',
+                description: `You can only purchase up to ${purchaseLimit} units.`,
+              });
+            }, 0);
+          return prevItems;
+        }
+
         newItems[existingItemIndex].quantity = newQuantity;
         setTimeout(() => {
           toast({
@@ -103,7 +115,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prevItems, { product, quantity: 1, size, color }];
       }
     });
-  }, [toast, items]);
+  }, [toast]);
 
   const removeItem = (productId: string, size: string, color: string) => {
     setItems((prevItems) =>
@@ -115,21 +127,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   
   const updateQuantity = (productId: string, size: string, color: string, quantity: number) => {
      const itemToUpdate = items.find(item => item.product.id === productId && item.size === size && item.color === color);
-     const stockLimit = itemToUpdate?.product.stock || 0;
+     if (!itemToUpdate) return;
+     
+     const stockLimit = itemToUpdate.product.stock;
+     const purchaseLimit = itemToUpdate.product.purchaseLimit || 10;
+     const limit = Math.min(stockLimit, purchaseLimit);
 
-     if (quantity > stockLimit) {
+     if (quantity > limit) {
         setTimeout(() => {
           toast({
               variant: 'destructive',
-              title: "Stock Limit Reached",
-              description: `You can only purchase up to ${stockLimit} units of ${itemToUpdate?.product.name}.`,
+              title: "Limit Reached",
+              description: `You can only add up to ${limit} units of ${itemToUpdate.product.name}.`,
           });
         }, 0);
-        // Reset to max available stock
+        // Reset to max available
         setItems((prevItems) =>
             prevItems.map((item) =>
                 item.product.id === productId && item.size === size && item.color === color
-                ? { ...item, quantity: stockLimit }
+                ? { ...item, quantity: limit }
                 : item
             )
         );

@@ -45,7 +45,7 @@ export function AdminProductCard({ product }: AdminProductCardProps) {
         <div className="mt-4">
              <div className="flex justify-center items-baseline gap-2">
                 <p className="text-lg font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
-                 {product.originalPrice && (
+                 {product.originalPrice && product.originalPrice > product.price && (
                     <p className="text-sm text-muted-foreground line-through">
                         Rs.{product.originalPrice.toFixed(2)}
                     </p>

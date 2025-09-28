@@ -76,13 +76,16 @@ export default function LoginPage() {
       return;
     }
     
-    const loginSuccess = customerLogin(data.email, data.password);
+    const loginResult = customerLogin(data.email, data.password);
     
-    if (loginSuccess) {
+    if (loginResult === 'success') {
       toast({ title: "Login Successful", description: "Welcome back!" });
       router.push("/");
     } else {
-        toast({ variant: 'destructive', title: "Login Failed", description: "Invalid email or password." });
+        const description = loginResult === 'not-found' 
+            ? "No account found with this email." 
+            : "The password you entered is incorrect.";
+        toast({ variant: 'destructive', title: "Login Failed", description });
         setIsSubmitting(false);
     }
   }
