@@ -231,13 +231,13 @@ export function AddProductSheet({ isOpen, onOpenChange }: AddProductSheetProps) 
             </div>
              <div className="space-y-2">
                 <Label htmlFor="colors">Colors</Label>
-                <Input id="colors" {...register('colors')} placeholder="e.g., #FF0000,blue,green" />
+                <Input id="colors" {...register('colors')} placeholder="e.g., Red, Blue, #FF5733" />
                 <p className="text-xs text-muted-foreground">Enter comma-separated colors (hex codes or names).</p>
                 {errors.colors && <p className="text-sm text-destructive">{errors.colors.message}</p>}
             </div>
              <div className="space-y-2">
                 <Label htmlFor="sizes">Sizes</Label>
-                <Input id="sizes" {...register('sizes')} placeholder="e.g., S,M,L or 7,8,9,10" />
+                <Input id="sizes" {...register('sizes')} placeholder="e.g., S, M, L, XL" />
                  <p className="text-xs text-muted-foreground">Enter comma-separated sizes.</p>
                 {errors.sizes && <p className="text-sm text-destructive">{errors.sizes.message}</p>}
             </div>

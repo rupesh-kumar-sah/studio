@@ -26,7 +26,21 @@ export function AddToCartForm({ product }: AddToCartFormProps) {
 
   const isOutOfStock = product.stock <= 0;
   const currentCartQuantity = getItemQuantity(product.id, selectedSize, selectedColor);
-  const canAddToCart = product.stock > currentCartQuantity;
+  const purchaseLimit = product.purchaseLimit || 10;
+  
+  const reachedStockLimit = currentCartQuantity >= product.stock;
+  const reachedPurchaseLimit = currentCartQuantity >= purchaseLimit;
+
+  const canAddToCart = !isOutOfStock && !reachedStockLimit && !reachedPurchaseLimit;
+  
+  let buttonText = "Add to Cart";
+  if (isOutOfStock) {
+      buttonText = "Out of Stock";
+  } else if (reachedStockLimit) {
+      buttonText = "No More in Stock";
+  } else if (reachedPurchaseLimit) {
+      buttonText = "Purchase Limit Reached";
+  }
 
 
   if (isOutOfStock) {
@@ -42,7 +56,7 @@ export function AddToCartForm({ product }: AddToCartFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {product.sizes.length > 1 && (
+      {product.sizes.length > 1 && product.sizes[0] !== 'One Size' && (
         <div>
           <Label className="font-semibold text-base">Size: {selectedSize}</Label>
           <RadioGroup value={selectedSize} onValueChange={setSelectedSize} className="flex flex-wrap gap-2 mt-2">
@@ -86,17 +100,8 @@ export function AddToCartForm({ product }: AddToCartFormProps) {
       )}
       
       <Button type="submit" size="lg" className="w-full" disabled={!canAddToCart}>
-        {canAddToCart ? (
-            <>
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Add to Cart
-            </>
-        ) : (
-            <>
-                <Ban className="mr-2 h-5 w-5" />
-                No More in Stock
-            </>
-        )}
+        {canAddToCart ? <ShoppingCart className="mr-2 h-5 w-5" /> : <Ban className="mr-2 h-5 w-5" />}
+        {buttonText}
       </Button>
     </form>
   );

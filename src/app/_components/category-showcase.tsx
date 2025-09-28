@@ -1,16 +1,56 @@
 
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
-import { getAllCategories } from "@/lib/categories-db";
+import { useCategories } from "@/components/categories/category-provider";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useMemo } from "react";
+import type { Category as CategoryType } from "@/lib/types";
 
-export async function CategoryShowcase() {
-    const categories = await getAllCategories();
+// Helper to create a seeded, stable ID from a category name
+const generateId = (name: string) => {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        const char = name.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+};
+
+
+export function CategoryShowcase() {
+    const { categories } = useCategories();
+
+    const categoryData = useMemo(() => {
+        const imageMap = {
+            'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
+            'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
+            'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-1'),
+            'Electronics': PlaceHolderImages.find(p => p.id === 'accessory-4'),
+        };
+
+        return categories.map((category: CategoryType) => {
+            const categoryKey = category as keyof typeof imageMap;
+            const fallbackImageIndex = generateId(category) % PlaceHolderImages.length;
+            const image = imageMap[categoryKey] || PlaceHolderImages[fallbackImageIndex];
+            
+            return {
+                id: generateId(category),
+                name: category,
+                imageUrl: image.imageUrl,
+                imageHint: image.imageHint,
+                description: `Image for ${category} category`,
+            };
+        });
+    }, [categories]);
 
     return (
         <section className="container">
             <h2 className="text-3xl font-bold mb-8 text-center">Shop by Category</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-                {categories.map((category) => (
+                {categoryData.slice(0, 4).map((category) => (
                     <Link href={`/products?category=${category.name}`} key={category.id} 
                         className="relative block group w-full aspect-square overflow-hidden rounded-lg">
                          <Image

@@ -63,7 +63,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
                     <Badge variant="destructive">{discount}% OFF</Badge>
                 )}
                 {product.stock > 0 && product.stock <= 10 && (
-                    <Badge variant="outline" className="text-amber-600 border-amber-500">Low Stock</Badge>
+                    <Badge variant="outline" className="text-amber-600 border-amber-500">Only {product.stock} left in stock</Badge>
                 )}
                  {product.stock === 0 && (
                     <Badge variant="destructive">Out of Stock</Badge>
