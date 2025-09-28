@@ -2,7 +2,6 @@
 
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { getProductById } from '@/app/actions/product-actions';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
@@ -10,16 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Star, Edit } from 'lucide-react';
 import { EditProductSheet } from '@/components/products/edit-product-sheet';
-import { Skeleton } from '@/components/ui/skeleton';
 import { getIsOwner } from '@/lib/auth-db';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Badge } from '@/components/ui/badge';
 import { ProductReviews } from '@/components/products/product-reviews';
-
-const ProductRecommendations = dynamic(() => import('@/components/products/product-recommendations').then(mod => mod.ProductRecommendations), {
-  loading: () => <Skeleton className="h-48 w-full" />,
-});
 
 
 export default async function ProductDetailPage({ params }: { params: { id: string } }) {
@@ -98,9 +92,6 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
            <ProductReviews product={product} />
         </div>
 
-        <div className="mt-16">
-          <ProductRecommendations currentProductId={product.id} />
-        </div>
       </div>
       <Footer />
     </>

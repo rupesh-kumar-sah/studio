@@ -14,7 +14,6 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { generatePasswordResetCode } from "@/ai/flows/forgot-password-flow";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -31,6 +30,10 @@ const resetSchema = z.object({
   path: ["confirmPassword"],
 });
 
+// Helper function to generate a random 6-digit code
+function createRandomCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState('enter-email'); // 'enter-email', 'show-code', 'reset-password'
@@ -55,21 +58,12 @@ export default function ForgotPasswordPage() {
     const userExists = findUserByEmail(data.email);
 
     if (userExists) {
-        try {
-            const result = await generatePasswordResetCode({ email: data.email });
-            setGeneratedCode(result.resetCode);
-            setEmailToReset(data.email);
-            setStep('show-code');
-        } catch (error) {
-            console.error("Failed to generate reset code:", error);
-            toast({ variant: 'destructive', title: "Error", description: "Could not generate a reset code. Please try again." });
-        }
-    } else {
-        // To prevent email enumeration, we show the same flow, but won't show a code.
-        setStep('show-code');
-        setGeneratedCode(''); // No code for non-existent users
-    }
-    
+        const code = createRandomCode();
+        setGeneratedCode(code);
+        setEmailToReset(data.email);
+    } 
+    // To prevent email enumeration, we always proceed to the next step
+    setStep('show-code');
     setIsLoading(false);
   }
 
