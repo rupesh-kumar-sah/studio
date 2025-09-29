@@ -11,7 +11,7 @@ export async function updatePageContent(
   console.log(`Server Action: Pretending to update page with slug: ${slug}`);
 
   const pageIndex = allPagesData.pages.findIndex(
-    (p: PageContent) => p.slug === slug
+    (p) => p.slug === slug
   );
 
   if (pageIndex === -1) {
