@@ -47,25 +47,6 @@ npm run build
 ```
 This command optimizes your application for performance and outputs the static files to the `.next` directory.
 
-## Deployment to GitHub Pages
-
-This project can be deployed as a static site to GitHub Pages. **Note:** This will disable all server-side functionality, including the admin dashboard and any actions that modify data.
-
-1.  **Update `package.json`**
-    Before deploying, open your `package.json` file and replace `<your-username>` in the `homepage` field with your GitHub username.
-
-2.  **Deploy**
-    Run the following command to build and deploy your application:
-    ```bash
-    npm run deploy
-    ```
-    This command will create a `gh-pages` branch and push the static output to it. The `predeploy` script automatically handles the creation of a `404.html` file to ensure client-side routing works correctly on GitHub Pages.
-
-3.  **Configure GitHub Pages**
-    - Go to your repository settings on GitHub.
-    - Navigate to the "Pages" section.
-    - Under "Build and deployment", select `gh-pages` as the source branch and `/ (root)` as the folder.
-    - Save your changes. Your site will be live at the URL provided.
 
 ## Deployment to Firebase App Hosting (Recommended)
 
