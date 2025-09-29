@@ -62,6 +62,7 @@ export default function AdminProductsPage() {
       case 'popularity':
          filtered.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0));
         break;
+      case 'featured':
       default: // featured (e.g., by popularity)
         filtered.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0));
         break;

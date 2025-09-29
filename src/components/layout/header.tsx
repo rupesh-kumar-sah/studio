@@ -126,6 +126,12 @@ export function Header() {
       <div className="container flex h-16 items-center">
         <Logo />
         <nav className="ml-6 hidden md:flex items-center space-x-4 lg:space-x-6">
+          <Link 
+            href="/products" 
+            className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80"
+          >
+            All Products
+          </Link>
           {categories.map(category => (
             <Link 
               key={category}

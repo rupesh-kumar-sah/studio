@@ -40,21 +40,18 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
   const [emailToReset, setEmailToReset] = useState('');
-  const { findUserByEmail, resetPassword } = useAuth();
+  const { findUserByEmail, resetPassword, isOwnerCredentials } = useAuth();
   const { toast } = useToast();
-
-  const emailForm = useForm<z.infer<typeof emailSchema>>({
-    resolver: zodResolver(emailSchema),
-    defaultValues: { email: "" },
-  });
-
-  const resetForm = useForm<z.infer<typeof resetSchema>>({
-    resolver: zodResolver(resetSchema),
-    defaultValues: { code: "", password: "", confirmPassword: "" },
-  });
 
   async function onEmailSubmit(data: z.infer<typeof emailSchema>) {
     setIsLoading(true);
+
+    if (isOwnerCredentials(data.email, 'any')) {
+        toast({ variant: 'destructive', title: 'Action Not Allowed', description: 'Password reset for the owner account is disabled for security.' });
+        setIsLoading(false);
+        return;
+    }
+
     const userExists = findUserByEmail(data.email);
     let code = '';
 
