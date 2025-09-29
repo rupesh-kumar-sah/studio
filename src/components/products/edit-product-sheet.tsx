@@ -147,13 +147,13 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="sm:max-w-lg">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <SheetHeader>
-            <SheetTitle>Edit Product</SheetTitle>
-            <SheetDescription>Make changes to your product. Click save when you're done.</SheetDescription>
-          </SheetHeader>
-          <div className="space-y-4 py-6 max-h-[calc(100vh-12rem)] overflow-y-auto pr-6">
+      <SheetContent className="sm:max-w-lg flex flex-col">
+        <SheetHeader>
+          <SheetTitle>Edit Product</SheetTitle>
+          <SheetDescription>Make changes to your product. Click save when you're done.</SheetDescription>
+        </SheetHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 space-y-4 py-6 overflow-y-auto pr-6">
             <div className="space-y-2">
               <Label htmlFor="name">Product Name</Label>
               <Input id="name" {...register('name')} />
