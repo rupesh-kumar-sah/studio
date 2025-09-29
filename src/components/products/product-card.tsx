@@ -22,7 +22,8 @@ export function ProductCard({ product }: ProductCardProps) {
             <Image
               src={product.images[0].url}
               alt={product.images[0].alt}
-              fill
+              width={400}
+              height={400}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               data-ai-hint={product.images[0].hint}

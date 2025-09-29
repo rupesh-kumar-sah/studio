@@ -12,12 +12,16 @@ import { Plus } from 'lucide-react';
 import { Checkbox } from '../ui/checkbox';
 import { Separator } from '../ui/separator';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
+import type { Product } from '@/lib/types';
 
-export function ProductFilters({ filters, setFilters, uniqueColors, uniqueSizes }: any) {
+export function ProductFilters({ filters, setFilters, products }: any) {
   const { categories } = useCategories();
   const { isOwner } = useAuth();
   const router = useRouter();
 
+  const uniqueColors = useMemo(() => [...new Set(products.flatMap((p: Product) => p.colors))], [products]);
+  const uniqueSizes = useMemo(() => [...new Set(products.flatMap((p: Product) => p.sizes))], [products]);
 
   const handleCategoryChange = (category: string) => {
     setFilters({ ...filters, category });

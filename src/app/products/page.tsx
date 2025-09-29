@@ -83,7 +83,7 @@ function ProductsPageContent() {
         filtered.sort((a, b) => a.price - b.price);
         break;
       case 'price-desc':
-        filtered.sort((a, b) => b.price - a.price);
+        filtered.sort((a, b) => b.price - b.price);
         break;
       case 'rating':
         filtered.sort((a, b) => {
@@ -108,9 +108,6 @@ function ProductsPageContent() {
     
     return filtered;
   }, [allProducts, filters, sort]);
-  
-  const uniqueColors = useMemo(() => [...new Set(allProducts.flatMap(p => p.colors))], [allProducts]);
-  const uniqueSizes = useMemo(() => [...new Set(allProducts.flatMap(p => p.sizes))], [allProducts]);
 
   return (
     <>
@@ -128,8 +125,7 @@ function ProductsPageContent() {
           <ProductFilters 
             filters={filters}
             setFilters={setFilters}
-            uniqueColors={uniqueColors}
-            uniqueSizes={uniqueSizes}
+            products={allProducts}
           />
         </aside>
         
@@ -167,8 +163,7 @@ function ProductsPageContent() {
                    <ProductFilters 
                       filters={filters}
                       setFilters={setFilters}
-                      uniqueColors={uniqueColors}
-                      uniqueSizes={uniqueSizes}
+                      products={allProducts}
                     />
                 </SheetContent>
               </Sheet>

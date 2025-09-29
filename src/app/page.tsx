@@ -5,9 +5,16 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { CategoryShowcase } from "./_components/category-showcase";
-import { FeaturedProducts } from "./_components/featured-products";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import { Footer } from "@/components/layout/footer";
+
+const CategoryShowcase = dynamic(() => import('./_components/category-showcase').then(m => m.CategoryShowcase), {
+  loading: () => <div className="container text-center">Loading categories...</div>
+});
+const FeaturedProducts = dynamic(() => import('./_components/featured-products').then(m => m.FeaturedProducts), {
+  loading: () => <div className="container text-center">Loading products...</div>
+});
 
 export default function Home() {
     const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
@@ -52,10 +59,14 @@ export default function Home() {
             </section>
 
             {/* Featured Categories */}
-            <CategoryShowcase />
+            <Suspense>
+              <CategoryShowcase />
+            </Suspense>
 
             {/* Featured Products */}
-            <FeaturedProducts />
+            <Suspense>
+              <FeaturedProducts />
+            </Suspense>
 
           </div>
           <Footer />
