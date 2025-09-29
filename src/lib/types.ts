@@ -45,9 +45,64 @@ export type Category = string;
 
 export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled' | 'payment-issue';
 
-export interface PageContent {
-  slug: string;
+export type FAQPage = {
+  slug: 'faq';
   title: string;
   description: string;
-  content: Record<string, any>;
-}
+  content: {
+    faqs: { question: string; answer: string }[];
+  };
+};
+
+export type PolicyPage = {
+  slug: 'terms-of-service' | 'privacy-policy';
+  title: string;
+  description: string;
+  content: {
+    sections: { title: string; content: string }[];
+    lastUpdated: string;
+  };
+};
+
+export type ShippingPage = {
+  slug: 'shipping-returns';
+  title: string;
+  description: string;
+  content: {
+    shipping: {
+      title: string;
+      intro: string;
+      deliveryTimes: {
+        title: string;
+        insideValley: string;
+        outsideValley: string;
+      };
+      costs: {
+        title: string;
+        content: string;
+      };
+      tracking: {
+        title: string;
+        content: string;
+      };
+    };
+    returns: {
+      title: string;
+      intro: string;
+      policy: {
+        title: string;
+        content: string;
+      };
+      process: {
+        title: string;
+        steps: string[];
+      };
+      refunds: {
+        title: string;
+        content: string;
+      };
+    };
+  };
+};
+
+export type PageContent = FAQPage | PolicyPage | ShippingPage;
