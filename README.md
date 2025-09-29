@@ -31,12 +31,12 @@ Before you begin, ensure you have Node.js version 18.x or newer (but less than 2
 
 ## Seeding the Database
 
-The project uses a local JSON file that acts as a mock database for products. To populate your Firestore database with the initial product data, run the seed script:
+The project uses a local JSON file that acts as a mock database for products. To populate your local data, you can use the seed script (though the app primarily reads from `src/lib/products.json` directly).
 
 ```bash
 npm run seed
 ```
-This command will read from `src/lib/products.json` and write the data to your configured Firestore database.
+This command is configured to write to Firestore, but our current implementation uses a JSON file directly. For a production setup, this script would be used to populate a live Firestore database.
 
 ## Building for Production
 
