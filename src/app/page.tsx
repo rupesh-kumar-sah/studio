@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { CategoryShowcase } from "./_components/category-showcase";
+import { FeaturedProducts } from "./_components/featured-products";
+import { Footer } from "@/components/layout/footer";
 
 export default function Home() {
     const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
@@ -41,7 +43,7 @@ export default function Home() {
                     Shop Now
                   </Link>
                   <Link
-                    href="/categories"
+                    href="/products"
                     className={cn(
                       buttonVariants({ variant: "outline", size: "lg" }),
                       "border-white text-white hover:bg-white/10"
@@ -55,9 +57,11 @@ export default function Home() {
             {/* Featured Categories */}
             <CategoryShowcase />
 
-            {/* TODO: Featured Products */}
+            {/* Featured Products */}
+            <FeaturedProducts />
 
           </div>
+          <Footer />
         </>
       );
 }

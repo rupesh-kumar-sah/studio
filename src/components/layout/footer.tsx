@@ -36,7 +36,7 @@ export function Footer() {
              <div className="mt-2 space-y-1">
                 <h4 className="font-semibold mb-2">Contact Us</h4>
                 <a href="mailto:rsah0123456@gmail.com" className="text-sm text-muted-foreground hover:text-foreground block">
-                  <span>📧 rsah0123456@gmail.com</span>
+                  rsah0123456@gmail.com
                 </a>
             </div>
           </div>
