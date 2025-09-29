@@ -59,7 +59,7 @@ This project can be deployed as a static site to GitHub Pages. **Note:** This wi
     ```bash
     npm run deploy
     ```
-    This command will create a `gh-pages` branch and push the static output to it.
+    This command will create a `gh-pages` branch and push the static output to it. The `predeploy` script automatically handles the creation of a `404.html` file to ensure client-side routing works correctly on GitHub Pages.
 
 3.  **Configure GitHub Pages**
     - Go to your repository settings on GitHub.
