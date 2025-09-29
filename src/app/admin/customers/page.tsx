@@ -24,7 +24,7 @@ export default function AdminCustomersPage() {
     };
   }, [reloadAllUsers]);
 
-  const customerUsers = allUsers.filter(user => user.email !== "rsah0123456@gmail.com");
+  const customerUsers = allUsers;
 
   return (
     <div className="p-4 sm:p-6">
