@@ -1,4 +1,5 @@
 
+
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getProductById } from '@/app/actions/product-actions';
@@ -71,7 +72,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex items-center text-amber-500">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`h-5 w-5 ${i < Math.round(rating) ? 'fill-current' : 'fill-muted stroke-muted-foreground'}`}/>
+                    <Star key={`rating-${i}`} className={`h-5 w-5 ${i < Math.round(rating) ? 'fill-current' : 'fill-muted stroke-muted-foreground'}`}/>
                   ))}
                 </div>
                 <span className="text-sm text-muted-foreground">({reviews} reviews)</span>
@@ -96,3 +97,4 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     </>
   );
 }
+

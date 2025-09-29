@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -163,8 +164,8 @@ export function ProductFilters({ filters, setFilters, products }: any) {
           <RadioGroup value={String(filters.rating)} onValueChange={handleRatingChange} className="mt-2 space-y-1">
             {[4, 3, 2, 1].map(star => (
               <div key={star} className="flex items-center space-x-2">
-                <RadioGroupItem value={String(star)} id={`rating-${star}`} />
-                <Label htmlFor={`rating-${star}`} className="font-normal">{star} stars & up</Label>
+                <RadioGroupItem value={String(star)} id={`rating-filter-${star}`} />
+                <Label htmlFor={`rating-filter-${star}`} className="font-normal">{star} stars & up</Label>
               </div>
             ))}
           </RadioGroup>
