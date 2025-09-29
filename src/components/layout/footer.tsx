@@ -1,5 +1,5 @@
 
-"use client";
+'use client';
 
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
@@ -7,6 +7,7 @@ import { Facebook, Instagram, Twitter, Youtube, Send } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -18,11 +19,14 @@ function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function Footer() {
   const pathname = usePathname();
+  const [newsletterEmail, setNewsletterEmail] = useState('');
 
   // Hide footer on admin pages
   if (pathname.startsWith('/admin')) {
     return null;
   }
+  
+  const mailtoLink = `mailto:rsah0123456@gmail.com?subject=Newsletter Subscription&body=Please add me to the newsletter list: ${newsletterEmail}`;
 
   return (
     <footer className="bg-secondary">
@@ -58,12 +62,20 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Newsletter</h3>
             <p className="text-sm text-muted-foreground mb-3">Subscribe to get the latest deals and offers.</p>
-             <form className="flex w-full max-w-sm items-center space-x-2">
-              <Input type="email" placeholder="Email" className="bg-background" />
-              <Button type="submit" size="icon">
-                <Send className="h-4 w-4" />
+             <div className="flex w-full max-w-sm items-center space-x-2">
+              <Input 
+                type="email" 
+                placeholder="Email" 
+                className="bg-background"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+              />
+              <Button asChild size="icon">
+                <a href={mailtoLink}>
+                  <Send className="h-4 w-4" />
+                </a>
               </Button>
-            </form>
+            </div>
           </div>
         </div>
         <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
