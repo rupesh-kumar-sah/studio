@@ -1,0 +1,141 @@
+{
+  "pages": [
+    {
+      "slug": "faq",
+      "title": "Frequently Asked Questions",
+      "description": "Find answers to common questions about our products, shipping, and policies.",
+      "content": {
+        "faqs": [
+          {
+            "question": "What payment methods do you accept?",
+            "answer": "We accept all major credit cards, PayPal, and also offer Cash on Delivery (COD) for certain locations. For digital payments, we support eSewa and Khalti."
+          },
+          {
+            "question": "How can I track my order?",
+            "answer": "Once your order is shipped, you will receive an email with a tracking number. You can also view your order status by logging into your account and visiting the 'My Orders' page."
+          },
+          {
+            "question": "What is your return policy?",
+            "answer": "We offer a 14-day return policy for unused and unworn items. Please visit our Shipping & Returns page for detailed instructions on how to process a return."
+          },
+          {
+            "question": "How long does shipping take?",
+            "answer": "Shipping within Kathmandu Valley typically takes 1-2 business days. For orders outside the valley, it may take 3-7 business days depending on the location."
+          },
+          {
+            "question": "Do you ship internationally?",
+            "answer": "Currently, we only ship within Nepal. We are working on expanding our shipping options to international locations in the future."
+          }
+        ]
+      }
+    },
+    {
+      "slug": "shipping-returns",
+      "title": "Shipping & Returns",
+      "description": "Everything you need to know about our shipping process and return policy.",
+      "content": {
+        "shipping": {
+          "title": "Shipping Policy",
+          "intro": "We are committed to delivering your order accurately, in good condition, and always on time.",
+          "deliveryTimes": {
+            "title": "Delivery Times",
+            "insideValley": "1-2 business days.",
+            "outsideValley": "3-7 business days."
+          },
+          "costs": {
+            "title": "Shipping Costs",
+            "content": "We offer FREE shipping on all orders above Rs. 2000. For orders below this amount, a flat rate of Rs. 100 will be applied."
+          },
+          "tracking": {
+            "title": "Tracking",
+            "content": "Once your order is dispatched, you will receive an email with your tracking number, which you can use to follow your package's journey."
+          }
+        },
+        "returns": {
+          "title": "Return Policy",
+          "intro": "We want you to be completely satisfied with your purchase. If you're not, we're here to help.",
+          "policy": {
+            "title": "14-Day Returns",
+            "content": "You can return any unworn, unwashed, or defective merchandise within 14 days of the order delivery date. All tags must be attached."
+          },
+          "process": {
+            "title": "How to Return",
+            "steps": [
+              "Contact our support team with your order ID to initiate a return.",
+              "Package the item securely.",
+              "Our delivery partner will arrange a pickup from your address."
+            ]
+          },
+          "refunds": {
+            "title": "Refunds",
+            "content": "Once we receive and inspect your return, we will process your refund to the original payment method within 5-7 business days."
+          }
+        }
+      }
+    },
+    {
+      "slug": "terms-of-service",
+      "title": "Terms of Service",
+      "description": "Please read these terms carefully before using our service.",
+      "content": {
+        "sections": [
+          {
+            "title": "1. Introduction",
+            "content": "Welcome to Nepal E-Mart. These Terms of Service ('Terms') govern your use of our website and services. By accessing or using our service, you agree to be bound by these Terms."
+          },
+          {
+            "title": "2. User Accounts",
+            "content": "When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our service."
+          },
+          {
+            "title": "3. Orders and Payments",
+            "content": "We reserve the right to refuse or cancel your order at any time for reasons including but not limited to: product or service availability, errors in the description or price of the product or service, error in your order, or other reasons."
+          },
+          {
+            "title": "4. Intellectual Property",
+            "content": "The service and its original content, features, and functionality are and will remain the exclusive property of Nepal E-Mart and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Nepal E-Mart."
+          },
+          {
+            "title": "5. Limitation of Liability",
+            "content": "In no event shall Nepal E-Mart, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses."
+          },
+          {
+            "title": "6. Changes to Terms",
+            "content": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide at least 30 days' notice prior to any new terms taking effect."
+          }
+        ],
+        "lastUpdated": "July 29, 2024"
+      }
+    },
+    {
+      "slug": "privacy-policy",
+      "title": "Privacy Policy",
+      "description": "Your privacy is important to us.",
+      "content": {
+        "sections": [
+          {
+            "title": "1. Information We Collect",
+            "content": "We collect information you provide directly to us when you create an account, place an order, or communicate with us. This may include your name, email address, shipping address, and payment information. We do not store your full credit card details."
+          },
+          {
+            "title": "2. How We Use Your Information",
+            "content": "We use the information we collect to process your orders, communicate with you, and improve our services. We may also use your information to send you promotional materials, but you can opt out at any time."
+          },
+          {
+            "title": "3. Data Sharing",
+            "content": "We do not sell or rent your personal information to third parties. We may share your information with trusted partners who assist us in operating our website, conducting our business, or servicing you, so long as those parties agree to keep this information confidential."
+          },
+          {
+            "title": "4. Data Security",
+            "content": "We implement a variety of security measures to maintain the safety of your personal information. Your personal information is contained behind secured networks and is only accessible by a limited number of persons who have special access rights to such systems."
+          },
+          {
+            "title": "5. Your Rights",
+            "content": "You have the right to access, correct, or delete your personal information. You can do this by logging into your account or by contacting our customer support."
+          }
+        ],
+        "lastUpdated": "July 29, 2024"
+      }
+    }
+  ]
+}
