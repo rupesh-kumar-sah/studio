@@ -15,7 +15,7 @@ export default function Home() {
     return (
         <>
           <Header />
-          <div className="space-y-16 md:space-y-24 pb-16">
+          <div className="space-y-20 md:space-y-28 pb-20">
             {/* Hero Section */}
             <section className="relative w-full h-[60vh] md:h-[80vh] text-white">
               {heroImage && (
@@ -30,17 +30,14 @@ export default function Home() {
                 />
               )}
               <div className="container h-full flex flex-col items-center justify-center text-center">
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight">Made in Nepal – Shop Smart, Shop Local.</h1>
-                <p className="mt-4 max-w-2xl text-lg md:text-xl text-gray-300">
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight">Authentic Nepali Goods, Delivered.</h1>
+                <p className="mt-4 max-w-2xl text-lg md:text-xl text-gray-200">
                   From the Himalayas to your home. Explore our curated collection of clothing, shoes, and accessories.
                 </p>
-                <div className="mt-8 flex gap-4">
+                <div className="mt-8 flex flex-wrap gap-4 justify-center">
                   <Link href="/products"
-                    className={cn(
-                      buttonVariants({ size: "lg" }),
-                      "bg-white text-gray-900 hover:bg-gray-200"
-                    )}>
-                    Shop Now
+                    className={cn(buttonVariants({ size: "lg" }))}>
+                    Shop The Collection
                   </Link>
                   <Link
                     href="/products"
@@ -48,7 +45,7 @@ export default function Home() {
                       buttonVariants({ variant: "outline", size: "lg" }),
                       "border-white text-white hover:bg-white/10"
                     )}>
-                    Explore Categories
+                    Browse All Products
                   </Link>
                 </div>
               </div>
