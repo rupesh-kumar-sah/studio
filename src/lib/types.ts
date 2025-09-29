@@ -1,3 +1,4 @@
+
 export type Review = {
   id: string;
   author: string;
@@ -24,6 +25,7 @@ export type Product = {
 };
 
 export type CartItem = {
+  cartItemId: string;
   product: Product;
   quantity: number;
   size: string;

@@ -73,10 +73,10 @@ export default function CartPage() {
                 </TableHeader>
                 <TableBody>
                   {items.map(item => (
-                    <TableRow key={`${item.product.id}-${item.size}-${item.color}`}>
+                    <TableRow key={item.cartItemId}>
                       <TableCell>
                         <div className="relative h-24 w-24 rounded-md overflow-hidden">
-                          <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
+                          <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" sizes="96px" />
                         </div>
                       </TableCell>
                       <TableCell>
@@ -92,7 +92,7 @@ export default function CartPage() {
                           value={item.quantity}
                           onChange={(e) => {
                             const newQuantity = parseInt(e.target.value, 10);
-                            updateQuantity(item.product.id, item.size, item.color, isNaN(newQuantity) ? 0 : newQuantity);
+                            updateQuantity(item.cartItemId, isNaN(newQuantity) ? 0 : newQuantity);
                           }}
                           className="h-9 w-20 mx-auto"
                         />
@@ -101,7 +101,7 @@ export default function CartPage() {
                         Rs.{(item.product.price * item.quantity).toFixed(2)}
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" onClick={() => removeItem(item.product.id, item.size, item.color)}>
+                        <Button variant="ghost" size="icon" onClick={() => removeItem(item.cartItemId)}>
                           <Trash2 className="h-5 w-5" />
                         </Button>
                       </TableCell>

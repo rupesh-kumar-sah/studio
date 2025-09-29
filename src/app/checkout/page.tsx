@@ -283,9 +283,9 @@ export default function CheckoutPage() {
                             <ScrollArea className="h-64 pr-4">
                                 <div className="space-y-4">
                                     {items.map(item => (
-                                        <div key={`${item.product.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
+                                        <div key={item.cartItemId} className="flex items-center gap-4">
                                             <div className="relative h-16 w-16 rounded-md overflow-hidden">
-                                                <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
+                                                <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" sizes="64px" />
                                                 <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                     {item.quantity}
                                                 </div>

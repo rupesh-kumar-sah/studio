@@ -23,7 +23,7 @@ import { Footer } from '@/components/layout/footer';
 export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const { isOwner, currentUser } = useAuth();
+  const { isOwner, currentUser, verifyOwnerPassword } = useAuth();
   const { toast } = useToast();
   const params = useParams();
   const router = useRouter();
@@ -67,7 +67,7 @@ export default function OrderDetailPage() {
   };
 
   const handleDeleteConfirm = () => {
-    if (deletePassword === 'rupesh@0123456') {
+    if (verifyOwnerPassword(deletePassword)) {
         if (order) {
             const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
             const updatedOrders = storedOrders.filter(o => o.id !== order.id);
@@ -194,9 +194,9 @@ export default function OrderDetailPage() {
                     <h3 className="font-semibold mb-4">Items ({order.items.length})</h3>
                     <div className="space-y-3">
                     {order.items.map(item => (
-                        <div key={`${item.product.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
+                        <div key={item.cartItemId} className="flex items-center gap-4">
                             <div className="relative h-16 w-16 rounded-md overflow-hidden border">
-                                <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" />
+                                <Image src={item.product.images[0].url} alt={item.product.name} fill className="object-cover" sizes="64px" />
                             </div>
                             <div className="flex-1">
                                 <p className="font-medium">{item.product.name}</p>

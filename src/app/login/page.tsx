@@ -82,11 +82,8 @@ export default function LoginPage() {
       toast({ title: "Login Successful", description: "Welcome back!" });
       router.push("/");
     } else {
-        const description = loginResult === 'not-found' 
-            ? "No account found with this email." 
-            : "The password you entered is incorrect.";
-        toast({ variant: 'destructive', title: "Login Failed", description });
-        setIsSubmitting(false);
+      toast({ variant: 'destructive', title: "Login Failed", description: "Invalid credentials. Please try again." });
+      setIsSubmitting(false);
     }
   }
 

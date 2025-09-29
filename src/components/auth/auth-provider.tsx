@@ -11,11 +11,10 @@ const ownerDetails = {
     name: "Rupesh Kumar Sah",
     email: "rsah0123456@gmail.com",
     phone: "9812345678",
-    avatar: "https://firebasestorage.googleapis.com/v0/b/app-rune-beta.appspot.com/o/rupesh-sah.jpg?alt=media&token=c97480a7-459f-431c-9391-7c9b33c37326"
+    avatar: "https://firebasestorage.googleapis.com/v0/b/app-rune-beta.appspot.com/o/rupesh-sah.jpg?alt=media&token=c97480a7-459f-431c-9391-7c9b33c37326",
+    password: "rupesh@0123456",
+    pin: "12345",
 };
-
-const OWNER_PASS = "rupesh@0123456";
-const OWNER_PIN = "12345";
 
 interface AuthContextType {
   isOwner: boolean;
@@ -26,6 +25,7 @@ interface AuthContextType {
   reloadAllUsers: () => void;
   isOwnerCredentials: (email: string, pass: string) => boolean;
   verifyOwnerPin: (pin: string) => boolean;
+  verifyOwnerPassword: (password: string) => boolean;
   completeOwnerLogin: () => void;
   customerLogin: (email: string, pass: string) => 'success' | 'not-found' | 'wrong-password';
   signup: (name: string, email: string, pass: string) => boolean;
@@ -82,17 +82,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setCurrentUser(JSON.parse(storedUser));
     }
     setAllUsers(loadUsers());
+    setOwner(loadOwner());
     setIsMounted(true);
   }, [loadUsers, loadOwner]);
 
   const isOwnerCredentials = (email: string, pass: string) => {
-    // In a real app, the password would be hashed. This is for prototype purposes.
-    return email === ownerDetails.email && pass === OWNER_PASS;
+    return email === ownerDetails.email && pass === ownerDetails.password;
   };
   
   const verifyOwnerPin = (pin: string) => {
-      return pin === OWNER_PIN;
+      return pin === ownerDetails.pin;
   }
+  
+  const verifyOwnerPassword = (password: string) => {
+    return password === ownerDetails.password;
+  };
 
   const completeOwnerLogin = () => {
     localStorage.setItem('isOwnerLoggedIn', 'true');
@@ -146,16 +150,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
   
   const updateOwnerDetails = useCallback((details: { name: string; phone: string }) => {
-    if (owner) {
-      const updatedOwner = { ...owner, ...details };
+    const ownerData = loadOwner();
+    if (ownerData) {
+      const updatedOwner = { ...ownerData, ...details };
       setOwner(updatedOwner);
       localStorage.setItem('owner', JSON.stringify(updatedOwner));
     }
-  }, [owner]);
+  }, [loadOwner]);
 
   const updateAvatar = useCallback((userId: string, avatar: string) => {
-    if (isOwner && userId === owner?.id) {
-        const updatedOwner = { ...owner!, avatar };
+    const ownerData = loadOwner();
+    if (isOwner && userId === ownerData?.id) {
+        const updatedOwner = { ...ownerData!, avatar };
         setOwner(updatedOwner);
         localStorage.setItem('owner', JSON.stringify(updatedOwner));
     } else {
@@ -170,7 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
         }
     }
-  }, [isOwner, owner, currentUser, loadUsers]);
+  }, [isOwner, currentUser, loadUsers, loadOwner]);
 
   const findUserByEmail = useCallback((email: string): User | undefined => {
     if (email === ownerDetails.email) {
@@ -196,9 +202,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAllUsers(updatedUsers);
     }
     
-    // Note: We don't handle owner password reset here for security.
-    // It is assumed to be a manual process.
-
     return userFound;
   }, [loadUsers]);
 
@@ -211,6 +214,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       reloadAllUsers, 
       isOwnerCredentials,
       verifyOwnerPin,
+      verifyOwnerPassword,
       completeOwnerLogin,
       customerLogin, 
       signup, 

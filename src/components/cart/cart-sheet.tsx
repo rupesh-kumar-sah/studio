@@ -57,7 +57,7 @@ export function CartSheet() {
             <ScrollArea className="flex-1">
               <div className="flex flex-col gap-4 px-6 py-4">
                 {items.map((item) => (
-                  <CartEntry key={`${item.product.id}-${item.size}-${item.color}`} item={item} setSheetOpen={setIsOpen} />
+                  <CartEntry key={item.cartItemId} item={item} setSheetOpen={setIsOpen} />
                 ))}
               </div>
             </ScrollArea>
@@ -118,7 +118,7 @@ function CartEntry({ item, setSheetOpen }: { item: CartItem, setSheetOpen: (open
             onChange={(e) => {
                 const newQuantity = parseInt(e.target.value, 10);
                 if (!isNaN(newQuantity)) {
-                    updateQuantity(item.product.id, item.size, item.color, newQuantity)
+                    updateQuantity(item.cartItemId, newQuantity)
                 }
             }}
             className="h-8 w-16"
@@ -127,7 +127,7 @@ function CartEntry({ item, setSheetOpen }: { item: CartItem, setSheetOpen: (open
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => removeItem(item.product.id, item.size, item.color)}
+            onClick={() => removeItem(item.cartItemId)}
             aria-label={`Remove ${item.product.name} from cart`}
           >
             <Trash2 className="h-4 w-4" />

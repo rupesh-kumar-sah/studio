@@ -13,11 +13,13 @@ import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/components/auth/auth-provider';
 
 export default function AdminOrdersPage() {
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
+  const { verifyOwnerPassword } = useAuth();
   
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -85,7 +87,7 @@ export default function AdminOrdersPage() {
   };
   
   const handleDeleteConfirm = () => {
-    if (deletePassword === 'rupesh@0123456') {
+    if (verifyOwnerPassword(deletePassword)) {
         if (orderToDelete) {
             const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
             const updatedOrders = storedOrders.filter(o => o.id !== orderToDelete);
