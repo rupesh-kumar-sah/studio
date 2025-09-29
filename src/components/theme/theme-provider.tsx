@@ -5,21 +5,13 @@ import React, { useEffect } from 'react';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    const savedTheme = localStorage.getItem('storeTheme');
-    if (savedTheme) {
+    const savedThemeCss = localStorage.getItem('themeCss');
+    if (savedThemeCss) {
       try {
-        const theme = JSON.parse(savedTheme);
-        const root = document.documentElement;
-
-        if (theme.primary) root.style.setProperty('--primary', theme.primary);
-        if (theme.background) root.style.setProperty('--background', theme.background);
-        if (theme.accent) {
-          root.style.setProperty('--accent', theme.accent);
-          root.style.setProperty('--muted', theme.accent);
-          root.style.setProperty('--secondary', theme.accent);
-        }
-        if (theme.ring) root.style.setProperty('--ring', theme.ring);
-
+        const styleTag = document.createElement('style');
+        styleTag.innerHTML = savedThemeCss;
+        document.head.appendChild(styleTag);
+        
       } catch (error) {
         console.error("Failed to parse or apply theme from localStorage", error);
       }
@@ -28,3 +20,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+
+    

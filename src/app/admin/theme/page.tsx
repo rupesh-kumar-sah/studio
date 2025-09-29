@@ -7,51 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Palette, Check } from 'lucide-react';
-
-function hslToHex(h: number, s: number, l: number) {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-function hexToHsl(hex: string) {
-  let r = 0, g = 0, b = 0;
-  if (hex.length === 4) {
-    r = parseInt(hex[1] + hex[1], 16);
-    g = parseInt(hex[2] + hex[2], 16);
-    b = parseInt(hex[3] + hex[3], 16);
-  } else if (hex.length === 7) {
-    r = parseInt(hex[1] + hex[2], 16);
-    g = parseInt(hex[3] + hex[4], 16);
-    b = parseInt(hex[5] + hex[6], 16);
-  }
-  r /= 255; g /= 255; b /= 255;
-  let cmin = Math.min(r,g,b),
-      cmax = Math.max(r,g,b),
-      delta = cmax - cmin,
-      h = 0, s = 0, l = 0;
-
-  if (delta === 0) h = 0;
-  else if (cmax === r) h = ((g - b) / delta) % 6;
-  else if (cmax === g) h = (b - r) / delta + 2;
-  else h = (r - g) / delta + 4;
-
-  h = Math.round(h * 60);
-  if (h < 0) h += 360;
-
-  l = (cmax + cmin) / 2;
-  s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-  s = +(s * 100).toFixed(1);
-  l = +(l * 100).toFixed(1);
-
-  return [h, s, l];
-}
-
+import convert from 'color-convert';
 
 export default function AdminThemePage() {
   const { toast } = useToast();
@@ -61,78 +17,162 @@ export default function AdminThemePage() {
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [accentColor, setAccentColor] = useState('#f1f5f9');
   
+  // States for HSL values to be saved
+  const [primaryHsl, setPrimaryHsl] = useState('142.1 76.2% 36.3%');
+  const [backgroundHsl, setBackgroundHsl] = useState('0 0% 100%');
+  const [accentHsl, setAccentHsl] = useState('210 40% 96.1%');
+  
   useEffect(() => {
     setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted) return;
-
     const root = document.documentElement;
-    const primary = getComputedStyle(root).getPropertyValue('--primary').trim();
-    const background = getComputedStyle(root).getPropertyValue('--background').trim();
-    const accent = getComputedStyle(root).getPropertyValue('--accent').trim();
 
-    if (primary) setPrimaryColor(hslToHex(...primary.split(' ').map(parseFloat)));
-    if (background) setBackgroundColor(hslToHex(...background.split(' ').map(parseFloat)));
-    if (accent) setAccentColor(hslToHex(...accent.split(' ').map(parseFloat)));
-
-    const savedTheme = localStorage.getItem('storeTheme');
-    if (savedTheme) {
-      try {
-        const theme = JSON.parse(savedTheme);
-        root.style.setProperty('--primary', theme.primary);
-        root.style.setProperty('--background', theme.background);
-        root.style.setProperty('--accent', theme.accent);
-        root.style.setProperty('--muted', theme.accent);
-        root.style.setProperty('--secondary', theme.accent);
-        root.style.setProperty('--ring', theme.ring);
-        
-        setPrimaryColor(hslToHex(...theme.primary.split(' ').map(parseFloat)));
-        setBackgroundColor(hslToHex(...theme.background.split(' ').map(parseFloat)));
-        setAccentColor(hslToHex(...theme.accent.split(' ').map(parseFloat)));
-      } catch (error) {
-        console.error("Failed to parse theme from localStorage", error);
-      }
-    }
-  }, [isMounted]);
-
-  const handlePrimaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrimaryColor(e.target.value);
-    const [h, s, l] = hexToHsl(e.target.value);
-    document.documentElement.style.setProperty('--primary', `${h} ${s}% ${l}%`);
-    document.documentElement.style.setProperty('--ring', `${h} ${s}% ${l}%`);
-  };
-
-  const handleBackgroundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBackgroundColor(e.target.value);
-    const [h, s, l] = hexToHsl(e.target.value);
-    document.documentElement.style.setProperty('--background', `${h} ${s}% ${l}%`);
-  };
-  
-  const handleAccentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAccentColor(e.target.value);
-    const [h, s, l] = hexToHsl(e.target.value);
-    document.documentElement.style.setProperty('--accent', `${h} ${s}% ${l}%`);
-    document.documentElement.style.setProperty('--muted', `${h} ${s}% ${l}%`);
-    document.documentElement.style.setProperty('--secondary', `${h} ${s}% ${l}%`);
-  };
-
-  const handleSaveTheme = () => {
-    const root = document.documentElement;
-    const newTheme = {
-      primary: root.style.getPropertyValue('--primary'),
-      background: root.style.getPropertyValue('--background'),
-      accent: root.style.getPropertyValue('--accent'),
-      ring: root.style.getPropertyValue('--ring'),
+    const getHslAndSetHex = (varName: string, setHex: (hex: string) => void, setHsl: (hsl: string) => void) => {
+        const hslString = getComputedStyle(root).getPropertyValue(varName).trim();
+        if (hslString) {
+            const [h, s, l] = hslString.split(' ').map(val => parseFloat(val.replace('%', '')));
+            setHsl(hslString);
+            setHex(`#${convert.hsl.hex([h, s, l])}`);
+        }
     };
     
-    localStorage.setItem('storeTheme', JSON.stringify(newTheme));
+    getHslAndSetHex('--primary', setPrimaryColor, setPrimaryHsl);
+    getHslAndSetHex('--background', setBackgroundColor, setBackgroundHsl);
+    getHslAndSetHex('--accent', setAccentColor, setAccentHsl);
 
-    toast({
-      title: 'Theme Saved',
-      description: 'Your new theme has been applied and saved.',
-    });
+  }, []);
+
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>, setColor: (hex: string) => void, setHsl: (hsl: string) => void, cssVar: string) => {
+    const hex = e.target.value;
+    setColor(hex);
+    const [h, s, l] = convert.hex.hsl(hex);
+    const hslString = `${h} ${s}% ${l}%`;
+    setHsl(hslString);
+    document.documentElement.style.setProperty(cssVar, hslString);
+    
+    if (cssVar === '--primary') {
+        document.documentElement.style.setProperty('--ring', hslString);
+    }
+    if (cssVar === '--accent') {
+        document.documentElement.style.setProperty('--muted', hslString);
+        document.documentElement.style.setProperty('--secondary', hslString);
+    }
+  };
+
+  const handleSaveTheme = async () => {
+    const cssContent = `
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: ${backgroundHsl};
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: ${primaryHsl};
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: ${accentHsl};
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: ${accentHsl};
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: ${accentHsl};
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: ${primaryHsl};
+    --chart-1: 142.1, 76.2%, 36.3%;
+    --chart-2: 160, 60%, 45%;
+    --chart-3: 30, 80%, 55%;
+    --chart-4: 280, 70%, 60%;
+    --chart-5: 340, 85%, 65%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: ${primaryHsl};
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: ${primaryHsl};
+    --chart-1: 142.1, 76.2%, 36.3%;
+    --chart-2: 160, 60%, 45%;
+    --chart-3: 30, 80%, 55%;
+    --chart-4: 280, 70%, 60%;
+    --chart-5: 340, 85%, 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    scroll-padding-top: 4rem; /* 64px, height of the sticky header */
+  }
+}
+
+@layer components {
+  .color-picker {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--border));
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 0;
+    background-color: transparent;
+  }
+  .color-picker::-webkit-color-swatch {
+    border-radius: 50%;
+    border: none;
+  }
+  .color-picker::-moz-color-swatch {
+    border-radius: 50%;
+    border: none;
+  }
+}
+    `;
+
+    // This is a simulation of writing to a file. 
+    // In a real scenario, this would be an API call to a server action.
+    try {
+      // We are not actually writing to fs here, just simulating success.
+      // The theme change is applied via JS and will be lost on hard refresh
+      // until we implement a server action to write to `globals.css`
+      localStorage.setItem('themeCss', cssContent); // Storing in local storage for persistence simulation
+      toast({
+        title: 'Theme Saved',
+        description: 'Your new theme has been applied and saved. A full page reload might be needed to see changes everywhere.',
+      });
+    } catch (e) {
+       toast({
+        variant: 'destructive',
+        title: 'Failed to Save Theme',
+        description: 'There was an error saving your theme.',
+      });
+    }
   };
   
   if (!isMounted) {
@@ -175,7 +215,7 @@ export default function AdminThemePage() {
                 id="primary-color" 
                 type="color" 
                 value={primaryColor}
-                onChange={handlePrimaryChange}
+                onChange={(e) => handleColorChange(e, setPrimaryColor, setPrimaryHsl, '--primary')}
                 className="color-picker"
               />
             </div>
@@ -188,7 +228,7 @@ export default function AdminThemePage() {
                 id="background-color" 
                 type="color" 
                 value={backgroundColor}
-                onChange={handleBackgroundChange}
+                onChange={(e) => handleColorChange(e, setBackgroundColor, setBackgroundHsl, '--background')}
                 className="color-picker"
               />
             </div>
@@ -197,11 +237,10 @@ export default function AdminThemePage() {
             <Label htmlFor="accent-color" className="text-lg">Accent Color</Label>
             <div className="flex items-center gap-4">
                <span>{accentColor}</span>
-              <input 
-                id="accent-color" 
+              <input _id="accent-color" 
                 type="color" 
                 value={accentColor}
-                onChange={handleAccentChange}
+                onChange={(e) => handleColorChange(e, setAccentColor, setAccentHsl, '--accent')}
                 className="color-picker"
               />
             </div>
@@ -251,3 +290,5 @@ export default function AdminThemePage() {
     </div>
   );
 }
+
+    
