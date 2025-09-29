@@ -1,5 +1,4 @@
 
-
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getProductById } from '@/app/actions/product-actions';

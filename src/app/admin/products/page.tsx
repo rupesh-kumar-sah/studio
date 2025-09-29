@@ -1,5 +1,4 @@
 
-
 import { Suspense } from 'react';
 import { AdminProductPageClient } from './_components/admin-product-page-client';
 import { getProducts } from '@/app/actions/product-actions';
