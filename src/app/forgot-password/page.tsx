@@ -43,6 +43,14 @@ export default function ForgotPasswordPage() {
   const { findUserByEmail, resetPassword, isOwnerCredentials } = useAuth();
   const { toast } = useToast();
 
+  const emailForm = useForm<z.infer<typeof emailSchema>>({
+    resolver: zodResolver(emailSchema),
+  });
+
+  const resetForm = useForm<z.infer<typeof resetSchema>>({
+    resolver: zodResolver(resetSchema),
+  });
+
   async function onEmailSubmit(data: z.infer<typeof emailSchema>) {
     setIsLoading(true);
 
@@ -144,6 +152,7 @@ export default function ForgotPasswordPage() {
             </AlertDialog>
             <CardHeader>
               <CardTitle>Waiting</CardTitle>
+              <CardDescription>Awaiting code confirmation...</CardDescription>
             </CardHeader>
             <CardContent><p className="text-center text-muted-foreground">Waiting for code confirmation...</p></CardContent>
           </>
@@ -192,6 +201,7 @@ export default function ForgotPasswordPage() {
               <>
                 <CardHeader>
                   <CardTitle>Password Reset</CardTitle>
+                  <CardDescription>Your password has been successfully changed.</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                     <p className="text-lg font-semibold">Password Reset!</p>

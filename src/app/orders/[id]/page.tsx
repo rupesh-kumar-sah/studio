@@ -105,9 +105,9 @@ export default function OrderDetailPage() {
           <CardHeader>
             <AlertTriangle className="h-12 w-12 mx-auto text-destructive" />
             <CardTitle className="mt-4">Order Not Found</CardTitle>
+            <CardDescription>The order you are looking for does not exist.</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">The order you are looking for does not exist.</p>
             <Button asChild className="mt-6">
               <Link href="/orders">Back to Orders</Link>
             </Button>

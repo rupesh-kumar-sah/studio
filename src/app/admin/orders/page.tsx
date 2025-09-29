@@ -119,9 +119,10 @@ export default function AdminOrdersPage() {
             <CardHeader>
                 <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground" />
                 <CardTitle className="mt-4">No Orders Found</CardTitle>
+                <CardDescription>There are currently no orders to display.</CardDescription>
             </CardHeader>
             <CardContent>
-                <p className="text-muted-foreground">There are currently no orders to display.</p>
+                <p className="text-muted-foreground">When new orders are placed, they will appear here.</p>
             </CardContent>
         </Card>
       </div>
