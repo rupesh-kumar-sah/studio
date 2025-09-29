@@ -31,6 +31,7 @@ interface AuthContextType {
   signup: (name: string, email: string, pass: string) => boolean;
   logout: () => void;
   updateAvatar: (userId: string, avatar: string) => void;
+  updateOwnerDetails: (details: { name: string; phone: string }) => void;
   findUserByEmail: (email: string) => User | undefined;
   resetPassword: (email: string, newPass: string) => boolean;
 }
@@ -85,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers, loadOwner]);
 
   const isOwnerCredentials = (email: string, pass: string) => {
+    // In a real app, the password would be hashed. This is for prototype purposes.
     return email === ownerDetails.email && pass === OWNER_PASS;
   };
   
@@ -142,6 +144,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(null);
     setOwner(null);
   };
+  
+  const updateOwnerDetails = useCallback((details: { name: string; phone: string }) => {
+    if (owner) {
+      const updatedOwner = { ...owner, ...details };
+      setOwner(updatedOwner);
+      localStorage.setItem('owner', JSON.stringify(updatedOwner));
+    }
+  }, [owner]);
 
   const updateAvatar = useCallback((userId: string, avatar: string) => {
     if (isOwner && userId === owner?.id) {
@@ -206,6 +216,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signup, 
       logout, 
       updateAvatar, 
+      updateOwnerDetails,
       findUserByEmail,
       resetPassword
   };

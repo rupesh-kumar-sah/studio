@@ -5,8 +5,8 @@ import { useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, ShoppingBag, LogIn, Users, Edit, Phone, LayoutDashboard } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Mail, ShoppingBag, LogIn, Edit, Phone, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -17,12 +17,19 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 
 export default function ProfilePage() {
-  const { isOwner, currentUser, owner, isMounted, updateAvatar } = useAuth();
+  const { isOwner, currentUser, owner, isMounted, updateAvatar, updateOwnerDetails } = useAuth();
   const { toast } = useToast();
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  
+  // State for avatar
   const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // State for owner details
+  const [ownerName, setOwnerName] = useState(owner?.name || '');
+  const [ownerPhone, setOwnerPhone] = useState(owner?.phone || '');
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -36,18 +43,26 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveAvatar = () => {
+  const handleSave = () => {
+      if (isOwner) {
+        // Save owner details
+        if (owner) {
+           updateOwnerDetails({ name: ownerName, phone: ownerPhone });
+        }
+      }
+
       if (previewUrl && (currentUser || isOwner)) {
           const userId = isOwner ? owner!.id : currentUser!.id;
           updateAvatar(userId, previewUrl);
-          toast({
-              title: 'Avatar Updated',
-              description: 'Your new profile photo has been saved.',
-          });
-          setIsEditDialogOpen(false);
-          setNewAvatarFile(null);
-          setPreviewUrl(null);
       }
+      
+      toast({
+          title: 'Profile Updated',
+          description: 'Your new details have been saved.',
+      });
+      setIsEditDialogOpen(false);
+      setNewAvatarFile(null);
+      setPreviewUrl(null);
   };
 
   if (!isMounted) {
@@ -106,44 +121,12 @@ export default function ProfilePage() {
         <div className="flex justify-center">
             <Card className="w-full max-w-2xl">
                 <CardHeader className="flex flex-col items-center text-center">
-                    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                        <div className="relative group">
-                            <Avatar className="h-24 w-24 mb-4">
-                                <AvatarImage src={user.avatar} alt={user.name || ''} />
-                                <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                            </Avatar>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" size="icon" className="absolute bottom-4 right-0 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Edit className="h-4 w-4" />
-                                    <span className="sr-only">Edit Photo</span>
-                                </Button>
-                            </DialogTrigger>
-                        </div>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Update Profile Photo</DialogTitle>
-                                <DialogDescription>Select a new image to use as your avatar.</DialogDescription>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                                <div>
-                                    <Label htmlFor="avatar-upload">New Avatar Image</Label>
-                                    <Input id="avatar-upload" type="file" accept="image/*" onChange={handleFileChange} />
-                                </div>
-                                {previewUrl && (
-                                    <div>
-                                        <p className="text-sm font-medium mb-2">Preview:</p>
-                                        <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden">
-                                          <Image src={previewUrl} alt="New avatar preview" fill className="object-cover" />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-                                <Button onClick={handleSaveAvatar} disabled={!newAvatarFile}>Save Photo</Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                     <div className="relative group">
+                        <Avatar className="h-24 w-24 mb-4">
+                            <AvatarImage src={user.avatar} alt={user.name || ''} />
+                            <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                    </div>
                     <CardTitle className="text-3xl">{user.name}</CardTitle>
                     <CardDescription>{user.role}</CardDescription>
                 </CardHeader>
@@ -160,24 +143,66 @@ export default function ProfilePage() {
                             </div>
                         )}
                     </div>
-                     <div className="border-t pt-6 space-y-4">
-                         {isOwner ? (
-                             <Button asChild className="w-full" size="lg">
+                </CardContent>
+                <CardFooter className="flex-col gap-4 border-t pt-6">
+                    {isOwner ? (
+                        <div className="w-full flex flex-col sm:flex-row gap-2">
+                             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" className="w-full">
+                                        <Edit className="mr-2 h-4 w-4" />
+                                        Edit Profile
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Edit Owner Profile</DialogTitle>
+                                        <DialogDescription>Update your administrator details.</DialogDescription>
+                                    </DialogHeader>
+                                    <div className="space-y-4 py-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="ownerName">Full Name</Label>
+                                            <Input id="ownerName" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} />
+                                        </div>
+                                         <div className="space-y-2">
+                                            <Label htmlFor="ownerPhone">Phone Number</Label>
+                                            <Input id="ownerPhone" value={ownerPhone} onChange={(e) => setOwnerPhone(e.target.value)} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="avatar-upload">Profile Photo</Label>
+                                            <Input id="avatar-upload" type="file" accept="image/*" onChange={handleFileChange} />
+                                        </div>
+                                        {previewUrl && (
+                                            <div>
+                                                <p className="text-sm font-medium mb-2">New Photo Preview:</p>
+                                                <div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden">
+                                                <Image src={previewUrl} alt="New avatar preview" fill className="object-cover" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <DialogFooter>
+                                        <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+                                        <Button onClick={handleSave}>Save Changes</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                            <Button asChild className="w-full" size="lg">
                                 <Link href="/admin">
                                     <LayoutDashboard className="mr-2 h-5 w-5" />
-                                    Go to Admin Dashboard
+                                    Go to Dashboard
                                 </Link>
                             </Button>
-                         ) : (
-                            <Button asChild className="w-full" size="lg">
-                                <Link href="/orders">
-                                    <ShoppingBag className="mr-2 h-5 w-5" />
-                                    View My Orders
-                                </Link>
-                            </Button>
-                         )}
-                    </div>
-                </CardContent>
+                        </div>
+                    ) : (
+                        <Button asChild className="w-full" size="lg">
+                            <Link href="/orders">
+                                <ShoppingBag className="mr-2 h-5 w-5" />
+                                View My Orders
+                            </Link>
+                        </Button>
+                    )}
+                </CardFooter>
             </Card>
         </div>
     </div>
