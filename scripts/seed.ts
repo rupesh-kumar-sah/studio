@@ -1,13 +1,13 @@
 
-import { db } from './firebase';
+import { db } from '../src/lib/firebase';
 import { collection, writeBatch, doc } from 'firebase/firestore';
-import productsData from './products.json';
+import productsData from '../src/lib/products.json';
 
 async function seedDatabase() {
   const productsCollection = collection(db, 'products');
   const batch = writeBatch(db);
 
-  productsData.forEach((product) => {
+  productsData.products.forEach((product: any) => {
     const docRef = doc(productsCollection, product.id);
     batch.set(docRef, product);
   });
