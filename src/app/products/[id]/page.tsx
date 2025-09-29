@@ -97,4 +97,3 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     </>
   );
 }
-

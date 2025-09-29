@@ -246,41 +246,42 @@ export default function OrderDetailPage() {
                         </Dialog>
                     )}
                      {isOwner && (
-                        <Button variant="destructive" onClick={openDeleteDialog}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete Order
-                        </Button>
+                        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="destructive">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete Order
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                <DialogTitle>Confirm Deletion</DialogTitle>
+                                <DialogDescription>
+                                    This action cannot be undone. To permanently delete this order, please enter the admin password.
+                                </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4 py-2">
+                                    <Label htmlFor="delete-password">Password</Label>
+                                    <Input
+                                        id="delete-password"
+                                        type="password"
+                                        value={deletePassword}
+                                        onChange={(e) => setDeletePassword(e.target.value)}
+                                        placeholder="Enter password..."
+                                    />
+                                    {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+                                </div>
+                                <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+                                <Button type="button" variant="destructive" onClick={handleDeleteConfirm}>Delete Order</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                      )}
                 </CardFooter>
             )}
         </Card>
       </div>
-
-       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Deletion</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. To permanently delete this order, please enter the admin password.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-2">
-                <Label htmlFor="delete-password">Password</Label>
-                <Input
-                    id="delete-password"
-                    type="password"
-                    value={deletePassword}
-                    onChange={(e) => setDeletePassword(e.target.value)}
-                    placeholder="Enter password..."
-                />
-                {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-              <Button type="button" variant="destructive" onClick={handleDeleteConfirm}>Delete Order</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
     </div>
     <Footer />
     </>

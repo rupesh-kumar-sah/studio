@@ -27,7 +27,7 @@ interface AuthContextType {
   verifyOwnerPin: (pin: string) => boolean;
   verifyOwnerPassword: (password: string) => boolean;
   completeOwnerLogin: () => void;
-  customerLogin: (email: string, pass: string) => 'success' | 'not-found' | 'wrong-password';
+  customerLogin: (email: string, pass: string) => 'success' | 'invalid';
   signup: (name: string, email: string, pass: string) => boolean;
   logout: () => void;
   updateAvatar: (userId: string, avatar: string) => void;
@@ -41,7 +41,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isOwner, setIsOwner] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [owner, setOwner] = useState<User | null>(null);
+  const [owner, setOwner] = useState<User | null>(ownerDetails);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
@@ -87,15 +87,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers, loadOwner]);
 
   const isOwnerCredentials = (email: string, pass: string) => {
-    return email === ownerDetails.email && pass === ownerDetails.password;
+    const currentOwner = owner || ownerDetails;
+    return email === currentOwner.email && pass === currentOwner.password;
   };
   
   const verifyOwnerPin = (pin: string) => {
-      return pin === ownerDetails.pin;
+      const currentOwner = owner || ownerDetails;
+      return pin === currentOwner.pin;
   }
   
   const verifyOwnerPassword = (password: string) => {
-    return password === ownerDetails.password;
+    const currentOwner = owner || ownerDetails;
+    return password === currentOwner.password;
   };
 
   const completeOwnerLogin = () => {
@@ -110,11 +113,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const customerLogin = useCallback((email: string, pass: string) => {
     const users = loadUsers();
     const user = users.find(u => u.email === email);
-    if (!user) {
-      return 'not-found';
-    }
-    if (user.password !== pass) {
-      return 'wrong-password';
+    if (!user || user.password !== pass) {
+      return 'invalid';
     }
     localStorage.setItem('currentUser', JSON.stringify(user));
     setCurrentUser(user);
@@ -126,7 +126,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = useCallback((name: string, email: string, pass: string) => {
     const users = loadUsers();
-    if (users.some(u => u.email === email) || email === ownerDetails.email) {
+    const currentOwner = owner || ownerDetails;
+    if (users.some(u => u.email === email) || email === currentOwner.email) {
       toast({
         variant: 'destructive',
         title: 'Signup Failed',
@@ -139,14 +140,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('users', JSON.stringify(updatedUsers));
     setAllUsers(updatedUsers);
     return true;
-  }, [loadUsers, toast]);
+  }, [loadUsers, toast, owner]);
 
   const logout = () => {
     localStorage.removeItem('isOwnerLoggedIn');
     localStorage.removeItem('currentUser');
     setIsOwner(false);
     setCurrentUser(null);
-    setOwner(null);
+    setOwner(loadOwner()); // Reset owner state to default from localStorage
   };
   
   const updateOwnerDetails = useCallback((details: { name: string; phone: string }) => {
@@ -179,12 +180,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isOwner, currentUser, loadUsers, loadOwner]);
 
   const findUserByEmail = useCallback((email: string): User | undefined => {
-    if (email === ownerDetails.email) {
-      return ownerDetails as User;
+    const currentOwner = owner || ownerDetails;
+    if (email === currentOwner.email) {
+      return currentOwner as User;
     }
     const users = loadUsers();
     return users.find(u => u.email === email);
-  }, [loadUsers]);
+  }, [loadUsers, owner]);
 
   const resetPassword = useCallback((email: string, newPass: string) => {
     const users = loadUsers();

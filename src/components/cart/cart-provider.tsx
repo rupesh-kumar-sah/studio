@@ -45,8 +45,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, isCartMounted]);
   
   const getItemQuantity = useCallback((productId: string, size: string, color: string) => {
+    const cartItemId = `${productId}-${size}-${color}`;
     const existingItem = items.find(
-      (item) => item.product.id === productId && item.size === size && item.color === color
+      (item) => item.cartItemId === cartItemId
     );
     return existingItem ? existingItem.quantity : 0;
   }, [items]);
