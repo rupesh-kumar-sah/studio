@@ -8,6 +8,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -20,13 +21,31 @@ function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
 export function Footer() {
   const pathname = usePathname();
   const [newsletterEmail, setNewsletterEmail] = useState('');
+  const { toast } = useToast();
 
   // Hide footer on admin pages
   if (pathname.startsWith('/admin')) {
     return null;
   }
   
-  const mailtoLink = `mailto:rsah0123456@gmail.com?subject=Newsletter Subscription&body=Please add me to the newsletter list: ${newsletterEmail}`;
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newsletterEmail && newsletterEmail.includes('@')) {
+      // In a real app, this would be an API call.
+      // For the prototype, we just show a toast.
+      toast({
+        title: "Subscribed!",
+        description: "Thank you for subscribing to our newsletter.",
+      });
+      setNewsletterEmail('');
+    } else {
+      toast({
+        variant: 'destructive',
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+      });
+    }
+  };
 
   return (
     <footer className="bg-secondary">
@@ -62,7 +81,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Newsletter</h3>
             <p className="text-sm text-muted-foreground mb-3">Subscribe to get the latest deals and offers.</p>
-             <div className="flex w-full max-w-sm items-center space-x-2">
+             <form onSubmit={handleNewsletterSubmit} className="flex w-full max-w-sm items-center space-x-2">
               <Input 
                 type="email" 
                 placeholder="Email" 
@@ -70,12 +89,10 @@ export function Footer() {
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
               />
-              <Button asChild size="icon">
-                <a href={mailtoLink}>
-                  <Send className="h-4 w-4" />
-                </a>
+              <Button type="submit" size="icon">
+                <Send className="h-4 w-4" />
               </Button>
-            </div>
+            </form>
           </div>
         </div>
         <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
