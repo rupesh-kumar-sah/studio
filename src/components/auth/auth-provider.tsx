@@ -78,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
     if (ownerLoggedIn) {
       setIsOwner(true);
+      setOwner(loadedOwner);
     }
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
@@ -107,8 +108,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const completeOwnerLogin = () => {
     localStorage.setItem('isOwnerLoggedIn', 'true');
-    const ownerData = loadOwner();
-    setOwner(ownerData);
+    const currentOwner = loadOwner() || ownerDetails;
+    setOwner(currentOwner);
     setIsOwner(true);
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
@@ -123,7 +124,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('currentUser', JSON.stringify(user));
     setCurrentUser(user);
     setIsOwner(false);
-    setOwner(null);
     localStorage.removeItem('isOwnerLoggedIn');
     return 'success';
   }, [loadUsers]);
