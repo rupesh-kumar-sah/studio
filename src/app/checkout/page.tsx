@@ -142,7 +142,8 @@ export default function CheckoutPage() {
             updateCustomerDetails({ name: currentUser.name, phone: data.customer.phone });
         }
         
-        localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
+        const updatedOrders = [...existingOrders, newOrder];
+        localStorage.setItem('orders', JSON.stringify(updatedOrders));
 
         window.dispatchEvent(new CustomEvent('orders-updated'));
         window.dispatchEvent(new CustomEvent('new-order-alert', { detail: { orderId } }));
@@ -379,3 +380,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    
