@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -49,8 +48,24 @@ export function ChatWidget() {
                 loadConversation();
             }
         };
+        
+        const handlePrefillMessage = (e: Event) => {
+            const detail = (e as CustomEvent).detail;
+            if (detail.message) {
+                setNewMessage(current => current ? `${current}\n${detail.message}`: detail.message);
+                setIsOpen(true);
+            }
+        };
+
         window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
+        window.addEventListener('conversations-updated', loadConversation);
+        window.addEventListener('prefill-chat-message', handlePrefillMessage);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('conversations-updated', loadConversation);
+            window.removeEventListener('prefill-chat-message', handlePrefillMessage);
+        };
     }, [loadConversation]);
 
     useEffect(() => {

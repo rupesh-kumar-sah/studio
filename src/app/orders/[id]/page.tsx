@@ -91,6 +91,14 @@ export default function OrderDetailPage() {
       setDeleteError('');
       setIsDeleteDialogOpen(true);
   }
+  
+  const handleMessageAboutOrder = () => {
+        if (order) {
+            const message = `I have a question about my order #${order.id} (Transaction ID: ${order.transactionId}).`;
+            const event = new CustomEvent('prefill-chat-message', { detail: { message } });
+            window.dispatchEvent(event);
+        }
+    };
 
   if (!isMounted) {
     return <div className="container py-12 text-center"><p>Loading order details...</p></div>;
@@ -121,6 +129,7 @@ export default function OrderDetailPage() {
 
   const isOrderOwner = currentUser?.email === order.customer.email;
   const canCancel = (isOwner || isOrderOwner) && order.status === 'pending';
+  const canMessage = isOrderOwner && !isOwner;
 
   return (
     <>
@@ -209,8 +218,8 @@ export default function OrderDetailPage() {
                     </div>
                 </div>
             </CardContent>
-            {(isOwner || canCancel) && (
-                <CardFooter className="gap-2 bg-secondary p-4 rounded-b-lg">
+            {(isOwner || canCancel || canMessage) && (
+                <CardFooter className="gap-2 bg-secondary p-4 rounded-b-lg flex-wrap justify-start">
                     {isOwner && order.status === 'pending' && (
                         <>
                             <Button onClick={() => acceptOrder(order.id)}>
@@ -244,6 +253,12 @@ export default function OrderDetailPage() {
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
+                    )}
+                     {canMessage && (
+                        <Button variant="outline" onClick={handleMessageAboutOrder}>
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Message about this Order
+                        </Button>
                     )}
                      {isOwner && (
                         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

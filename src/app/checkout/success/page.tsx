@@ -4,7 +4,7 @@
 import { useCart } from '@/components/cart/cart-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, Clock } from 'lucide-react';
+import { CheckCircle2, Clock, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import type { Order } from '@/app/checkout/page';
@@ -44,6 +44,14 @@ function CheckoutSuccessContent() {
 
     }, [orderId]);
 
+    const handleMessageAboutOrder = () => {
+        if (order) {
+            const message = `I have a question about my order #${order.id} (Transaction ID: ${order.transactionId}).`;
+            const event = new CustomEvent('prefill-chat-message', { detail: { message } });
+            window.dispatchEvent(event);
+        }
+    };
+
     if (!order) {
         return (
             <div className="text-center text-muted-foreground">
@@ -77,9 +85,15 @@ function CheckoutSuccessContent() {
                                 You will be notified once payment is confirmed. You can check your order status on the orders page.
                             </p>
                         </div>
-                        <Button asChild className="mt-6">
-                            <Link href="/products">Continue Shopping</Link>
-                        </Button>
+                         <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                            <Button asChild>
+                                <Link href="/products">Continue Shopping</Link>
+                            </Button>
+                             <Button variant="outline" onClick={handleMessageAboutOrder}>
+                                <MessageSquare className="mr-2 h-4 w-4" />
+                                Message about this order
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -110,9 +124,15 @@ function CheckoutSuccessContent() {
                             You can view your order details on the orders page.
                         </p>
                     </div>
-                    <Button asChild className="mt-6">
-                    <Link href="/products">Continue Shopping</Link>
-                    </Button>
+                     <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button asChild>
+                            <Link href="/products">Continue Shopping</Link>
+                        </Button>
+                         <Button variant="outline" onClick={handleMessageAboutOrder}>
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Message about this order
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
         </div>
