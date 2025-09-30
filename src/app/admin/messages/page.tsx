@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Inbox } from 'lucide-react';
+import { Send, Inbox, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -151,7 +151,7 @@ export default function AdminMessagesPage() {
                                 <div className="space-y-4">
                                     {selectedConvo.messages.map(msg => (
                                         <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === 'owner' ? 'justify-end' : 'justify-start')}>
-                                            {msg.sender === 'customer' && <Avatar className="h-6 w-6"><AvatarFallback>{selectedConvo.customer.name.charAt(0)}</AvatarFallback></Avatar>}
+                                            {msg.sender === 'customer' && <Mail className="h-6 w-6 text-muted-foreground" />}
                                             <div className={cn(
                                                 "max-w-[70%] rounded-lg px-3 py-2",
                                                 msg.sender === 'owner' ? 'bg-primary text-primary-foreground' : 'bg-secondary'
