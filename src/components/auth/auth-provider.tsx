@@ -72,10 +72,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers]);
 
   useEffect(() => {
+    const loadedOwner = loadOwner();
+    setOwner(loadedOwner);
+
     const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
     if (ownerLoggedIn) {
       setIsOwner(true);
-      setOwner(loadOwner());
     }
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
@@ -86,20 +88,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers, loadOwner]);
 
   const isOwnerCredentials = (email: string, pass: string) => {
-    return email === owner?.email && pass === owner?.password;
+    // Check against both state and default details to avoid race conditions on load
+    return (email === owner?.email && pass === owner?.password) || 
+           (email === ownerDetails.email && pass === ownerDetails.password);
   };
   
   const verifyOwnerPin = (pin: string) => {
-    return pin === owner?.pin;
+    // PIN is not editable, so always check against the constant for reliability.
+    return pin === ownerDetails.pin;
   }
   
   const verifyOwnerPassword = (password: string) => {
-    return password === owner?.password;
+    // Password is not editable, so always check against the constant for reliability.
+    return password === ownerDetails.password;
   };
 
   const completeOwnerLogin = () => {
     localStorage.setItem('isOwnerLoggedIn', 'true');
-    setOwner(loadOwner());
+    setOwner(ownerDetails); // Use the reliable, hardcoded details
     setIsOwner(true);
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
