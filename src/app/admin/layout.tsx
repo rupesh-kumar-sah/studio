@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -6,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes, Palette, FileText } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes, Palette, FileText, MessageSquare } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -35,9 +34,18 @@ export default function AdminLayout({
       });
     };
 
+    const handleNewMessage = (event: Event) => {
+      toast({
+        title: "New Message Received!",
+        description: `You have a new message from a customer.`,
+      });
+    };
+
     window.addEventListener('new-order-alert', handleNewOrder);
+    window.addEventListener('new-message-alert', handleNewMessage);
     return () => {
       window.removeEventListener('new-order-alert', handleNewOrder);
+      window.removeEventListener('new-message-alert', handleNewMessage);
     };
   }, [toast]);
 
@@ -84,6 +92,14 @@ export default function AdminLayout({
                          <Link href="/admin/orders">
                             <FileText />
                             Orders
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton href="/admin/messages" asChild>
+                         <Link href="/admin/messages">
+                            <MessageSquare />
+                            Messages
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
