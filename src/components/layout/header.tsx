@@ -145,7 +145,7 @@ export function Header() {
             </Link>
           ))}
            {isMounted && currentUser && !isOwner && (
-             <Button variant="link" className="text-foreground/60" onClick={() => setContactOpen(true)}>
+             <Button variant="link" className="text-sm font-medium text-foreground/60 p-0 h-auto hover:no-underline" onClick={() => setContactOpen(true)}>
                 Contact
             </Button>
           )}
@@ -202,7 +202,7 @@ export function Header() {
                      {isMounted && currentUser && !isOwner && (
                         <Button
                             variant="link"
-                            className="text-lg font-medium justify-start p-0"
+                            className="text-lg font-medium justify-start p-0 h-auto"
                             onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}
                         >
                             Contact
