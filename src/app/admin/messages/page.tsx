@@ -169,6 +169,12 @@ export default function AdminMessagesPage() {
                                         placeholder={`Reply to ${selectedConvo.customer.name}...`}
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault();
+                                                handleSendMessage();
+                                            }
+                                        }}
                                     />
                                     <Button type="submit" size="icon">
                                         <Send className="h-4 w-4" />
