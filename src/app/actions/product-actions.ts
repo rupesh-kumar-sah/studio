@@ -15,7 +15,8 @@ const dbPath = path.join(process.cwd(), 'src', 'lib', 'products.json');
 async function readDb(): Promise<{ products: Product[] }> {
   try {
     const data = await fs.readFile(dbPath, 'utf-8');
-    return JSON.parse(data);
+    const jsonData = JSON.parse(data);
+    return jsonData && Array.isArray(jsonData.products) ? jsonData : { products: [] };
   } catch (error) {
     // If the file doesn't exist or is empty, return a default structure
     console.error("Error reading products DB:", error);
