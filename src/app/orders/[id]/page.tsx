@@ -23,13 +23,13 @@ import { Footer } from '@/components/layout/footer';
 export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const { isOwner, currentUser, verifyOwnerPassword } = useAuth();
+  const { isOwner, currentUser, verifyOwnerPin } = useAuth();
   const { toast } = useToast();
   const params = useParams();
   const router = useRouter();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deletePassword, setDeletePassword] = useState('');
+  const [deletePin, setDeletePin] = useState('');
   const [deleteError, setDeleteError] = useState('');
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
@@ -67,7 +67,7 @@ export default function OrderDetailPage() {
   };
 
   const handleDeleteConfirm = () => {
-    if (verifyOwnerPassword(deletePassword)) {
+    if (verifyOwnerPin(deletePin)) {
         if (order) {
             const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
             const updatedOrders = storedOrders.filter(o => o.id !== order.id);
@@ -82,12 +82,12 @@ export default function OrderDetailPage() {
             router.push(isOwner ? '/admin/orders' : '/orders');
         }
     } else {
-        setDeleteError('Incorrect password. Please try again.');
+        setDeleteError('Incorrect PIN. Please try again.');
     }
   };
   
   const openDeleteDialog = () => {
-      setDeletePassword('');
+      setDeletePin('');
       setDeleteError('');
       setIsDeleteDialogOpen(true);
   }
@@ -257,17 +257,18 @@ export default function OrderDetailPage() {
                                 <DialogHeader>
                                 <DialogTitle>Confirm Deletion</DialogTitle>
                                 <DialogDescription>
-                                    This action cannot be undone. To permanently delete this order, please enter the admin password.
+                                    This action cannot be undone. To permanently delete this order, please enter the admin PIN.
                                 </DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4 py-2">
-                                    <Label htmlFor="delete-password">Password</Label>
+                                    <Label htmlFor="delete-pin">PIN</Label>
                                     <Input
-                                        id="delete-password"
+                                        id="delete-pin"
                                         type="password"
-                                        value={deletePassword}
-                                        onChange={(e) => setDeletePassword(e.target.value)}
-                                        placeholder="Enter password..."
+                                        maxLength={5}
+                                        value={deletePin}
+                                        onChange={(e) => setDeletePin(e.target.value)}
+                                        placeholder="Enter 5-digit PIN..."
                                     />
                                     {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
                                 </div>

@@ -19,11 +19,11 @@ export default function AdminOrdersPage() {
   const [displayOrders, setDisplayOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
-  const { verifyOwnerPassword } = useAuth();
+  const { verifyOwnerPin } = useAuth();
   
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deletePassword, setDeletePassword] = useState('');
+  const [deletePin, setDeletePin] = useState('');
   const [deleteError, setDeleteError] = useState('');
 
   const loadOrders = useCallback(() => {
@@ -81,13 +81,13 @@ export default function AdminOrdersPage() {
 
   const openDeleteDialog = (orderId: string) => {
     setOrderToDelete(orderId);
-    setDeletePassword('');
+    setDeletePin('');
     setDeleteError('');
     setIsDeleteDialogOpen(true);
   };
   
   const handleDeleteConfirm = () => {
-    if (verifyOwnerPassword(deletePassword)) {
+    if (verifyOwnerPin(deletePin)) {
         if (orderToDelete) {
             const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
             const updatedOrders = storedOrders.filter(o => o.id !== orderToDelete);
@@ -102,7 +102,7 @@ export default function AdminOrdersPage() {
             setOrderToDelete(null);
         }
     } else {
-        setDeleteError('Incorrect password. Please try again.');
+        setDeleteError('Incorrect PIN. Please try again.');
     }
   };
   
@@ -207,17 +207,18 @@ export default function AdminOrdersPage() {
             <DialogHeader>
               <DialogTitle>Confirm Deletion</DialogTitle>
               <DialogDescription>
-                This action cannot be undone. To permanently delete this order, please enter the admin password.
+                This action cannot be undone. To permanently delete this order, please enter the admin PIN.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-2">
-                <Label htmlFor="delete-password">Password</Label>
+                <Label htmlFor="delete-pin">PIN</Label>
                 <Input
-                    id="delete-password"
+                    id="delete-pin"
                     type="password"
-                    value={deletePassword}
-                    onChange={(e) => setDeletePassword(e.target.value)}
-                    placeholder="Enter password..."
+                    maxLength={5}
+                    value={deletePin}
+                    onChange={(e) => setDeletePin(e.target.value)}
+                    placeholder="Enter 5-digit PIN..."
                 />
                 {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
             </div>
