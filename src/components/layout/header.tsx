@@ -26,7 +26,7 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { useCategories } from '../categories/category-provider';
 import { cn } from '@/lib/utils';
 import { SearchDialog } from '../shared/search-dialog';
-import { ContactDialog } from '../shared/contact-dialog';
+
 
 export function Header() {
   const router = useRouter();
@@ -36,7 +36,6 @@ export function Header() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isOwner, currentUser, isMounted, logout, owner } = useAuth();
   const { categories } = useCategories();
-  const [isContactOpen, setContactOpen] = useState(false);
   
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');
@@ -145,8 +144,8 @@ export function Header() {
             </Link>
           ))}
            {isMounted && currentUser && !isOwner && (
-             <Button variant="link" className="text-sm font-medium text-foreground/60 p-0 h-auto hover:no-underline" onClick={() => setContactOpen(true)}>
-                Contact
+             <Button variant="link" className="text-sm font-medium text-foreground/60 p-0 h-auto hover:no-underline" asChild>
+                <Link href="/faq">Contact</Link>
             </Button>
           )}
         </nav>
@@ -203,9 +202,9 @@ export function Header() {
                         <Button
                             variant="link"
                             className="text-lg font-medium justify-start p-0 h-auto"
-                            onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}
+                            asChild
                         >
-                            Contact
+                           <Link href="/faq" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
                         </Button>
                      )}
                 </nav>
@@ -229,7 +228,6 @@ export function Header() {
         </div>
       </div>
     </header>
-    {currentUser && <ContactDialog isOpen={isContactOpen} onOpenChange={setContactOpen} />}
     </>
   );
 }

@@ -7,6 +7,7 @@ import { AuthProvider } from '@/components/auth/auth-provider';
 import { CategoryProvider } from '@/components/categories/category-provider';
 import { CartProvider } from '@/components/cart/cart-provider';
 import { ThemeProvider } from '@/components/theme/theme-provider';
+import { ChatWidget } from '@/components/chat/chat-widget';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -75,6 +76,7 @@ export default function RootLayout({
                 <main className="flex-1 flex flex-col">
                   {children}
                 </main>
+                <ChatWidget />
                 <Toaster />
               </ThemeProvider>
             </CartProvider>

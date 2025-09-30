@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -168,7 +169,7 @@ export default function AdminLayout({
               </div>
           </SidebarFooter>
         </Sidebar>
-        <main className="flex-1">
+        <main className="flex-1 bg-muted/40">
              <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 md:hidden">
                 <SidebarTrigger />
                 <Logo />

@@ -45,6 +45,26 @@ export type Category = string;
 
 export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled' | 'payment-issue';
 
+export type ChatMessage = {
+  id: string;
+  text: string;
+  sender: 'customer' | 'owner';
+  timestamp: string;
+  isRead: boolean;
+};
+
+export type Conversation = {
+  id: string; // Based on customer ID
+  customer: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  messages: ChatMessage[];
+  lastMessageAt: string;
+};
+
+
 export type FAQPage = {
   slug: 'faq';
   title: string;
