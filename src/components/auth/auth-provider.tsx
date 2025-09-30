@@ -97,8 +97,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
   
   const verifyOwnerPin = (pin: string) => {
-      const currentOwner = owner || ownerDetails;
-      return pin === currentOwner.pin;
+      // The PIN is not user-configurable, so we only need to check against the default.
+      // This avoids race conditions with localStorage.
+      return pin === ownerDetails.pin;
   }
   
   const verifyOwnerPassword = (password: string) => {
