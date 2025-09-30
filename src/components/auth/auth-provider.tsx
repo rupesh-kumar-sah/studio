@@ -41,7 +41,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isOwner, setIsOwner] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [owner, setOwner] = useState<User | null>(null);
+  const [owner, setOwner] = useState<User | null>(ownerDetails);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
@@ -88,8 +88,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers, loadOwner]);
 
   const isOwnerCredentials = (email: string, pass: string) => {
+    // This function can be called before state is fully hydrated.
+    // Check against both the current state and the default hardcoded details.
     const currentOwner = owner || ownerDetails;
-    return email === currentOwner.email && pass === currentOwner.password;
+    return (email === currentOwner.email && pass === currentOwner.password) ||
+           (email === ownerDetails.email && pass === ownerDetails.password);
   };
   
   const verifyOwnerPin = (pin: string) => {
