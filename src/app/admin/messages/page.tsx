@@ -23,15 +23,17 @@ export default function AdminMessagesPage() {
     const loadConversations = useCallback(() => {
         const allConvos: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
         allConvos.sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
+        
         setConversations(allConvos);
 
-        if (selectedConvo) {
-            const updatedSelected = allConvos.find(c => c.id === selectedConvo.id);
-            setSelectedConvo(updatedSelected || null);
-        } else if (allConvos.length > 0) {
-            setSelectedConvo(allConvos[0]);
-        }
-    }, [selectedConvo]);
+        setSelectedConvo(prevConvo => {
+            if (prevConvo) {
+                return allConvos.find(c => c.id === prevConvo.id) || allConvos[0] || null;
+            }
+            return allConvos[0] || null;
+        });
+
+    }, []);
 
     useEffect(() => {
         loadConversations();
@@ -44,16 +46,17 @@ export default function AdminMessagesPage() {
         };
     }, [loadConversations]);
 
+
     useEffect(() => {
-        if (selectedConvo && scrollAreaRef.current) {
-             setTimeout(() => {
+        if (isOpen && scrollAreaRef.current) {
+            setTimeout(() => {
                 const scrollElement = scrollAreaRef.current?.querySelector('div');
                 if (scrollElement) {
                     scrollElement.scrollTop = scrollElement.scrollHeight;
                 }
             }, 100);
         }
-    }, [selectedConvo?.messages.length]);
+    }, [isOpen, conversation]);
 
     const handleSendMessage = () => {
         if (!newMessage.trim() || !selectedConvo) return;
@@ -72,13 +75,20 @@ export default function AdminMessagesPage() {
             lastMessageAt: new Date().toISOString(),
         };
 
-        const updatedConversations = conversations.map(c => c.id === selectedConvo.id ? updatedConversation : c);
+        const allConversations: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
+        const existingIndex = allConversations.findIndex(c => c.id === selectedConvo.id);
         
-        localStorage.setItem('conversations', JSON.stringify(updatedConversations));
+        if (existingIndex > -1) {
+            allConversations[existingIndex] = updatedConversation;
+        } else {
+             allConversations.push(updatedConversation);
+        }
+        
+        localStorage.setItem('conversations', JSON.stringify(allConversations));
         window.dispatchEvent(new CustomEvent('conversations-updated'));
         setNewMessage('');
     };
-
+    
     if (conversations.length === 0) {
         return (
             <div className="p-4 sm:p-6 text-center">
