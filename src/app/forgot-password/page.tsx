@@ -56,6 +56,7 @@ export default function ForgotPasswordPage() {
 
     if (isOwnerCredentials(data.email, 'any')) {
         toast({ variant: 'destructive', title: 'Action Not Allowed', description: 'Password reset for the owner account is disabled for security.' });
+        setGeneratedCode(''); // Ensure no code is set
         setIsLoading(false);
         return;
     }
@@ -67,9 +68,12 @@ export default function ForgotPasswordPage() {
         code = createRandomCode();
         setGeneratedCode(code);
         setEmailToReset(data.email);
-    } 
-    // To prevent email enumeration, we always proceed to the next step
-    // and only show the code if the user exists.
+    } else {
+        // To prevent email enumeration, we don't reveal if the user exists.
+        // We still proceed, but no code will be shown and no password can be reset.
+        setGeneratedCode(''); 
+    }
+    
     setStep('show-code');
     setIsLoading(false);
   }
