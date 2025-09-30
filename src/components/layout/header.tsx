@@ -143,11 +143,6 @@ export function Header() {
               {category}
             </Link>
           ))}
-           {isMounted && currentUser && !isOwner && (
-             <Button variant="link" className="text-sm font-medium text-foreground/60 p-0 h-auto hover:no-underline" asChild>
-                <Link href="/faq">Contact</Link>
-            </Button>
-          )}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
           <div className="hidden lg:block w-full max-w-sm">
@@ -198,15 +193,6 @@ export function Header() {
                           {category}
                         </Link>
                     ))}
-                     {isMounted && currentUser && !isOwner && (
-                        <Button
-                            variant="link"
-                            className="text-lg font-medium justify-start p-0 h-auto"
-                            asChild
-                        >
-                           <Link href="/faq" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-                        </Button>
-                     )}
                 </nav>
                 <div className="mt-8 border-t pt-6">
                  {isMounted && !isOwner && !currentUser && (
