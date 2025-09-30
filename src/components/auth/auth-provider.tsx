@@ -41,7 +41,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isOwner, setIsOwner] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [owner, setOwner] = useState<User | null>(ownerDetails);
+  const [owner, setOwner] = useState<User | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
