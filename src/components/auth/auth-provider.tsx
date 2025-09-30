@@ -72,13 +72,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers]);
 
   useEffect(() => {
-    const loadedOwner = loadOwner();
-    setOwner(loadedOwner);
-
     const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
     if (ownerLoggedIn) {
       setIsOwner(true);
-      setOwner(loadedOwner);
+      setOwner(loadOwner());
     }
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
@@ -89,28 +86,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadUsers, loadOwner]);
 
   const isOwnerCredentials = (email: string, pass: string) => {
-    // This function can be called before state is fully hydrated.
-    // Check against both the current state and the default hardcoded details.
-    const currentOwner = owner || ownerDetails;
-    return (email === currentOwner.email && pass === currentOwner.password) ||
-           (email === ownerDetails.email && pass === ownerDetails.password);
+    return email === owner?.email && pass === owner?.password;
   };
   
   const verifyOwnerPin = (pin: string) => {
-      // The PIN is not user-configurable, so we only need to check against the default.
-      // This avoids race conditions with localStorage.
-      return pin === ownerDetails.pin;
+    return pin === owner?.pin;
   }
   
   const verifyOwnerPassword = (password: string) => {
-    const currentOwner = owner || ownerDetails;
-    return password === currentOwner.password;
+    return password === owner?.password;
   };
 
   const completeOwnerLogin = () => {
     localStorage.setItem('isOwnerLoggedIn', 'true');
-    const currentOwner = loadOwner() || ownerDetails;
-    setOwner(currentOwner);
+    setOwner(loadOwner());
     setIsOwner(true);
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
@@ -131,8 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = useCallback((name: string, email: string, pass: string) => {
     const users = loadUsers();
-    const currentOwner = owner || ownerDetails;
-    if (users.some(u => u.email === email) || email === currentOwner.email) {
+    if (users.some(u => u.email === email) || email === owner?.email) {
       toast({
         variant: 'destructive',
         title: 'Signup Failed',
@@ -145,29 +133,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('users', JSON.stringify(updatedUsers));
     setAllUsers(updatedUsers);
     return true;
-  }, [loadUsers, toast, owner]);
+  }, [loadUsers, toast, owner?.email]);
 
   const logout = () => {
     localStorage.removeItem('isOwnerLoggedIn');
     localStorage.removeItem('currentUser');
     setIsOwner(false);
     setCurrentUser(null);
-    setOwner(loadOwner()); // Reset owner state to default from localStorage
+    setOwner(ownerDetails); // Reset owner state to default
   };
   
   const updateOwnerDetails = useCallback((details: { name: string; phone: string }) => {
-    const ownerData = loadOwner();
-    if (ownerData) {
-      const updatedOwner = { ...ownerData, ...details };
+    if (owner) {
+      const updatedOwner = { ...owner, ...details };
       setOwner(updatedOwner);
       localStorage.setItem('owner', JSON.stringify(updatedOwner));
     }
-  }, [loadOwner]);
+  }, [owner]);
 
   const updateAvatar = useCallback((userId: string, avatar: string) => {
-    const ownerData = loadOwner();
-    if (isOwner && userId === ownerData?.id) {
-        const updatedOwner = { ...ownerData!, avatar };
+    if (isOwner && userId === owner?.id) {
+        const updatedOwner = { ...owner!, avatar };
         setOwner(updatedOwner);
         localStorage.setItem('owner', JSON.stringify(updatedOwner));
     } else {
@@ -182,12 +168,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
         }
     }
-  }, [isOwner, currentUser, loadUsers, loadOwner]);
+  }, [isOwner, owner, currentUser, loadUsers]);
 
   const findUserByEmail = useCallback((email: string): User | undefined => {
-    const currentOwner = owner || ownerDetails;
-    if (email === currentOwner.email) {
-      return currentOwner as User;
+    if (email === owner?.email) {
+      return owner as User;
     }
     const users = loadUsers();
     return users.find(u => u.email === email);
