@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Search, User, Menu, LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { Search, User, Menu, LayoutDashboard, ShieldCheck, MessageSquare } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,7 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { useCategories } from '../categories/category-provider';
 import { cn } from '@/lib/utils';
 import { SearchDialog } from '../shared/search-dialog';
+import { ContactDialog } from '../shared/contact-dialog';
 
 export function Header() {
   const router = useRouter();
@@ -35,6 +36,7 @@ export function Header() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isOwner, currentUser, isMounted, logout, owner } = useAuth();
   const { categories } = useCategories();
+  const [isContactOpen, setContactOpen] = useState(false);
   
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');
@@ -109,6 +111,7 @@ export function Header() {
   }
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {isMounted && isOwner && (
           <div className="bg-primary/10 text-primary-foreground">
@@ -141,6 +144,11 @@ export function Header() {
               {category}
             </Link>
           ))}
+           {isMounted && currentUser && !isOwner && (
+             <Button variant="link" className="text-foreground/60" onClick={() => setContactOpen(true)}>
+                Contact
+            </Button>
+          )}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
           <div className="hidden lg:block w-full max-w-sm">
@@ -191,6 +199,15 @@ export function Header() {
                           {category}
                         </Link>
                     ))}
+                     {isMounted && currentUser && !isOwner && (
+                        <Button
+                            variant="link"
+                            className="text-lg font-medium justify-start p-0"
+                            onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}
+                        >
+                            Contact
+                        </Button>
+                     )}
                 </nav>
                 <div className="mt-8 border-t pt-6">
                  {isMounted && !isOwner && !currentUser && (
@@ -212,5 +229,7 @@ export function Header() {
         </div>
       </div>
     </header>
+    {currentUser && <ContactDialog isOpen={isContactOpen} onOpenChange={setContactOpen} />}
+    </>
   );
 }
