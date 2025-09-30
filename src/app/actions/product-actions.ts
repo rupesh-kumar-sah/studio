@@ -1,3 +1,4 @@
+
 'use server';
 
 import { revalidatePath } from 'next/cache';
@@ -78,6 +79,7 @@ export async function addProduct(data: ProductFormData) {
             { url: image3, alt: rest.name, hint: 'product photo' },
         ],
         purchaseLimit: rest.purchaseLimit || 10,
+        originalPrice: rest.originalPrice || undefined,
     };
     
     db.products.unshift(newProduct);
