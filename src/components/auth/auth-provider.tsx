@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const loadedOwner = loadOwner();
-    setOwner(loadedOwner); 
+    setOwner(loadedOwner);
 
     const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
     if (ownerLoggedIn) {
