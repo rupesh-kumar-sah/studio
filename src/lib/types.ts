@@ -126,3 +126,5 @@ export type ShippingPage = {
 };
 
 export type PageContent = FAQPage | PolicyPage | ShippingPage;
+
+    

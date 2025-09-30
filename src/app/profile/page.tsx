@@ -17,7 +17,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 
 export default function ProfilePage() {
-  const { isOwner, currentUser, owner, isMounted, updateAvatar, updateOwnerDetails } = useAuth();
+  const { isOwner, currentUser, owner, isMounted, updateAvatar, updateOwnerDetails, updateCustomerDetails } = useAuth();
   const { toast } = useToast();
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -26,9 +26,9 @@ export default function ProfilePage() {
   const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // State for owner details
-  const [ownerName, setOwnerName] = useState(owner?.name || '');
-  const [ownerPhone, setOwnerPhone] = useState(owner?.phone || '');
+  // State for editable details
+  const [name, setName] = useState(isOwner ? owner?.name || '' : currentUser?.name || '');
+  const [phone, setPhone] = useState(isOwner ? owner?.phone || '' : currentUser?.phone || '');
 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,11 +44,10 @@ export default function ProfilePage() {
   };
 
   const handleSave = () => {
-      if (isOwner) {
-        // Save owner details
-        if (owner) {
-           updateOwnerDetails({ name: ownerName, phone: ownerPhone });
-        }
+      if (isOwner && owner) {
+        updateOwnerDetails({ name, phone });
+      } else if (currentUser) {
+        updateCustomerDetails({ name, phone });
       }
 
       if (previewUrl && (currentUser || isOwner)) {
@@ -64,6 +63,14 @@ export default function ProfilePage() {
       setNewAvatarFile(null);
       setPreviewUrl(null);
   };
+  
+  const openEditDialog = () => {
+    setName(isOwner ? owner?.name || '' : currentUser?.name || '');
+    setPhone(isOwner ? owner?.phone || '' : currentUser?.phone || '');
+    setPreviewUrl(null);
+    setNewAvatarFile(null);
+    setIsEditDialogOpen(true);
+  }
 
   if (!isMounted) {
     return <div className="container py-12 text-center">Loading profile...</div>;
@@ -136,7 +143,7 @@ export default function ProfilePage() {
                             <Mail className="h-5 w-5 text-muted-foreground" />
                             <span className="text-foreground">{user.email}</span>
                         </div>
-                        {isOwner && user.phone && (
+                        {user.phone && (
                             <div className="flex items-center gap-4 p-3 bg-secondary rounded-lg">
                                 <Phone className="h-5 w-5 text-muted-foreground" />
                                 <span className="text-foreground">{user.phone}</span>
@@ -145,63 +152,63 @@ export default function ProfilePage() {
                     </div>
                 </CardContent>
                 <CardFooter className="flex-col gap-4 border-t pt-6">
-                    {isOwner ? (
-                        <div className="w-full flex flex-col sm:flex-row gap-2">
-                             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" className="w-full">
-                                        <Edit className="mr-2 h-4 w-4" />
-                                        Edit Profile
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Edit Owner Profile</DialogTitle>
-                                        <DialogDescription>Update your administrator details.</DialogDescription>
-                                    </DialogHeader>
-                                    <div className="space-y-4 py-2">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="ownerName">Full Name</Label>
-                                            <Input id="ownerName" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} />
-                                        </div>
-                                         <div className="space-y-2">
-                                            <Label htmlFor="ownerPhone">Phone Number</Label>
-                                            <Input id="ownerPhone" value={ownerPhone} onChange={(e) => setOwnerPhone(e.target.value)} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="avatar-upload">Profile Photo</Label>
-                                            <Input id="avatar-upload" type="file" accept="image/*" onChange={handleFileChange} />
-                                        </div>
-                                        {previewUrl && (
-                                            <div>
-                                                <p className="text-sm font-medium mb-2">New Photo Preview:</p>
-                                                <div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden">
-                                                <Image src={previewUrl} alt="New avatar preview" fill className="object-cover" />
-                                                </div>
-                                            </div>
-                                        )}
+                     <div className="w-full flex flex-col sm:flex-row gap-2">
+                         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="w-full" onClick={openEditDialog}>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit Profile
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Edit Profile</DialogTitle>
+                                    <DialogDescription>Update your account details.</DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4 py-2">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="profileName">Full Name</Label>
+                                        <Input id="profileName" value={name} onChange={(e) => setName(e.target.value)} />
                                     </div>
-                                    <DialogFooter>
-                                        <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-                                        <Button onClick={handleSave}>Save Changes</Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
+                                     <div className="space-y-2">
+                                        <Label htmlFor="profilePhone">Phone Number</Label>
+                                        <Input id="profilePhone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="avatar-upload">Profile Photo</Label>
+                                        <Input id="avatar-upload" type="file" accept="image/*" onChange={handleFileChange} />
+                                    </div>
+                                    {previewUrl && (
+                                        <div>
+                                            <p className="text-sm font-medium mb-2">New Photo Preview:</p>
+                                            <div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden">
+                                            <Image src={previewUrl} alt="New avatar preview" fill className="object-cover" />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+                                    <Button onClick={handleSave}>Save Changes</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                        {isOwner ? (
                             <Button asChild className="w-full" size="lg">
                                 <Link href="/admin">
                                     <LayoutDashboard className="mr-2 h-5 w-5" />
                                     Go to Dashboard
                                 </Link>
                             </Button>
-                        </div>
-                    ) : (
-                        <Button asChild className="w-full" size="lg">
-                            <Link href="/orders">
-                                <ShoppingBag className="mr-2 h-5 w-5" />
-                                View My Orders
-                            </Link>
-                        </Button>
-                    )}
+                        ) : (
+                            <Button asChild className="w-full">
+                                <Link href="/orders">
+                                    <ShoppingBag className="mr-2 h-5 w-5" />
+                                    View My Orders
+                                </Link>
+                            </Button>
+                        )}
+                    </div>
                 </CardFooter>
             </Card>
         </div>
@@ -210,3 +217,5 @@ export default function ProfilePage() {
     </>
   );
 }
+
+    

@@ -44,6 +44,7 @@ const customerInfoSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email address'),
+  phone: z.string().min(1, 'Phone number is required'),
   address: z.string().min(1, 'Address is required'),
   city: z.string().min(1, 'City is required'),
   postalCode: z.string().min(1, 'Postal code is required'),
@@ -59,7 +60,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart, isCartMounted } = useCart();
-  const { currentUser, isMounted: isAuthMounted } = useAuth();
+  const { currentUser, isMounted: isAuthMounted, updateCustomerDetails } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -71,6 +72,7 @@ export default function CheckoutPage() {
         firstName: '',
         lastName: '',
         email: '',
+        phone: '',
         address: '',
         city: '',
         postalCode: '',
@@ -85,6 +87,9 @@ export default function CheckoutPage() {
       form.setValue('customer.firstName', currentUser.name.split(' ')[0] || '');
       form.setValue('customer.lastName', currentUser.name.split(' ').slice(1).join(' ') || '');
       form.setValue('customer.email', currentUser.email);
+      if(currentUser.phone) {
+          form.setValue('customer.phone', currentUser.phone);
+      }
     }
   }, [currentUser, form]);
   
@@ -131,6 +136,11 @@ export default function CheckoutPage() {
             status: 'pending',
             paymentMethod: 'eSewa',
         };
+        
+        // Also update customer's phone number if it's new
+        if (currentUser && currentUser.phone !== data.customer.phone) {
+            updateCustomerDetails({ name: currentUser.name, phone: data.customer.phone });
+        }
         
         localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
 
@@ -205,13 +215,22 @@ export default function CheckoutPage() {
                                     </FormItem>
                                 )} />
                             </div>
-                            <FormField control={form.control} name="customer.email" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl><Input type="email" {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
+                             <div className="grid sm:grid-cols-2 gap-4">
+                                <FormField control={form.control} name="customer.email" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl><Input type="email" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+                                <FormField control={form.control} name="customer.phone" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormControl><Input type="tel" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+                            </div>
                             <FormField control={form.control} name="customer.address" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Address</FormLabel>

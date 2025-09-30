@@ -31,6 +31,7 @@ interface AuthContextType {
   logout: () => void;
   updateAvatar: (userId: string, avatar: string) => void;
   updateOwnerDetails: (details: { name: string; phone: string }) => void;
+  updateCustomerDetails: (details: { name: string; phone?: string }) => void;
   findUserByEmail: (email: string) => User | undefined;
   resetPassword: (email: string, newPass: string) => boolean;
 }
@@ -162,6 +163,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('owner', JSON.stringify(updatedOwner));
     }
   }, [owner]);
+  
+  const updateCustomerDetails = useCallback((details: { name: string; phone?: string }) => {
+    if (currentUser) {
+      const updatedUser = { ...currentUser, ...details };
+      setCurrentUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      
+      const users = loadUsers();
+      const updatedUsers = users.map(u => u.id === currentUser.id ? updatedUser : u);
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+      setAllUsers(updatedUsers);
+    }
+  }, [currentUser, loadUsers]);
 
   const updateAvatar = useCallback((userId: string, avatar: string) => {
     if (isOwner && userId === owner?.id) {
@@ -225,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logout, 
       updateAvatar, 
       updateOwnerDetails,
+      updateCustomerDetails,
       findUserByEmail,
       resetPassword
   };
@@ -243,3 +258,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    

@@ -185,6 +185,7 @@ export default function OrderDetailPage() {
                         <div className="text-sm text-muted-foreground">
                             <p><strong>Name:</strong> {order.customer.firstName} {order.customer.lastName}</p>
                             <p><strong>Email:</strong> {order.customer.email}</p>
+                            <p><strong>Phone:</strong> {order.customer.phone}</p>
                             <p><strong>Address:</strong> {order.customer.address}</p>
                             <p>{order.customer.city}, {order.customer.postalCode}</p>
                         </div>
@@ -303,3 +304,5 @@ export default function OrderDetailPage() {
     </>
   );
 }
+
+    
