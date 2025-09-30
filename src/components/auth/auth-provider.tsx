@@ -13,7 +13,7 @@ const ownerDetails = {
     phone: "9812345678",
     avatar: "https://firebasestorage.googleapis.com/v0/b/app-rune-beta.appspot.com/o/rupesh-sah.jpg?alt=media&token=c97480a7-459f-431c-9391-7c9b33c37326",
     password: "rupesh@0123456",
-    pin: "12345",
+    pin: "2063",
 };
 
 interface AuthContextType {
@@ -78,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const ownerLoggedIn = localStorage.getItem('isOwnerLoggedIn') === 'true';
     if (ownerLoggedIn) {
       setIsOwner(true);
+      setOwner(loadedOwner);
     }
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
