@@ -53,7 +53,7 @@ export default function AdminMessagesPage() {
                 }
             }, 100);
         }
-    }, [selectedConvo]);
+    }, [selectedConvo?.messages.length]);
 
     const handleSendMessage = () => {
         if (!newMessage.trim() || !selectedConvo) return;
