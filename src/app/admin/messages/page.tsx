@@ -154,7 +154,7 @@ export default function AdminMessagesPage() {
                                             )}>
                                                 <p className="text-sm">{msg.text}</p>
                                             </div>
-                                             {msg.sender === 'owner' && <Avatar className="h-6 w-6"><AvatarFallback>{owner?.name.charAt(0)}</AvatarFallback></Avatar>}
+                                             {msg.sender === 'owner' && <Avatar className="h-6 w-6"><AvatarFallback>{owner?.name?.charAt(0)}</AvatarFallback></Avatar>}
                                         </div>
                                     ))}
                                 </div>
