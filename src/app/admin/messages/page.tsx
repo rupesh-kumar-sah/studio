@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -23,16 +22,7 @@ export default function AdminMessagesPage() {
     const loadConversations = useCallback(() => {
         const allConvos: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
         allConvos.sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
-        
         setConversations(allConvos);
-
-        setSelectedConvo(prevConvo => {
-            if (prevConvo) {
-                return allConvos.find(c => c.id === prevConvo.id) || allConvos[0] || null;
-            }
-            return allConvos[0] || null;
-        });
-
     }, []);
 
     useEffect(() => {
@@ -45,10 +35,15 @@ export default function AdminMessagesPage() {
             window.removeEventListener('conversations-updated', handleStorage);
         };
     }, [loadConversations]);
-
+    
+    useEffect(() => {
+        if (!selectedConvo && conversations.length > 0) {
+            setSelectedConvo(conversations[0]);
+        }
+    }, [conversations, selectedConvo]);
 
     useEffect(() => {
-        if (isOpen && scrollAreaRef.current) {
+        if (selectedConvo && scrollAreaRef.current) {
             setTimeout(() => {
                 const scrollElement = scrollAreaRef.current?.querySelector('div');
                 if (scrollElement) {
@@ -56,7 +51,7 @@ export default function AdminMessagesPage() {
                 }
             }, 100);
         }
-    }, [isOpen, conversation]);
+    }, [selectedConvo]);
 
     const handleSendMessage = () => {
         if (!newMessage.trim() || !selectedConvo) return;
