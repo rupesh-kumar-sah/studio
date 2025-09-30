@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Conversation, ChatMessage, User } from '@/lib/types';
 import { useAuth } from '@/components/auth/auth-provider';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { format } from 'date-fns';
 export default function AdminMessagesPage() {
     const { owner } = useAuth();
     const [conversations, setConversations] = useState<Conversation[]>([]);
-    const [selectedConvo, setSelectedConvo] = useState<Conversation | null>(null);
+    const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
     const [newMessage, setNewMessage] = useState('');
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -37,11 +37,15 @@ export default function AdminMessagesPage() {
     }, [loadConversations]);
     
     useEffect(() => {
-        if (!selectedConvo && conversations.length > 0) {
-            setSelectedConvo(conversations[0]);
+        if (!selectedConversationId && conversations.length > 0) {
+            setSelectedConversationId(conversations[0].id);
         }
-    }, [conversations, selectedConvo]);
+    }, [conversations, selectedConversationId]);
 
+    const selectedConvo = useMemo(() => {
+        return conversations.find(c => c.id === selectedConversationId) || null;
+    }, [conversations, selectedConversationId]);
+    
     useEffect(() => {
         if (selectedConvo && scrollAreaRef.current) {
             setTimeout(() => {
@@ -61,7 +65,7 @@ export default function AdminMessagesPage() {
             text: newMessage,
             sender: 'owner',
             timestamp: new Date().toISOString(),
-            isRead: false,
+            isRead: true, // Messages sent by owner are read by default
         };
 
         const updatedConversation = {
@@ -70,14 +74,9 @@ export default function AdminMessagesPage() {
             lastMessageAt: new Date().toISOString(),
         };
 
-        const allConversations: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
-        const existingIndex = allConversations.findIndex(c => c.id === selectedConvo.id);
-        
-        if (existingIndex > -1) {
-            allConversations[existingIndex] = updatedConversation;
-        } else {
-             allConversations.push(updatedConversation);
-        }
+        const allConversations = conversations.map(c => 
+            c.id === selectedConvo.id ? updatedConversation : c
+        );
         
         localStorage.setItem('conversations', JSON.stringify(allConversations));
         window.dispatchEvent(new CustomEvent('conversations-updated'));
@@ -113,10 +112,10 @@ export default function AdminMessagesPage() {
                             return (
                                 <button
                                     key={convo.id}
-                                    onClick={() => setSelectedConvo(convo)}
+                                    onClick={() => setSelectedConversationId(convo.id)}
                                     className={cn(
                                         "w-full text-left p-3 border-b flex items-center gap-3 hover:bg-secondary transition-colors",
-                                        selectedConvo?.id === convo.id && "bg-secondary"
+                                        selectedConversationId === convo.id && "bg-secondary"
                                     )}
                                 >
                                     <Avatar>
