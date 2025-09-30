@@ -258,7 +258,7 @@ export default function CheckoutPage() {
                                 name="transactionId"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Transaction ID</FormLabel>
+                                        <FormLabel>Transaction ID (Payment Code)</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter your transaction ID" {...field} />
                                         </FormControl>

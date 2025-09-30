@@ -80,7 +80,7 @@ function CheckoutSuccessContent() {
                             <p className='font-semibold mb-2'>Order Summary:</p>
                             <p><strong>Order ID:</strong> {order.id}</p>
                             <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
-                            <p><strong>Transaction ID:</strong> {order.transactionId}</p>
+                            <p><strong>Transaction ID (Payment Code):</strong> {order.transactionId}</p>
                             <p className='mt-2 text-muted-foreground'>
                                 You will be notified once payment is confirmed. You can check your order status on the orders page.
                             </p>
@@ -119,7 +119,7 @@ function CheckoutSuccessContent() {
                         <p className='font-semibold mb-2'>Order Summary:</p>
                         <p><strong>Order ID:</strong> {order.id}</p>
                         <p><strong>Total:</strong> Rs.{order.total.toFixed(2)}</p>
-                        <p><strong>Transaction ID:</strong> {order.transactionId}</p>
+                        <p><strong>Transaction ID (Payment Code):</strong> {order.transactionId}</p>
                          <p className='mt-2 text-muted-foreground'>
                             You can view your order details on the orders page.
                         </p>

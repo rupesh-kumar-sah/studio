@@ -193,7 +193,7 @@ export default function OrderDetailPage() {
                         <h3 className="font-semibold mb-2">Payment Details</h3>
                         <div className="text-sm text-muted-foreground">
                             <p><strong>Method:</strong> eSewa (Manual)</p>
-                            <p><strong>Transaction ID:</strong> {order.transactionId}</p>
+                            <p><strong>Transaction ID (Payment Code):</strong> {order.transactionId}</p>
                             <p><strong>Status:</strong> <span className={cn("font-medium", order.status === 'confirmed' ? 'text-green-600' : 'text-amber-600')}>{order.status === 'confirmed' ? 'Payment Confirmed' : 'Pending Verification'}</span></p>
                         </div>
                     </div>

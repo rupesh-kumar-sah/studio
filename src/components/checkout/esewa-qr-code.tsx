@@ -114,7 +114,7 @@ export function EsewaQrCode() {
             </div>
             <p>Account Name: <strong>Rupesh Kumar Sah</strong></p>
             <Separator className="my-4" />
-            <p className="mt-2 text-muted-foreground">After completing the payment, please enter the Transaction ID below to confirm.</p>
+            <p className="mt-2 text-muted-foreground">After completing the payment, please enter the Transaction ID (Payment Code) below to confirm.</p>
         </div>
     )
 }

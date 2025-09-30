@@ -155,7 +155,7 @@ export default function OrdersPage() {
             </CardHeader>
             <CardContent className="flex justify-between items-center">
               <p className='text-sm text-muted-foreground'>
-                {order.items.length} item(s) • Transaction ID: {order.transactionId}
+                {order.items.length} item(s) • Transaction ID (Payment Code): {order.transactionId}
               </p>
               <Button asChild variant="secondary" size="sm">
                 <Link href={`/orders/${order.id}`}>
