@@ -9,7 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes, Palette, FileText, MessageSquare } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout({
   children,
@@ -18,7 +17,6 @@ export default function AdminLayout({
 }) {
   const { isOwner, isMounted, owner, logout } = useAuth();
   const router = useRouter();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (isMounted && !isOwner) {
@@ -26,29 +24,6 @@ export default function AdminLayout({
     }
   }, [isMounted, isOwner, router]);
 
-  useEffect(() => {
-    const handleNewOrder = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      toast({
-        title: "New Order Received!",
-        description: `Order #${customEvent.detail.orderId} has been placed.`,
-      });
-    };
-    
-    const handleNewMessage = (event: Event) => {
-      toast({
-        title: "New Message Received!",
-        description: `You have a new message. Check the messages page.`,
-      });
-    };
-
-    window.addEventListener('new-order-alert', handleNewOrder);
-     window.addEventListener('new-message-alert', handleNewMessage);
-    return () => {
-      window.removeEventListener('new-order-alert', handleNewOrder);
-      window.removeEventListener('new-message-alert', handleNewMessage);
-    };
-  }, [toast]);
 
   if (!isMounted || !isOwner) {
     return (
