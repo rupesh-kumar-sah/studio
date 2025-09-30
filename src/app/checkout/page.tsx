@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Loader2 } from 'lucide-react';
+import { Loader2, LogIn } from 'lucide-react';
 import type { CartItem } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { OrderStatus } from '@/lib/types';
@@ -26,6 +26,7 @@ import { isToday } from 'date-fns';
 import { EsewaQrCode } from '@/components/checkout/esewa-qr-code';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import Link from 'next/link';
 
 export type Order = {
   id: string;
@@ -58,7 +59,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const { items, totalPrice, totalItems, clearCart, isCartMounted } = useCart();
-  const { currentUser } = useAuth();
+  const { currentUser, isMounted: isAuthMounted } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -141,7 +142,7 @@ export default function CheckoutPage() {
     }, 1500);
   };
   
-  if (!isCartMounted || (isCartMounted && totalItems === 0 && !isProcessing)) {
+  if (!isCartMounted || !isAuthMounted || (isCartMounted && totalItems === 0 && !isProcessing)) {
       return (
           <div className="container flex items-center justify-center py-20 text-center">
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -150,6 +151,25 @@ export default function CheckoutPage() {
               </div>
           </div>
       );
+  }
+  
+  if (!currentUser) {
+    return (
+        <>
+        <Header />
+        <div className="container flex flex-col items-center justify-center text-center py-20">
+            <Card className="w-full max-w-md p-8">
+                 <LogIn className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h1 className="text-2xl font-bold mt-4">Please Log In</h1>
+                <p className="mt-2 text-muted-foreground">You need to be logged in to proceed to checkout.</p>
+                <Button asChild className="mt-6">
+                    <Link href="/login">Go to Login</Link>
+                </Button>
+            </Card>
+        </div>
+        <Footer />
+        </>
+    )
   }
 
   return (
