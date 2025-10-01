@@ -7,7 +7,7 @@ export default async function ProductsPage() {
   const initialProducts = await getProducts();
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="container py-8 text-center">Loading products...</div>}>
       <ProductsPageClient initialProducts={initialProducts} />
     </Suspense>
   );
