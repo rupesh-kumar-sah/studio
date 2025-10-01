@@ -1,7 +1,7 @@
 
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { getProductById } from '@/app/actions/product-actions';
+import { getProductById, getProducts } from '@/app/actions/product-actions';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,13 @@ import { Footer } from '@/components/layout/footer';
 import { Badge } from '@/components/ui/badge';
 import { ProductReviews } from '@/components/products/product-reviews';
 
+export async function generateStaticParams() {
+  const products = await getProducts();
+ 
+  return products.map((product) => ({
+    id: product.id,
+  }));
+}
 
 export default async function ProductDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
