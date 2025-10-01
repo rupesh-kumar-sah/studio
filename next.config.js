@@ -9,13 +9,6 @@
 // If you are deploying to a custom domain or the root of your GitHub Pages site,
 // you can remove the `basePath` line.
 
-const nextConfig = {
-  // Replace 'your-repo-name' with the name of your GitHub repository
-  basePath: '/your-repo-name',
-  output: 'export',
-  images: {
-    unoptimized: true,
-  },
-};
+const nextConfig = {};
 
 module.exports = nextConfig;
