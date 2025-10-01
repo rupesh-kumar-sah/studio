@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { User } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 // Define owner details in one place
 const ownerDetails = {
@@ -44,13 +45,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [owner, setOwner] = useState<User | null>(ownerDetails);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isMounted, setIsMounted] = useState(false);
-  const [toast, setToast] = useState<{show: (p: any) => void} | null>(null);
-
-  useEffect(() => {
-    import('@/hooks/use-toast').then(mod => {
-      setToast({show: mod.useToast().toast});
-    });
-  }, []);
 
   const loadUsers = useCallback((): User[] => {
     if (typeof window === 'undefined') return [];
@@ -134,11 +128,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = useCallback((name: string, email: string, pass: string) => {
     const users = loadUsers();
     if (users.some(u => u.email === email) || email === owner?.email) {
-      toast?.show({
-        variant: 'destructive',
-        title: 'Signup Failed',
-        description: 'An account with this email already exists.',
-      });
       return false;
     }
     const newUser: User = { 
@@ -152,7 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('users', JSON.stringify(updatedUsers));
     setAllUsers(updatedUsers);
     return true;
-  }, [loadUsers, toast, owner?.email]);
+  }, [loadUsers, owner?.email]);
 
   const logout = () => {
     localStorage.removeItem('isOwnerLoggedIn');
@@ -264,5 +253,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    

@@ -71,6 +71,12 @@ export default function SignupPage() {
         description: "You have successfully signed up. Please log in.",
       });
       router.push("/login");
+    } else {
+       toast({
+        variant: 'destructive',
+        title: 'Signup Failed',
+        description: 'An account with this email already exists.',
+      });
     }
   }
 
