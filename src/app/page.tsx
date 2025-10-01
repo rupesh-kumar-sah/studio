@@ -49,8 +49,7 @@ export default function Home() {
                   <Link
                     href="/products"
                     className={cn(
-                      buttonVariants({ variant: "outline", size: "lg" }),
-                      "border-primary text-primary-foreground hover:bg-primary/20 hover:text-primary-foreground"
+                      buttonVariants({ variant: "secondary", size: "lg" })
                     )}>
                     Browse All Products
                   </Link>
