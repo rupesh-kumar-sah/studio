@@ -4,15 +4,13 @@ import { notFound } from 'next/navigation';
 import { getProductById, getProducts } from '@/app/actions/product-actions';
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { AddToCartForm } from './_components/add-to-cart-form';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Star, Edit } from 'lucide-react';
-import { EditProductSheet } from '@/components/products/edit-product-sheet';
-import { getIsOwner } from '@/lib/auth-db';
+import { Star } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Badge } from '@/components/ui/badge';
 import { ProductReviews } from '@/components/products/product-reviews';
+import { ProductActions } from './_components/product-actions';
 
 export async function generateStaticParams() {
   const products = await getProducts();
@@ -25,7 +23,6 @@ export async function generateStaticParams() {
 export default async function ProductDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const product = await getProductById(id);
-  const isOwner = await getIsOwner();
 
   if (!product) {
     notFound();
@@ -49,14 +46,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
             <div>
               <div className="flex justify-between items-start">
                 <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
-                {isOwner && (
-                  <EditProductSheet product={product}>
-                    <Button variant="outline" size="icon">
-                      <Edit className="h-5 w-5" />
-                      <span className="sr-only">Edit Product</span>
-                    </Button>
-                  </EditProductSheet>
-                )}
+                <ProductActions product={product} />
               </div>
               <div className="flex items-center flex-wrap gap-3 mt-2">
                 <p className="text-2xl font-bold text-primary">Rs.{product.price.toFixed(2)}</p>
@@ -103,3 +93,4 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     </>
   );
 }
+
