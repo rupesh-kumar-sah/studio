@@ -6,12 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Check } from 'lucide-react';
+import { Palette, Check, Loader2 } from 'lucide-react';
 import convert from 'color-convert';
+import { updateTheme } from '@/app/actions/theme-actions';
 
 export default function AdminThemePage() {
   const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const [primaryColor, setPrimaryColor] = useState('#22c55e');
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
@@ -30,8 +32,10 @@ export default function AdminThemePage() {
         const hslString = getComputedStyle(root).getPropertyValue(varName).trim();
         if (hslString) {
             const [h, s, l] = hslString.split(' ').map(val => parseFloat(val.replace('%', '')));
-            setHsl(hslString);
-            setHex(`#${convert.hsl.hex([h, s, l])}`);
+            if(!isNaN(h) && !isNaN(s) && !isNaN(l)) {
+              setHsl(hslString);
+              setHex(`#${convert.hsl.hex([h, s, l])}`);
+            }
         }
     };
     
@@ -59,6 +63,7 @@ export default function AdminThemePage() {
   };
 
   const handleSaveTheme = async () => {
+    setIsSaving(true);
     const cssContent = `
 @tailwind base;
 @tailwind components;
@@ -155,24 +160,20 @@ export default function AdminThemePage() {
 }
     `;
 
-    // This is a simulation of writing to a file. 
-    // In a real scenario, this would be an API call to a server action.
-    try {
-      // We are not actually writing to fs here, just simulating success.
-      // The theme change is applied via JS and will be lost on hard refresh
-      // until we implement a server action to write to `globals.css`
-      localStorage.setItem('themeCss', cssContent); // Storing in local storage for persistence simulation
+    const result = await updateTheme(cssContent);
+    if (result.success) {
       toast({
         title: 'Theme Saved',
-        description: 'Your new theme has been applied and saved. A full page reload might be needed to see changes everywhere.',
+        description: 'Your new theme has been applied and saved.',
       });
-    } catch (e) {
+    } else {
        toast({
         variant: 'destructive',
         title: 'Failed to Save Theme',
         description: 'There was an error saving your theme.',
       });
     }
+    setIsSaving(false);
   };
   
   if (!isMounted) {
@@ -190,8 +191,8 @@ export default function AdminThemePage() {
           <h1 className="text-3xl font-bold tracking-tight">Theme Customizer</h1>
           <p className="text-muted-foreground">Change the look and feel of your storefront.</p>
         </div>
-        <Button onClick={handleSaveTheme}>
-          <Check className="mr-2 h-4 w-4" />
+        <Button onClick={handleSaveTheme} disabled={isSaving}>
+          {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
           Save Theme
         </Button>
       </div>

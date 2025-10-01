@@ -1,23 +1,13 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
+// This provider is a pass-through. The actual theme is now controlled
+// by the contents of globals.css, which is updated by a server action.
+// We keep the provider in case we want to add client-side theme logic
+// in the future (like light/dark mode toggling).
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    const savedThemeCss = localStorage.getItem('themeCss');
-    if (savedThemeCss) {
-      try {
-        const styleTag = document.createElement('style');
-        styleTag.innerHTML = savedThemeCss;
-        document.head.appendChild(styleTag);
-        
-      } catch (error) {
-        console.error("Failed to parse or apply theme from localStorage", error);
-      }
-    }
-  }, []);
-
   return <>{children}</>;
 }
 
