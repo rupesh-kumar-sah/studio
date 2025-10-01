@@ -50,7 +50,7 @@ export default function Home() {
                     href="/products"
                     className={cn(
                       buttonVariants({ variant: "outline", size: "lg" }),
-                      "border-white text-white hover:bg-white/10"
+                      "border-primary text-primary-foreground hover:bg-primary/20 hover:text-primary-foreground"
                     )}>
                     Browse All Products
                   </Link>
