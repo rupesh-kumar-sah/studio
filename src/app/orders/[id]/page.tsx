@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -8,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, CheckCircle, Clock, Trash2, ArrowLeft, AlertTriangle, XCircle } from 'lucide-react';
+import { MessageSquare, CheckCircle, Clock, Trash2, ArrowLeft, AlertTriangle, XCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -35,7 +34,7 @@ export default function OrderDetailPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    if (id) {
+    if (id && typeof window !== 'undefined') {
         const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]') as Order[];
         const foundOrder = storedOrders.find(o => o.id === id);
         setOrder(foundOrder || null);
@@ -101,7 +100,11 @@ export default function OrderDetailPage() {
     };
 
   if (!isMounted) {
-    return <div className="container py-12 text-center"><p>Loading order details...</p></div>;
+    return (
+        <div className="flex h-screen items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+    );
   }
 
   if (!order) {
@@ -117,7 +120,7 @@ export default function OrderDetailPage() {
           </CardHeader>
           <CardContent>
             <Button asChild className="mt-6">
-              <Link href="/orders">Back to Orders</Link>
+              <Link href={isOwner ? "/admin/orders" : "/orders"}>Back to Orders</Link>
             </Button>
           </CardContent>
         </Card>
@@ -130,6 +133,29 @@ export default function OrderDetailPage() {
   const isOrderOwner = currentUser?.email === order.customer.email;
   const canCancel = (isOwner || isOrderOwner) && order.status === 'pending';
   const canMessage = isOrderOwner && !isOwner;
+
+  if (!isOwner && !isOrderOwner) {
+       return (
+          <>
+          <Header />
+          <div className="container py-12 text-center">
+            <Card className="max-w-md mx-auto">
+              <CardHeader>
+                <AlertTriangle className="h-12 w-12 mx-auto text-destructive" />
+                <CardTitle className="mt-4">Access Denied</CardTitle>
+                <CardDescription>You do not have permission to view this order.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="mt-6">
+                  <Link href="/orders">Back to My Orders</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+          <Footer />
+          </>
+        );
+  }
 
   return (
     <>
@@ -304,5 +330,3 @@ export default function OrderDetailPage() {
     </>
   );
 }
-
-    

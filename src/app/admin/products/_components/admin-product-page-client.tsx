@@ -1,9 +1,8 @@
-
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Product } from '@/lib/types';
-import { AdminProductCard } from '@/components/products/admin-product-card';
+import { ProductCard } from '@/components/products/product-card';
 import {
   Select,
   SelectContent,
@@ -105,7 +104,7 @@ export function AdminProductPageClient({ initialProducts }: { initialProducts: P
         {filteredAndSortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredAndSortedProducts.map(product => (
-              <AdminProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (

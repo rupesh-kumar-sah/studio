@@ -1,4 +1,3 @@
-
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getProductById, getProducts } from '@/app/actions/product-actions';
@@ -93,5 +92,6 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     </>
   );
 }
+
 
 
