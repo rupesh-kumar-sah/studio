@@ -24,7 +24,11 @@ export function CategoryShowcase() {
     const { categories } = useCategories();
 
     const categoryData = useMemo(() => {
-        const imageMap = {
+        if (!PlaceHolderImages || PlaceHolderImages.length === 0) {
+            return [];
+        }
+        
+        const imageMap: { [key: string]: typeof PlaceHolderImages[0] | undefined } = {
             'Clothing': PlaceHolderImages.find(p => p.id === 'clothing-1'),
             'Shoes': PlaceHolderImages.find(p => p.id === 'shoe-1'),
             'Accessories': PlaceHolderImages.find(p => p.id === 'accessory-1'),
@@ -32,9 +36,18 @@ export function CategoryShowcase() {
         };
 
         return categories.map((category: CategoryType) => {
-            const categoryKey = category as keyof typeof imageMap;
-            const fallbackImageIndex = generateId(category) % PlaceHolderImages.length;
-            const image = imageMap[categoryKey] || PlaceHolderImages[fallbackImageIndex];
+            const image = imageMap[category] || PlaceHolderImages.find(p => p.id === 'clothing-2');
+            
+            if (!image) {
+                 // Fallback if clothing-2 is also missing for some reason
+                return {
+                    id: generateId(category),
+                    name: category,
+                    imageUrl: 'https://picsum.photos/seed/placeholder/600/400',
+                    imageHint: 'placeholder',
+                    description: `Placeholder image for ${category}`,
+                };
+            }
             
             return {
                 id: generateId(category),

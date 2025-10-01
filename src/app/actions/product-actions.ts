@@ -80,7 +80,7 @@ export async function addProduct(data: ProductFormData) {
             { url: image3, alt: rest.name, hint: 'product photo' },
         ],
         purchaseLimit: rest.purchaseLimit || 10,
-        originalPrice: rest.originalPrice || undefined,
+        originalPrice: rest.originalPrice === null ? undefined : rest.originalPrice,
     };
     
     db.products.unshift(newProduct);
@@ -117,7 +117,7 @@ export async function updateProduct(data: ProductFormData) {
     const updatedProductData: Product = {
         ...existingProduct,
         ...rest,
-        originalPrice: rest.originalPrice || undefined,
+        originalPrice: rest.originalPrice === null ? undefined : rest.originalPrice,
         colors: colors.split(',').map(s => s.trim()),
         sizes: sizes.split(',').map(s => s.trim()),
         images: [

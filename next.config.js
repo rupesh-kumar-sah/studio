@@ -1,22 +1,35 @@
 
 /** @type {import('next').NextConfig} */
+
+// IMPORTANT FOR GITHUB PAGES DEPLOYMENT:
+// If you are deploying to a GitHub Pages repository, you need to set the `basePath`.
+// The `basePath` should be the name of your GitHub repository.
+// For example, if your repository is named "my-nepal-emart", you should change
+// the basePath below to: `basePath: '/my-nepal-emart'`.
+// If you are deploying to a custom domain or the root of your GitHub Pages site,
+// you can remove the `basePath` line.
+
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'upload.wikimedia.org',
-      },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-      },
-    ],
-  },
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'firebasestorage.googleapis.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'upload.wikimedia.org',
+            },
+             {
+                protocol: 'https',
+                hostname: 'ui-avatars.com',
+            }
+        ],
+    },
 };
 
 module.exports = nextConfig;
