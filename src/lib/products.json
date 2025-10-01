@@ -3,10 +3,10 @@
     {
       "name": "Classic Leather Jacket",
       "description": "A timeless leather jacket that adds a touch of classic cool to any outfit. Made from genuine leather.",
-      "price": 250,
-      "originalPrice": 300,
+      "price": 7999,
+      "originalPrice": 10000,
       "stock": 15,
-      "category": "Clothing",
+      "category": "Shoes",
       "purchaseLimit": 5,
       "id": "1759066007792",
       "rating": 4.5,
