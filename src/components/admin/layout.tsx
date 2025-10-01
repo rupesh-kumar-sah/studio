@@ -10,7 +10,7 @@ import { LayoutDashboard, ShoppingCart, Users, LogOut, Home, Shapes, Palette, Fi
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
 
-export default function AdminLayout({
+export default function AdminLayoutClient({
   children,
 }: {
   children: React.ReactNode;
@@ -144,7 +144,7 @@ export default function AdminLayout({
               </div>
           </SidebarFooter>
         </Sidebar>
-        <main className="flex-1">
+        <main className="flex-1 bg-muted/40">
              <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 md:hidden">
                 <SidebarTrigger />
                 <Logo />
