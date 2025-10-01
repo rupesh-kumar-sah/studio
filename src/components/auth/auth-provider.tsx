@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     import('@/hooks/use-toast').then(mod => {
-      setToast({show: mod.toast});
+      setToast({show: mod.useToast().toast});
     });
   }, []);
 
@@ -141,7 +141,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       return false;
     }
-    const newUser: User = { id: Date.now().toString(), name, email, password: pass };
+    const newUser: User = { 
+        id: Date.now().toString(), 
+        name, 
+        email, 
+        password: pass,
+        avatar: `https://ui-avatars.com/api/?name=${name.replace(' ', '+')}&background=random`
+    };
     const updatedUsers = [...users, newUser];
     localStorage.setItem('users', JSON.stringify(updatedUsers));
     setAllUsers(updatedUsers);

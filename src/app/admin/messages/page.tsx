@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Inbox, Mail } from 'lucide-react';
+import { Send, Inbox } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -18,13 +18,31 @@ export default function AdminMessagesPage() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
     const [newMessage, setNewMessage] = useState('');
-    const scrollAreaRef = useRef<HTMLDivElement>(null);
+    const scrollViewportRef = useRef<HTMLDivElement>(null);
 
     const loadConversations = useCallback(() => {
         const allConvos: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
         allConvos.sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
         setConversations(allConvos);
-    }, []);
+
+        // If a conversation is selected, mark its messages as read
+        if (selectedConversationId) {
+            const convoIndex = allConvos.findIndex(c => c.id === selectedConversationId);
+            if (convoIndex > -1) {
+                let changed = false;
+                allConvos[convoIndex].messages.forEach(m => {
+                    if (m.sender === 'customer' && !m.isRead) {
+                        m.isRead = true;
+                        changed = true;
+                    }
+                });
+                if (changed) {
+                    localStorage.setItem('conversations', JSON.stringify(allConvos));
+                }
+            }
+        }
+
+    }, [selectedConversationId]);
 
     useEffect(() => {
         loadConversations();
@@ -48,11 +66,10 @@ export default function AdminMessagesPage() {
     }, [conversations, selectedConversationId]);
     
     useEffect(() => {
-        if (selectedConvo && scrollAreaRef.current) {
+        if (selectedConvo && scrollViewportRef.current) {
             setTimeout(() => {
-                const scrollElement = scrollAreaRef.current?.querySelector('div');
-                if (scrollElement) {
-                    scrollElement.scrollTop = scrollElement.scrollHeight;
+                if (scrollViewportRef.current) {
+                    scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
                 }
             }, 100);
         }
@@ -69,19 +86,30 @@ export default function AdminMessagesPage() {
             isRead: true, // Messages sent by owner are read by default
         };
 
-        const updatedConversation = {
-            ...selectedConvo,
-            messages: [...selectedConvo.messages, message],
-            lastMessageAt: new Date().toISOString(),
-        };
-
-        const allConversations = conversations.map(c => 
-            c.id === selectedConvo.id ? updatedConversation : c
-        );
+        const allConversations = JSON.parse(localStorage.getItem('conversations') || '[]') as Conversation[];
+        const convoIndex = allConversations.findIndex(c => c.id === selectedConvo.id);
+        
+        if (convoIndex > -1) {
+            allConversations[convoIndex].messages.push(message);
+            allConversations[convoIndex].lastMessageAt = new Date().toISOString();
+        }
         
         localStorage.setItem('conversations', JSON.stringify(allConversations));
         window.dispatchEvent(new CustomEvent('conversations-updated'));
         setNewMessage('');
+    };
+
+    const handleConversationSelect = (convoId: string) => {
+        setSelectedConversationId(convoId);
+        // Mark messages as read immediately on selection
+        const allConversations = JSON.parse(localStorage.getItem('conversations') || '[]') as Conversation[];
+        const convoIndex = allConversations.findIndex(c => c.id === convoId);
+        if (convoIndex > -1) {
+            allConversations[convoIndex].messages.forEach(m => m.isRead = true);
+            localStorage.setItem('conversations', JSON.stringify(allConversations));
+            // Trigger an update to reflect the read status change immediately
+            window.dispatchEvent(new CustomEvent('conversations-updated'));
+        }
     };
     
     if (conversations.length === 0) {
@@ -99,13 +127,13 @@ export default function AdminMessagesPage() {
     }
     
     return (
-        <div className="h-screen flex flex-col p-4">
+        <div className="h-[calc(100vh-4rem)] md:h-screen flex flex-col p-4">
             <div className="mb-4">
                 <h1 className="text-3xl font-bold tracking-tight">Customer Conversations</h1>
                 <p className="text-muted-foreground">Reply to customer messages in real-time.</p>
             </div>
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-hidden">
-                <Card className="md:col-span-1 lg:col-span-1 flex flex-col">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-[300px_1fr] lg:grid-cols-[350px_1fr] gap-4 overflow-hidden">
+                <Card className="md:col-span-1 flex flex-col">
                     <ScrollArea className="flex-1">
                         {conversations.map(convo => {
                             const lastMessage = convo.messages[convo.messages.length - 1];
@@ -113,14 +141,14 @@ export default function AdminMessagesPage() {
                             return (
                                 <button
                                     key={convo.id}
-                                    onClick={() => setSelectedConversationId(convo.id)}
+                                    onClick={() => handleConversationSelect(convo.id)}
                                     className={cn(
                                         "w-full text-left p-3 border-b flex items-center gap-3 hover:bg-secondary transition-colors",
                                         selectedConversationId === convo.id && "bg-secondary"
                                     )}
                                 >
                                     <Avatar>
-                                        <AvatarImage src={`https://ui-avatars.com/api/?name=${convo.customer.name.replace(' ', '+')}&background=random`} />
+                                        <AvatarImage src={convo.customer.avatar || `https://ui-avatars.com/api/?name=${convo.customer.name.replace(' ', '+')}&background=random`} />
                                         <AvatarFallback>{convo.customer.name.charAt(0)}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 overflow-hidden">
@@ -135,12 +163,12 @@ export default function AdminMessagesPage() {
                         })}
                     </ScrollArea>
                 </Card>
-                <div className="md:col-span-2 lg:col-span-3 flex flex-col h-full">
+                <div className="flex flex-col h-full">
                     {selectedConvo ? (
                         <Card className="flex-1 flex flex-col">
                             <div className="p-3 border-b flex items-center gap-3">
                                 <Avatar>
-                                    <AvatarImage src={`https://ui-avatars.com/api/?name=${selectedConvo.customer.name.replace(' ', '+')}&background=random`} />
+                                     <AvatarImage src={selectedConvo.customer.avatar || `https://ui-avatars.com/api/?name=${selectedConvo.customer.name.replace(' ', '+')}&background=random`} />
                                     <AvatarFallback>{selectedConvo.customer.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <div>
@@ -148,18 +176,18 @@ export default function AdminMessagesPage() {
                                     <p className="text-sm text-muted-foreground">{selectedConvo.customer.email}</p>
                                 </div>
                             </div>
-                            <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+                            <ScrollArea className="flex-1 p-4" viewportRef={scrollViewportRef}>
                                 <div className="space-y-4">
                                     {selectedConvo.messages.map(msg => (
                                         <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === 'owner' ? 'justify-end' : 'justify-start')}>
-                                            {msg.sender === 'customer' && <Mail className="h-6 w-6 text-muted-foreground" />}
+                                            {msg.sender === 'customer' && <Avatar className="h-6 w-6"><AvatarImage src={selectedConvo.customer.avatar} /><AvatarFallback>{selectedConvo.customer.name.charAt(0)}</AvatarFallback></Avatar>}
                                             <div className={cn(
                                                 "max-w-[70%] rounded-lg px-3 py-2",
                                                 msg.sender === 'owner' ? 'bg-primary text-primary-foreground' : 'bg-secondary'
                                             )}>
                                                 <p className="text-sm">{msg.text}</p>
                                             </div>
-                                             {msg.sender === 'owner' && <Avatar className="h-6 w-6"><AvatarFallback>{owner?.name?.charAt(0)}</AvatarFallback></Avatar>}
+                                             {msg.sender === 'owner' && <Avatar className="h-6 w-6"><AvatarImage src={owner?.avatar} /><AvatarFallback>{owner?.name?.charAt(0)}</AvatarFallback></Avatar>}
                                         </div>
                                     ))}
                                 </div>
@@ -177,7 +205,7 @@ export default function AdminMessagesPage() {
                                             }
                                         }}
                                     />
-                                    <Button type="submit" size="icon">
+                                    <Button type="submit" size="icon" disabled={!newMessage.trim()}>
                                         <Send className="h-4 w-4" />
                                     </Button>
                                 </form>
@@ -193,5 +221,7 @@ export default function AdminMessagesPage() {
         </div>
     );
 }
+
+    
 
     

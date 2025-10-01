@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -13,11 +14,11 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
 export function ChatWidget() {
-    const { currentUser, isOwner, isMounted } = useAuth();
+    const { currentUser, owner, isOwner, isMounted } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [conversation, setConversation] = useState<Conversation | null>(null);
     const [newMessage, setNewMessage] = useState('');
-    const scrollAreaRef = useRef<HTMLDivElement>(null);
+    const scrollViewportRef = useRef<HTMLDivElement>(null);
 
     const loadConversation = useCallback(() => {
         if (currentUser && !isOwner) {
@@ -31,10 +32,29 @@ export function ChatWidget() {
                     messages: [],
                     lastMessageAt: new Date().toISOString(),
                 };
+            } else {
+                 // Mark messages as read when loading conversation if chat is open
+                 if (isOpen) {
+                    let changed = false;
+                    userConvo.messages.forEach(m => {
+                        if (m.sender === 'owner' && !m.isRead) {
+                            m.isRead = true;
+                            changed = true;
+                        }
+                    });
+                    if (changed) {
+                        const allConvos: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
+                        const convoIndex = allConvos.findIndex(c => c.id === currentUser.id);
+                        if (convoIndex > -1) {
+                            allConvos[convoIndex] = userConvo;
+                            localStorage.setItem('conversations', JSON.stringify(allConvos));
+                        }
+                    }
+                }
             }
             setConversation(userConvo);
         }
-    }, [currentUser, isOwner]);
+    }, [currentUser, isOwner, isOpen]);
 
     useEffect(() => {
         if (isMounted) {
@@ -69,15 +89,35 @@ export function ChatWidget() {
     }, [loadConversation]);
 
     useEffect(() => {
-        if (isOpen && scrollAreaRef.current) {
+        if (isOpen && scrollViewportRef.current) {
             setTimeout(() => {
-                const scrollElement = scrollAreaRef.current?.querySelector('div');
-                if (scrollElement) {
-                    scrollElement.scrollTop = scrollElement.scrollHeight;
+                if(scrollViewportRef.current) {
+                    scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
                 }
             }, 100);
         }
     }, [isOpen, conversation]);
+    
+    // Effect to handle marking messages as read when chat is opened
+    useEffect(() => {
+        if (isOpen && currentUser && conversation) {
+            const hasUnread = conversation.messages.some(m => m.sender === 'owner' && !m.isRead);
+            if (hasUnread) {
+                const updatedMessages = conversation.messages.map(m => ({ ...m, isRead: true }));
+                const updatedConversation = { ...conversation, messages: updatedMessages };
+
+                const allConversations: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
+                const convoIndex = allConversations.findIndex(c => c.id === currentUser.id);
+
+                if (convoIndex > -1) {
+                    allConversations[convoIndex] = updatedConversation;
+                    localStorage.setItem('conversations', JSON.stringify(allConversations));
+                    setConversation(updatedConversation);
+                }
+            }
+        }
+    }, [isOpen, conversation, currentUser]);
+
 
     const handleSendMessage = () => {
         if (!newMessage.trim() || !currentUser || !conversation) return;
@@ -90,26 +130,30 @@ export function ChatWidget() {
             isRead: false,
         };
 
-        const updatedConversation = {
-            ...conversation,
-            messages: [...conversation.messages, message],
-            lastMessageAt: new Date().toISOString(),
-        };
-
         const allConversations: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
-        const existingIndex = allConversations.findIndex(c => c.id === currentUser.id);
+        const convoIndex = allConversations.findIndex(c => c.id === currentUser.id);
+        
+        let updatedConversation: Conversation;
 
-        if (existingIndex > -1) {
-            allConversations[existingIndex] = updatedConversation;
+        if (convoIndex > -1) {
+            updatedConversation = {
+                ...allConversations[convoIndex],
+                messages: [...allConversations[convoIndex].messages, message],
+                lastMessageAt: new Date().toISOString(),
+            };
+            allConversations[convoIndex] = updatedConversation;
         } else {
+            updatedConversation = {
+                ...conversation,
+                messages: [...conversation.messages, message],
+                lastMessageAt: new Date().toISOString(),
+            };
             allConversations.push(updatedConversation);
         }
 
         localStorage.setItem('conversations', JSON.stringify(allConversations));
         window.dispatchEvent(new CustomEvent('conversations-updated'));
-        setConversation(updatedConversation);
         setNewMessage('');
-        window.dispatchEvent(new CustomEvent('new-message-alert'));
     };
     
     if (!isMounted || !currentUser || isOwner) {
@@ -125,6 +169,7 @@ export function ChatWidget() {
                     <CardHeader className="flex flex-row items-center justify-between p-3 border-b">
                         <div className="flex items-center gap-2">
                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={owner?.avatar} />
                                 <AvatarFallback>NE</AvatarFallback>
                             </Avatar>
                             <CardTitle className="text-base font-semibold">Nepal eMart Support</CardTitle>
@@ -133,16 +178,18 @@ export function ChatWidget() {
                             <X className="h-4 w-4" />
                         </Button>
                     </CardHeader>
-                    <ScrollArea className="flex-1 p-3" ref={scrollAreaRef}>
+                    <ScrollArea className="flex-1 p-3" viewportRef={scrollViewportRef}>
                         <div className="space-y-4">
                             {conversation?.messages.map(msg => (
                                 <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === 'customer' ? 'justify-end' : 'justify-start')}>
+                                     {msg.sender === 'owner' && <Avatar className="h-6 w-6"><AvatarImage src={owner?.avatar} /><AvatarFallback>S</AvatarFallback></Avatar>}
                                     <div className={cn(
                                         "max-w-[75%] rounded-lg px-3 py-2",
                                         msg.sender === 'customer' ? 'bg-primary text-primary-foreground' : 'bg-secondary'
                                     )}>
                                         <p className="text-sm">{msg.text}</p>
                                     </div>
+                                    {msg.sender === 'customer' && <Avatar className="h-6 w-6"><AvatarImage src={currentUser?.avatar} /><AvatarFallback>{currentUser?.name.charAt(0)}</AvatarFallback></Avatar>}
                                 </div>
                             ))}
                         </div>
@@ -153,8 +200,9 @@ export function ChatWidget() {
                                 placeholder="Type a message..."
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyPress={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }}}
                             />
-                            <Button type="submit" size="icon">
+                            <Button type="submit" size="icon" disabled={!newMessage.trim()}>
                                 <Send className="h-4 w-4" />
                             </Button>
                         </form>
@@ -173,3 +221,5 @@ export function ChatWidget() {
         </div>
     );
 }
+
+    
