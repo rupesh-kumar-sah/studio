@@ -56,7 +56,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
-          # AutomaticallyBooks builds from the Actions tab
+          # Automatically builds from the Actions tab
           static_site_generator: next
       - name: Restore cache
         uses: actions/cache@v4
