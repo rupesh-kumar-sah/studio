@@ -115,6 +115,9 @@ export default function ProfilePage() {
     role: 'Customer'
   };
 
+  const avatarFallback = user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U';
+
+
   return (
     <>
     <Header />
@@ -131,7 +134,7 @@ export default function ProfilePage() {
                      <div className="relative group">
                         <Avatar className="h-24 w-24 mb-4">
                             <AvatarImage src={user.avatar} alt={user.name || ''} />
-                            <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            <AvatarFallback>{avatarFallback}</AvatarFallback>
                         </Avatar>
                     </div>
                     <CardTitle className="text-3xl">{user.name}</CardTitle>
@@ -217,5 +220,3 @@ export default function ProfilePage() {
     </>
   );
 }
-
-    

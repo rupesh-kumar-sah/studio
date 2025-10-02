@@ -149,7 +149,7 @@ export default function AdminMessagesPage() {
                                 >
                                     <Avatar>
                                         <AvatarImage src={convo.customer.avatar || `https://ui-avatars.com/api/?name=${convo.customer.name.replace(' ', '+')}&background=random`} />
-                                        <AvatarFallback>{convo.customer.name.charAt(0)}</AvatarFallback>
+                                        <AvatarFallback>{convo.customer.name ? convo.customer.name.charAt(0) : 'C'}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 overflow-hidden">
                                         <div className="flex justify-between items-center">
@@ -169,7 +169,7 @@ export default function AdminMessagesPage() {
                             <div className="p-3 border-b flex items-center gap-3">
                                 <Avatar>
                                      <AvatarImage src={selectedConvo.customer.avatar || `https://ui-avatars.com/api/?name=${selectedConvo.customer.name.replace(' ', '+')}&background=random`} />
-                                    <AvatarFallback>{selectedConvo.customer.name.charAt(0)}</AvatarFallback>
+                                    <AvatarFallback>{selectedConvo.customer.name ? selectedConvo.customer.name.charAt(0) : 'C'}</AvatarFallback>
                                 </Avatar>
                                 <div>
                                     <p className="font-semibold">{selectedConvo.customer.name}</p>
@@ -180,14 +180,14 @@ export default function AdminMessagesPage() {
                                 <div className="space-y-4">
                                     {selectedConvo.messages.map(msg => (
                                         <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === 'owner' ? 'justify-end' : 'justify-start')}>
-                                            {msg.sender === 'customer' && <Avatar className="h-6 w-6"><AvatarImage src={selectedConvo.customer.avatar} /><AvatarFallback>{selectedConvo.customer.name.charAt(0)}</AvatarFallback></Avatar>}
+                                            {msg.sender === 'customer' && <Avatar className="h-6 w-6"><AvatarImage src={selectedConvo.customer.avatar} /><AvatarFallback>{selectedConvo.customer.name ? selectedConvo.customer.name.charAt(0) : 'C'}</AvatarFallback></Avatar>}
                                             <div className={cn(
                                                 "max-w-[70%] rounded-lg px-3 py-2",
                                                 msg.sender === 'owner' ? 'bg-primary text-primary-foreground' : 'bg-secondary'
                                             )}>
                                                 <p className="text-sm">{msg.text}</p>
                                             </div>
-                                             {msg.sender === 'owner' && <Avatar className="h-6 w-6"><AvatarImage src={owner?.avatar} /><AvatarFallback>{owner?.name?.charAt(0)}</AvatarFallback></Avatar>}
+                                             {msg.sender === 'owner' && <Avatar className="h-6 w-6"><AvatarImage src={owner?.avatar} /><AvatarFallback>{owner?.name ? owner.name.charAt(0) : 'A'}</AvatarFallback></Avatar>}
                                         </div>
                                     ))}
                                 </div>
@@ -221,7 +221,3 @@ export default function AdminMessagesPage() {
         </div>
     );
 }
-
-    
-
-    
