@@ -47,7 +47,7 @@ export async function recommendProducts(
       const allProducts = await getProducts();
       const allProductNames = allProducts.map(p => p.name);
 
-      const prompt = getAi().definePrompt({
+      const recommendProductsPrompt = ai.definePrompt({
         name: 'recommendProductsPrompt',
         prompt: `You are a helpful e-commerce assistant for Nepal E-Mart.
 A user has recently viewed the following products:
@@ -70,7 +70,7 @@ Based on their viewing history and the available products, recommend 3 other pro
         },
       });
 
-      const { output } = await prompt({
+      const { output } = await recommendProductsPrompt({
         viewedProductNames,
         allProductNames,
       });
