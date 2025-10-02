@@ -8,9 +8,11 @@
  * - RecommendProductsOutput - The return type for the recommendProducts function.
  */
 
-import { ai } from '@/ai/genkit';
+import { getAi } from '@/ai/genkit';
 import { getProducts } from '@/app/actions/product-actions';
 import { z } from 'zod';
+
+const ai = getAi();
 
 const RecommendProductsInputSchema = z.object({
   viewedProductNames: z
