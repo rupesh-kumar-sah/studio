@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -213,7 +212,7 @@ export function EditProductSheet({ product, children }: EditProductSheetProps) {
                         type="number"
                         step="0.01"
                         value={field.value || ''}
-                        onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
+                        onChange={e => field.onChange(e.target.value === '' ? null : parseFloat(e.target.value))}
                         placeholder="e.g. 199.99"
                         />
                     )}

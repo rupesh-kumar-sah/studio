@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -91,7 +90,7 @@ function CartEntry({ item, setSheetOpen }: { item: CartItem, setSheetOpen: (open
   const { updateQuantity, removeItem } = useCart();
 
   return (
-    <div className="flex items-center gap-4">
+    <div key={item.cartItemId} className="flex items-center gap-4">
       <div className="relative h-24 w-24 overflow-hidden rounded-md">
         <Image
           src={item.product.images[0].url}
