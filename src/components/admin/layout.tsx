@@ -48,7 +48,7 @@ export default function AdminLayoutClient({
           <SidebarContent>
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin" asChild>
+                    <SidebarMenuButton asChild>
                         <Link href="/admin">
                             <LayoutDashboard />
                             Dashboard
@@ -56,7 +56,7 @@ export default function AdminLayoutClient({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin/products" asChild>
+                    <SidebarMenuButton asChild>
                         <Link href="/admin/products">
                             <ShoppingCart />
                             Products
@@ -64,7 +64,7 @@ export default function AdminLayoutClient({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin/orders" asChild>
+                    <SidebarMenuButton asChild>
                          <Link href="/admin/orders">
                             <FileText />
                             Orders
@@ -72,7 +72,7 @@ export default function AdminLayoutClient({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin/messages" asChild>
+                    <SidebarMenuButton asChild>
                          <Link href="/admin/messages">
                             <MessageSquare />
                             Messages
@@ -80,7 +80,7 @@ export default function AdminLayoutClient({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                  <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin/categories" asChild>
+                    <SidebarMenuButton asChild>
                         <Link href="/admin/categories">
                             <Shapes />
                             Categories
@@ -88,7 +88,7 @@ export default function AdminLayoutClient({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                  <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin/pages" asChild>
+                    <SidebarMenuButton asChild>
                         <Link href="/admin/pages">
                             <FileText />
                             Pages
@@ -96,7 +96,7 @@ export default function AdminLayoutClient({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin/customers" asChild>
+                    <SidebarMenuButton asChild>
                         <Link href="/admin/customers">
                             <Users />
                             Customers
@@ -104,7 +104,7 @@ export default function AdminLayoutClient({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                    <SidebarMenuButton href="/admin/theme" asChild>
+                    <SidebarMenuButton asChild>
                         <Link href="/admin/theme">
                             <Palette />
                             Theme
@@ -127,7 +127,7 @@ export default function AdminLayoutClient({
               <div className="w-full">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton href="/" asChild>
+                        <SidebarMenuButton asChild>
                             <Link href="/">
                                 <Home />
                                 Storefront
