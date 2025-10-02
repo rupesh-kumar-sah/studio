@@ -148,12 +148,12 @@ export default function AdminMessagesPage() {
                                     )}
                                 >
                                     <Avatar>
-                                        <AvatarImage src={convo.customer.avatar || `https://ui-avatars.com/api/?name=${convo.customer.name.replace(' ', '+')}&background=random`} />
+                                        <AvatarImage src={convo.customer.avatar || `https://ui-avatars.com/api/?name=${convo.customer.name ? convo.customer.name.replace(' ', '+') : 'C'}&background=random`} />
                                         <AvatarFallback>{convo.customer.name ? convo.customer.name.charAt(0) : 'C'}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 overflow-hidden">
                                         <div className="flex justify-between items-center">
-                                            <p className="font-semibold truncate">{convo.customer.name}</p>
+                                            <p className="font-semibold truncate">{convo.customer.name || 'Customer'}</p>
                                             {unreadCount > 0 && <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">{unreadCount}</span>}
                                         </div>
                                         <p className="text-sm text-muted-foreground truncate">{lastMessage?.text || 'No messages yet'}</p>
@@ -168,11 +168,11 @@ export default function AdminMessagesPage() {
                         <Card className="flex-1 flex flex-col">
                             <div className="p-3 border-b flex items-center gap-3">
                                 <Avatar>
-                                     <AvatarImage src={selectedConvo.customer.avatar || `https://ui-avatars.com/api/?name=${selectedConvo.customer.name.replace(' ', '+')}&background=random`} />
+                                     <AvatarImage src={selectedConvo.customer.avatar || `https://ui-avatars.com/api/?name=${selectedConvo.customer.name ? selectedConvo.customer.name.replace(' ', '+') : 'C'}&background=random`} />
                                     <AvatarFallback>{selectedConvo.customer.name ? selectedConvo.customer.name.charAt(0) : 'C'}</AvatarFallback>
                                 </Avatar>
                                 <div>
-                                    <p className="font-semibold">{selectedConvo.customer.name}</p>
+                                    <p className="font-semibold">{selectedConvo.customer.name || 'Customer'}</p>
                                     <p className="text-sm text-muted-foreground">{selectedConvo.customer.email}</p>
                                 </div>
                             </div>
@@ -195,7 +195,7 @@ export default function AdminMessagesPage() {
                             <div className="p-2 border-t">
                                 <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex w-full items-center gap-2">
                                     <Input
-                                        placeholder={`Reply to ${selectedConvo.customer.name}...`}
+                                        placeholder={`Reply to ${selectedConvo.customer.name || 'Customer'}...`}
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         onKeyPress={(e) => {
