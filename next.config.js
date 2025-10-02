@@ -1,9 +1,12 @@
 
 /** @type {import('next').NextConfig} */
+
+const isProd = process.env.NODE_ENV === 'production'
+
 const nextConfig = {
     output: 'export',
-    basePath: '/studio',
-    assetPrefix: '/studio/',
+    basePath: isProd ? '/studio' : '',
+    assetPrefix: isProd ? '/studio/' : '',
     images: {
         unoptimized: true,
         remotePatterns: [
