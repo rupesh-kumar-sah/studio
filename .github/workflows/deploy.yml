@@ -50,8 +50,11 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: npm install
-      - name="Run build"
+      - name: Build with Next.js
         run: npx --no-install next build
+        env:
+          # The base path is set in next.config.js, but we set it here again to be explicit.
+          BASE_PATH: /studio
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -68,4 +71,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
