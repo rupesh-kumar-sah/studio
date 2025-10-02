@@ -59,15 +59,11 @@ Here is a list of all available products:
 {{/each}}
 
 Based on their viewing history and the available products, recommend 3 other products they might like. Do not recommend products they have already viewed. Provide a short, compelling reason for each recommendation.`,
-        input: {
-          schema: z.object({
+        inputSchema: z.object({
             viewedProductNames: z.array(z.string()),
             allProductNames: z.array(z.string()),
           }),
-        },
-        output: {
-          schema: RecommendProductsOutputSchema,
-        },
+        outputSchema: RecommendProductsOutputSchema,
       });
 
       const { output } = await recommendProductsPrompt({

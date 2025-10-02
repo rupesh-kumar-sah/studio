@@ -1,10 +1,10 @@
 
 'use server';
 
-import { genkit } from '@genkit-ai/core';
+import { genkit, Genkit } from '@genkit-ai/core';
 import { googleAI } from '@genkit-ai/google-genai';
 
-let ai: ReturnType<typeof genkit>;
+let ai: Genkit;
 
 export function getAi() {
   if (ai) {
