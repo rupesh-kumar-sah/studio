@@ -9,6 +9,7 @@
     "dev": "next dev",
     "test": "jest",
     "build": "next build",
+    "export": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"

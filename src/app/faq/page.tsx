@@ -12,6 +12,7 @@ import { HelpCircle, Loader2 } from "lucide-react"
 import { usePageContent } from "@/hooks/use-page-content"
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import type { FAQPage } from "@/lib/types";
 
 export default function FaqPage() {
   const { content, loading } = usePageContent('faq');
@@ -36,7 +37,7 @@ export default function FaqPage() {
     )
   }
 
-  const { title, description, content: { faqs } } = content;
+  const { title, description, content: { faqs } } = content as FAQPage;
 
   return (
     <>

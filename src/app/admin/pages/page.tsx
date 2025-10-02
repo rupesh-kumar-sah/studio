@@ -57,10 +57,10 @@ export default function AdminPagesPage() {
                         current = current[keys[i]];
                     }
                     current[keys[keys.length - 1]] = value;
-                    return { ...page, content: newContent };
+                    return { ...page, content: newContent as any } as PageContent;
                 }
                 return page;
-            })
+            }) as PageContent[]
         );
     };
 

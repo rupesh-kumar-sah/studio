@@ -1,33 +1,37 @@
 
-'use server';
-
-import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import type { Product, Review } from '@/lib/types';
-import fs from 'fs/promises';
-import path from 'path';
-import { cache } from 'react';
 
-// Path to the JSON file that acts as our database
-const dbPath = path.join(process.cwd(), 'src', 'lib', 'products.json');
+// --- Helper Functions to Read/Write from localStorage ---
 
-// --- Helper Functions to Read/Write from JSON file ---
+const STORAGE_KEY = 'nepal-emart-products';
 
 async function readDb(): Promise<{ products: Product[] }> {
+  if (typeof window === 'undefined') {
+    // Server-side, return empty (for SSR)
+    return { products: [] };
+  }
   try {
-    const data = await fs.readFile(dbPath, 'utf-8');
-    const jsonData = JSON.parse(data);
-    return jsonData && Array.isArray(jsonData.products) ? jsonData : { products: [] };
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+      const jsonData = JSON.parse(data);
+      return jsonData && Array.isArray(jsonData.products) ? jsonData : { products: [] };
+    } else {
+      // Load initial from static JSON
+      const response = await fetch('/studio/lib/products.json');
+      const jsonData = await response.json();
+      return jsonData && Array.isArray(jsonData.products) ? jsonData : { products: [] };
+    }
   } catch (error) {
-    // If the file doesn't exist or is empty, return a default structure
     console.error("Error reading products DB:", error);
     return { products: [] };
   }
 }
 
 async function writeDb(data: { products: Product[] }): Promise<void> {
+  if (typeof window === 'undefined') return;
   try {
-    await fs.writeFile(dbPath, JSON.stringify(data, null, 2), 'utf-8');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data, null, 2));
   } catch (error) {
     console.error("Error writing to products DB:", error);
   }
@@ -73,8 +77,8 @@ export async function addProduct(data: ProductFormData) {
         rating: 0,
         reviews: 0,
         detailedReviews: [],
-        colors: colors.split(',').map(s => s.trim()),
-        sizes: sizes.split(',').map(s => s.trim()),
+        colors: colors.split(',').map((s: string) => s.trim()),
+        sizes: sizes.split(',').map((s: string) => s.trim()),
         images: [
             { url: image1, alt: rest.name, hint: 'product photo' },
             { url: image2, alt: rest.name, hint: 'product photo' },
@@ -87,8 +91,6 @@ export async function addProduct(data: ProductFormData) {
     db.products.unshift(newProduct);
     await writeDb(db);
 
-    revalidatePath('/products');
-    revalidatePath('/admin/products');
     return { success: true, product: newProduct };
 }
 
@@ -119,8 +121,8 @@ export async function updateProduct(data: ProductFormData) {
         ...existingProduct,
         ...rest,
         originalPrice: rest.originalPrice === null ? undefined : rest.originalPrice,
-        colors: colors.split(',').map(s => s.trim()),
-        sizes: sizes.split(',').map(s => s.trim()),
+        colors: colors.split(',').map((s: string) => s.trim()),
+        sizes: sizes.split(',').map((s: string) => s.trim()),
         images: [
             { url: image1, alt: rest.name, hint: 'product photo' },
             { url: image2, alt: rest.name, hint: 'product photo' },
@@ -130,10 +132,6 @@ export async function updateProduct(data: ProductFormData) {
 
     db.products[productIndex] = updatedProductData;
     await writeDb(db);
-
-    revalidatePath(`/products/${id}`);
-    revalidatePath('/products');
-    revalidatePath('/admin/products');
 
     return { success: true, product: updatedProductData };
 }
@@ -148,8 +146,6 @@ export async function deleteProduct(productId: string) {
     
     if (db.products.length < initialLength) {
         await writeDb(db);
-        revalidatePath('/products');
-        revalidatePath('/admin/products');
         return { success: true };
     }
     return { success: false, message: 'Product not found.' };
@@ -182,9 +178,8 @@ export async function addReview(productId: string, author: string, rating: numbe
         const productToUpdate = db.products[productIndex];
         productToUpdate.detailedReviews.unshift(newReview);
         db.products[productIndex] = refreshProductCalculations(productToUpdate);
-        
+
         await writeDb(db);
-        revalidatePath(`/products/${productId}`);
         return { success: true };
     }
     return { success: false, message: 'Product not found.' };
@@ -196,15 +191,13 @@ export async function updateReview(productId: string, reviewId: string, comment:
 
     if (productIndex !== -1) {
         const productToUpdate = db.products[productIndex];
-        const updatedReviews = productToUpdate.detailedReviews.map(r => 
+        const updatedReviews = productToUpdate.detailedReviews.map((r: Review) =>
             r.id === reviewId ? { ...r, comment, rating } : r
         );
         productToUpdate.detailedReviews = updatedReviews;
         db.products[productIndex] = refreshProductCalculations(productToUpdate);
-        
+
         await writeDb(db);
-        revalidatePath(`/products/${productId}`);
-        revalidatePath('/admin/products');
         return { success: true };
     }
     return { success: false, message: 'Failed to update review.' };
@@ -213,16 +206,14 @@ export async function updateReview(productId: string, reviewId: string, comment:
 export async function deleteReview(productId: string, reviewId: string) {
     const db = await readDb();
     const productIndex = db.products.findIndex(p => p.id === productId);
-    
+
     if (productIndex !== -1) {
         const productToUpdate = db.products[productIndex];
-        const updatedReviews = productToUpdate.detailedReviews.filter(r => r.id !== reviewId);
+        const updatedReviews = productToUpdate.detailedReviews.filter((r: Review) => r.id !== reviewId);
         productToUpdate.detailedReviews = updatedReviews;
         db.products[productIndex] = refreshProductCalculations(productToUpdate);
 
         await writeDb(db);
-        revalidatePath(`/products/${productId}`);
-        revalidatePath('/admin/products');
         return { success: true };
     }
     return { success: false, message: 'Failed to delete review.' };
@@ -231,12 +222,12 @@ export async function deleteReview(productId: string, reviewId: string) {
 
 // --- Functions to get product data ---
 
-export const getProducts = cache(async (): Promise<Product[]> => {
+export async function getProducts(): Promise<Product[]> {
     const db = await readDb();
     return db.products;
-});
+}
 
 export async function getProductById(id: string): Promise<Product | undefined> {
     const products = await getProducts();
-    return products.find(p => p.id === id);
+    return products.find((p: Product) => p.id === id);
 }

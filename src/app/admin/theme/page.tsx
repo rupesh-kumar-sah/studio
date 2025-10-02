@@ -238,8 +238,9 @@ export default function AdminThemePage() {
             <Label htmlFor="accent-color" className="text-lg">Accent Color</Label>
             <div className="flex items-center gap-4">
                <span>{accentColor}</span>
-              <input _id="accent-color" 
-                type="color" 
+              <input
+                id="accent-color"
+                type="color"
                 value={accentColor}
                 onChange={(e) => handleColorChange(e, setAccentColor, setAccentHsl, '--accent')}
                 className="color-picker"
