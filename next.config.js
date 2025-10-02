@@ -5,6 +5,7 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const nextConfig = {
     output: 'export',
+    // These are only needed for GitHub Pages deployment
     basePath: isProd ? '/studio' : '',
     assetPrefix: isProd ? '/studio/' : '',
     images: {
