@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import type { Product } from '@/lib/types';
 
-export function ProductFilters({ filters, setFilters, products }: any) {
+export function ProductFilters({ filters, setFilters, products }: { filters: any; setFilters: any; products: Product[] }) {
   const { categories } = useCategories();
   const { isOwner } = useAuth();
   const router = useRouter();
