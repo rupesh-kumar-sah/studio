@@ -68,7 +68,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="font-body antialiased flex flex-col min-h-screen">
+      <body className="antialiased flex flex-col min-h-screen">
         <AuthProvider>
           <CategoryProvider>
             <CartProvider>
