@@ -8,7 +8,7 @@
  * - RecommendProductsOutput - The return type for the recommendProducts function.
  */
 
-import { ai } from '@/ai/genkit';
+import { getAi } from '@/ai/genkit';
 import { getProducts } from '@/app/actions/product-actions';
 import { z } from 'zod';
 
@@ -36,22 +36,20 @@ export type RecommendProductsOutput = z.infer<
 export async function recommendProducts(
   input: RecommendProductsInput
 ): Promise<RecommendProductsOutput> {
-  return recommendProductsFlow(input);
-}
+  const ai = getAi();
+  const recommendProductsFlow = ai.defineFlow(
+    {
+      name: 'recommendProductsFlow',
+      inputSchema: RecommendProductsInputSchema,
+      outputSchema: RecommendProductsOutputSchema,
+    },
+    async ({ viewedProductNames }) => {
+      const allProducts = await getProducts();
+      const allProductNames = allProducts.map(p => p.name);
 
-const recommendProductsFlow = ai.defineFlow(
-  {
-    name: 'recommendProductsFlow',
-    inputSchema: RecommendProductsInputSchema,
-    outputSchema: RecommendProductsOutputSchema,
-  },
-  async ({ viewedProductNames }) => {
-    const allProducts = await getProducts();
-    const allProductNames = allProducts.map(p => p.name);
-
-    const prompt = ai.definePrompt({
-      name: 'recommendProductsPrompt',
-      prompt: `You are a helpful e-commerce assistant for Nepal E-Mart.
+      const prompt = getAi().definePrompt({
+        name: 'recommendProductsPrompt',
+        prompt: `You are a helpful e-commerce assistant for Nepal E-Mart.
 A user has recently viewed the following products:
 {{#each viewedProductNames}}- {{{this}}}
 {{/each}}
@@ -61,22 +59,24 @@ Here is a list of all available products:
 {{/each}}
 
 Based on their viewing history and the available products, recommend 3 other products they might like. Do not recommend products they have already viewed. Provide a short, compelling reason for each recommendation.`,
-      input: {
-        schema: z.object({
-          viewedProductNames: z.array(z.string()),
-          allProductNames: z.array(z.string()),
-        }),
-      },
-      output: {
-        schema: RecommendProductsOutputSchema,
-      },
-    });
+        input: {
+          schema: z.object({
+            viewedProductNames: z.array(z.string()),
+            allProductNames: z.array(z.string()),
+          }),
+        },
+        output: {
+          schema: RecommendProductsOutputSchema,
+        },
+      });
 
-    const { output } = await prompt({
-      viewedProductNames,
-      allProductNames,
-    });
+      const { output } = await prompt({
+        viewedProductNames,
+        allProductNames,
+      });
 
-    return output!;
-  }
-);
+      return output!;
+    }
+  );
+  return recommendProductsFlow(input);
+}
