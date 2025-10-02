@@ -1,6 +1,7 @@
 
 {
   "name": "nepal-emart",
+  "homepage": "https://<your-github-username>.github.io/nepal-emart",
   "version": "0.1.0",
   "private": true,
   "engines": {
