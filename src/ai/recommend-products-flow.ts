@@ -37,6 +37,26 @@ export async function recommendProducts(
   input: RecommendProductsInput
 ): Promise<RecommendProductsOutput> {
   const ai = getAi();
+  
+  const recommendProductsPrompt = ai.definePrompt({
+    name: 'recommendProductsPrompt',
+    prompt: `You are a helpful e-commerce assistant for Nepal E-Mart.
+A user has recently viewed the following products:
+{{#each viewedProductNames}}- {{{this}}}
+{{/each}}
+
+Here is a list of all available products:
+{{#each allProductNames}}- {{{this}}}
+{{/each}}
+
+Based on their viewing history and the available products, recommend 3 other products they might like. Do not recommend products they have already viewed. Provide a short, compelling reason for each recommendation.`,
+    inputSchema: z.object({
+        viewedProductNames: z.array(z.string()),
+        allProductNames: z.array(z.string()),
+      }),
+    outputSchema: RecommendProductsOutputSchema,
+  });
+
   const recommendProductsFlow = ai.defineFlow(
     {
       name: 'recommendProductsFlow',
@@ -47,25 +67,6 @@ export async function recommendProducts(
       const allProducts = await getProducts();
       const allProductNames = allProducts.map(p => p.name);
 
-      const recommendProductsPrompt = ai.definePrompt({
-        name: 'recommendProductsPrompt',
-        prompt: `You are a helpful e-commerce assistant for Nepal E-Mart.
-A user has recently viewed the following products:
-{{#each viewedProductNames}}- {{{this}}}
-{{/each}}
-
-Here is a list of all available products:
-{{#each allProductNames}}- {{{this}}}
-{{/each}}
-
-Based on their viewing history and the available products, recommend 3 other products they might like. Do not recommend products they have already viewed. Provide a short, compelling reason for each recommendation.`,
-        inputSchema: z.object({
-            viewedProductNames: z.array(z.string()),
-            allProductNames: z.array(z.string()),
-          }),
-        outputSchema: RecommendProductsOutputSchema,
-      });
-
       const { output } = await recommendProductsPrompt({
         viewedProductNames,
         allProductNames,
@@ -74,5 +75,6 @@ Based on their viewing history and the available products, recommend 3 other pro
       return output!;
     }
   );
+
   return recommendProductsFlow(input);
 }

@@ -1,10 +1,10 @@
 
 'use server';
 
-import { genkit, Genkit } from '@genkit-ai/core';
+import genkit from '@genkit-ai/core';
 import { googleAI } from '@genkit-ai/google-genai';
 
-let ai: Genkit;
+let ai: ReturnType<typeof genkit> | null = null;
 
 export function getAi() {
   if (ai) {
@@ -17,6 +17,8 @@ export function getAi() {
         apiVersion: 'v1beta',
       }),
     ],
+    logLevel: 'debug',
+    enableTracingAndMetrics: true,
   });
 
   return ai;
