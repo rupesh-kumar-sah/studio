@@ -49,7 +49,7 @@ export function AdminProductPageClient({ initialProducts }: { initialProducts: P
         filtered.sort((a, b) => a.price - b.price);
         break;
       case 'price-desc':
-        filtered.sort((a, b) => b.price - b.price);
+        filtered.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
         filtered.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
