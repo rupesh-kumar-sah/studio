@@ -2,7 +2,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'export',
-    // Replace 'nepal-emart' with your repository name
     basePath: '/nepal-emart',
     images: {
         unoptimized: true,
