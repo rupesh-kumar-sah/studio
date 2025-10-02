@@ -247,7 +247,7 @@ export function OrdersPageClient({ initialOrders }: { initialOrders: Order[] }) 
                     {order.status === 'pending' && <Clock className="h-3 w-3" />}
                     {order.status === 'payment-issue' && <AlertTriangle className="h-3 w-3" />}
                     {order.status === 'cancelled' && <XCircle className="h-3 w-3" />}
-                    {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ')}
+                    {order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ') : 'N/A'}
                   </div>
                 </TableCell>
                 <TableCell className="text-right font-medium">Rs.{order.total.toFixed(2)}</TableCell>
