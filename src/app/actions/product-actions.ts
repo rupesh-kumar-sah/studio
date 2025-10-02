@@ -6,6 +6,7 @@ import { z } from 'zod';
 import type { Product, Review } from '@/lib/types';
 import fs from 'fs/promises';
 import path from 'path';
+import { cache } from 'react';
 
 // Path to the JSON file that acts as our database
 const dbPath = path.join(process.cwd(), 'src', 'lib', 'products.json');
@@ -230,10 +231,10 @@ export async function deleteReview(productId: string, reviewId: string) {
 
 // --- Functions to get product data ---
 
-export async function getProducts(): Promise<Product[]> {
+export const getProducts = cache(async (): Promise<Product[]> => {
     const db = await readDb();
     return db.products;
-}
+});
 
 export async function getProductById(id: string): Promise<Product | undefined> {
     const products = await getProducts();

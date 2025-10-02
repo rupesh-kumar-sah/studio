@@ -17,7 +17,7 @@ export default function AdminMessagesPage() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
     const [newMessage, setNewMessage] = useState('');
-    const scrollViewportRef = useRef<HTMLDivElement>(null);
+
 
     const loadConversations = useCallback(() => {
         const allConvos: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
@@ -64,15 +64,7 @@ export default function AdminMessagesPage() {
         return conversations.find(c => c.id === selectedConversationId) || null;
     }, [conversations, selectedConversationId]);
     
-    useEffect(() => {
-        if (selectedConvo && scrollViewportRef.current) {
-            setTimeout(() => {
-                if (scrollViewportRef.current) {
-                    scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
-                }
-            }, 100);
-        }
-    }, [selectedConvo]);
+
 
     const handleSendMessage = () => {
         if (!newMessage.trim() || !selectedConvo) return;
@@ -175,7 +167,7 @@ export default function AdminMessagesPage() {
                                     <p className="text-sm text-muted-foreground">{selectedConvo.customer.email}</p>
                                 </div>
                             </div>
-                            <ScrollArea className="flex-1 p-4" viewportRef={scrollViewportRef}>
+                            <ScrollArea className="flex-1 p-4">
                                 <div className="space-y-4">
                                     {selectedConvo.messages.map(msg => (
                                         <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === 'owner' ? 'justify-end' : 'justify-start')}>

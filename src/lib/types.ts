@@ -59,6 +59,7 @@ export type Conversation = {
     id: string;
     name: string;
     email: string;
+    avatar?: string;
   };
   messages: ChatMessage[];
   lastMessageAt: string;

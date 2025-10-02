@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import type { Order, OrderStatus } from '@/app/checkout/page';
+import type { Order } from '@/app/checkout/page';
+import type { OrderStatus } from '@/lib/types';
 import {
   Table,
   TableBody,

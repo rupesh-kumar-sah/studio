@@ -7,7 +7,13 @@ import { AuthProvider } from '@/components/auth/auth-provider';
 import { CategoryProvider } from '@/components/categories/category-provider';
 import { CartProvider } from '@/components/cart/cart-provider';
 import { ThemeProvider } from '@/components/theme/theme-provider';
-import { ChatWidget } from '@/components/chat/chat-widget';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+const ChatWidget = dynamic(() => import('@/components/chat/chat-widget').then(m => m.ChatWidget), {
+  loading: () => null,
+  ssr: false,
+});
 
 const inter = Inter({
   subsets: ['latin'],

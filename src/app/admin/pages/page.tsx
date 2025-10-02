@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { PageContent } from '@/lib/types';
+import type { PageContent, FAQPage, PolicyPage, ShippingPage } from '@/lib/types';
 import allPagesData from '@/lib/page-content.json';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,11 @@ import { Loader2, FileText, Check, PlusCircle, Trash2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
+// Type guards
+const isFAQPage = (page: PageContent): page is FAQPage => page.slug === 'faq';
+const isPolicyPage = (page: PageContent): page is PolicyPage => page.slug === 'terms-of-service' || page.slug === 'privacy-policy';
+const isShippingPage = (page: PageContent): page is ShippingPage => page.slug === 'shipping-returns';
+
 export default function AdminPagesPage() {
     const [pages, setPages] = useState<PageContent[]>([]);
     const [loading, setLoading] = useState(true);
@@ -26,7 +31,7 @@ export default function AdminPagesPage() {
         if (storedPages) {
             setPages(JSON.parse(storedPages));
         } else {
-            setPages(allPagesData.pages);
+            setPages(allPagesData.pages as PageContent[]);
             localStorage.setItem('pageContents', JSON.stringify(allPagesData.pages));
         }
         setLoading(false);
@@ -62,74 +67,74 @@ export default function AdminPagesPage() {
     const handleSectionChange = (slug: string, index: number, field: 'title' | 'content', value: string) => {
         setPages(currentPages =>
             currentPages.map(page => {
-                if (page.slug === slug) {
+                if (page.slug === slug && isPolicyPage(page)) {
                     const newSections = [...(page.content.sections || [])];
                     newSections[index] = { ...newSections[index], [field]: value };
-                    return { ...page, content: { ...page.content, sections: newSections } };
+                    return { ...page, content: { ...page.content, sections: newSections } as any } as PageContent;
                 }
                 return page;
-            })
+            }) as PageContent[]
         );
     };
-    
+
      const addSection = (slug: string) => {
         setPages(currentPages =>
             currentPages.map(page => {
-                if (page.slug === slug) {
+                if (page.slug === slug && isPolicyPage(page)) {
                     const newSections = [...(page.content.sections || []), { title: 'New Section', content: 'New content...' }];
-                    return { ...page, content: { ...page.content, sections: newSections } };
+                    return { ...page, content: { ...page.content, sections: newSections } as any } as PageContent;
                 }
                 return page;
-            })
+            }) as PageContent[]
         );
     };
-    
+
     const removeSection = (slug: string, index: number) => {
         setPages(currentPages =>
             currentPages.map(page => {
-                if (page.slug === slug) {
+                if (page.slug === slug && isPolicyPage(page)) {
                     const newSections = (page.content.sections || []).filter((_: any, i: number) => i !== index);
-                    return { ...page, content: { ...page.content, sections: newSections } };
+                    return { ...page, content: { ...page.content, sections: newSections } as any } as PageContent;
                 }
                 return page;
-            })
+            }) as PageContent[]
         );
     };
 
     const handleFaqChange = (slug: string, index: number, field: 'question' | 'answer', value: string) => {
         setPages(currentPages =>
             currentPages.map(page => {
-                if (page.slug === slug) {
+                if (page.slug === slug && isFAQPage(page)) {
                     const newFaqs = [...(page.content.faqs || [])];
                     newFaqs[index] = { ...newFaqs[index], [field]: value };
-                    return { ...page, content: { ...page.content, faqs: newFaqs } };
+                    return { ...page, content: { faqs: newFaqs } } as PageContent;
                 }
                 return page;
-            })
+            }) as PageContent[]
         );
     };
 
     const addFaq = (slug: string) => {
         setPages(currentPages =>
             currentPages.map(page => {
-                if (page.slug === slug) {
+                if (page.slug === slug && isFAQPage(page)) {
                     const newFaqs = [...(page.content.faqs || []), { question: 'New Question', answer: 'New Answer' }];
-                    return { ...page, content: { ...page.content, faqs: newFaqs } };
+                    return { ...page, content: { faqs: newFaqs } } as PageContent;
                 }
                 return page;
-            })
+            }) as PageContent[]
         );
     };
-    
+
     const removeFaq = (slug: string, index: number) => {
         setPages(currentPages =>
             currentPages.map(page => {
-                if (page.slug === slug) {
+                if (page.slug === slug && isFAQPage(page)) {
                     const newFaqs = (page.content.faqs || []).filter((_: any, i: number) => i !== index);
-                    return { ...page, content: { ...page.content, faqs: newFaqs } };
+                    return { ...page, content: { faqs: newFaqs } } as PageContent;
                 }
                 return page;
-            })
+            }) as PageContent[]
         );
     };
 
@@ -167,9 +172,9 @@ export default function AdminPagesPage() {
     }
     
     const renderContentEditor = (page: PageContent) => {
-        const pageContent = page.content || {};
+        const pageContent = (page.content || {}) as any;
 
-        switch (page.slug) {
+        switch (page.slug as string) {
             case 'faq':
                 const faqs = pageContent.faqs || [];
                 return (

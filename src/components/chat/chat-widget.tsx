@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '@/components/auth/auth-provider';
 import type { Conversation, ChatMessage } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -13,16 +13,41 @@ import { MessageSquare, Send, X, ChevronsDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
+// Cache for localStorage data to reduce JSON parsing
+let conversationsCache: Conversation[] = [];
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5000; // 5 seconds
+
+const getConversationsFromStorage = (): Conversation[] => {
+    const now = Date.now();
+    if (conversationsCache && (now - cacheTimestamp) < CACHE_DURATION) {
+        return conversationsCache;
+    }
+    try {
+        const stored = localStorage.getItem('conversations');
+        conversationsCache = stored ? JSON.parse(stored) : [];
+        cacheTimestamp = now;
+        return conversationsCache;
+    } catch (error) {
+        console.error('Error parsing conversations from localStorage:', error);
+        return [];
+    }
+};
+
+const saveConversationsToStorage = (conversations: Conversation[]) => {
+    conversationsCache = conversations;
+    cacheTimestamp = Date.now();
+    localStorage.setItem('conversations', JSON.stringify(conversations));
+};
+
 export function ChatWidget() {
     const { currentUser, owner, isOwner, isMounted } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [conversation, setConversation] = useState<Conversation | null>(null);
     const [newMessage, setNewMessage] = useState('');
-    const scrollViewportRef = useRef<HTMLDivElement>(null);
-
     const loadConversation = useCallback(() => {
         if (currentUser && !isOwner) {
-            const allConversations: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
+            const allConversations: Conversation[] = getConversationsFromStorage();
             let userConvo = allConversations.find(c => c.customer.id === currentUser.id);
 
             if (!userConvo) {
@@ -43,11 +68,11 @@ export function ChatWidget() {
                         }
                     });
                     if (changed) {
-                        const allConvos: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
+                        const allConvos: Conversation[] = getConversationsFromStorage();
                         const convoIndex = allConvos.findIndex(c => c.id === currentUser.id);
                         if (convoIndex > -1) {
                             allConvos[convoIndex] = userConvo;
-                            localStorage.setItem('conversations', JSON.stringify(allConvos));
+                            saveConversationsToStorage(allConvos);
                         }
                     }
                 }
@@ -88,16 +113,6 @@ export function ChatWidget() {
         };
     }, [loadConversation]);
 
-    useEffect(() => {
-        if (isOpen && scrollViewportRef.current) {
-            setTimeout(() => {
-                if(scrollViewportRef.current) {
-                    scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
-                }
-            }, 100);
-        }
-    }, [isOpen, conversation]);
-    
     // Effect to handle marking messages as read when chat is opened
     useEffect(() => {
         if (isOpen && currentUser && conversation) {
@@ -106,12 +121,12 @@ export function ChatWidget() {
                 const updatedMessages = conversation.messages.map(m => ({ ...m, isRead: true }));
                 const updatedConversation = { ...conversation, messages: updatedMessages };
 
-                const allConversations: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
+                const allConversations: Conversation[] = getConversationsFromStorage();
                 const convoIndex = allConversations.findIndex(c => c.id === currentUser.id);
 
                 if (convoIndex > -1) {
                     allConversations[convoIndex] = updatedConversation;
-                    localStorage.setItem('conversations', JSON.stringify(allConversations));
+                    saveConversationsToStorage(allConversations);
                     setConversation(updatedConversation);
                 }
             }
@@ -130,9 +145,9 @@ export function ChatWidget() {
             isRead: false,
         };
 
-        const allConversations: Conversation[] = JSON.parse(localStorage.getItem('conversations') || '[]');
+        const allConversations: Conversation[] = getConversationsFromStorage();
         const convoIndex = allConversations.findIndex(c => c.id === currentUser.id);
-        
+
         let updatedConversation: Conversation;
 
         if (convoIndex > -1) {
@@ -151,7 +166,7 @@ export function ChatWidget() {
             allConversations.push(updatedConversation);
         }
 
-        localStorage.setItem('conversations', JSON.stringify(allConversations));
+        saveConversationsToStorage(allConversations);
         window.dispatchEvent(new CustomEvent('conversations-updated'));
         setNewMessage('');
     };
@@ -178,7 +193,7 @@ export function ChatWidget() {
                             <X className="h-4 w-4" />
                         </Button>
                     </CardHeader>
-                    <ScrollArea className="flex-1 p-3" viewportRef={scrollViewportRef}>
+                    <ScrollArea className="flex-1 p-3">
                         <div className="space-y-4">
                             {conversation?.messages.map(msg => (
                                 <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === 'customer' ? 'justify-end' : 'justify-start')}>

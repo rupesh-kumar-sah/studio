@@ -62,7 +62,7 @@ Based on their viewing history and the available products, recommend 3 other pro
       inputSchema: RecommendProductsInputSchema,
       outputSchema: RecommendProductsOutputSchema,
     },
-    async ({ viewedProductNames }) => {
+    async ({ viewedProductNames }: RecommendProductsInput) => {
       const allProducts = await getProducts();
       const allProductNames = allProducts.map(p => p.name);
 

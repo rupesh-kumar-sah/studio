@@ -3,14 +3,14 @@
 import genkit from '@genkit-ai/core';
 import { googleAI } from '@genkit-ai/google-genai';
 
-let ai: ReturnType<typeof genkit> | null = null;
+let ai: any = null;
 
 export function getAi() {
   if (ai) {
     return ai;
   }
 
-  ai = genkit({
+  ai = (genkit as any)({
     plugins: [
       googleAI({
         apiVersion: 'v1beta',
