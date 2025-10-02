@@ -2,9 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ gh-pages ]
+    branches: [ main ]
   pull_request:
-    branches: [ gh-pages ]
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
@@ -24,10 +24,10 @@ jobs:
       run: npm ci
 
     - name: Build
-      run: npm run export
+      run: npm run build
 
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/gh-pages'
+      if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
