@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
-    trailingSlash: true,
-    basePath: '/studio',
-    assetPrefix: '/studio',
     images: {
-        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',
