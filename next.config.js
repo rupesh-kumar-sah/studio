@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'export',
+    trailingSlash: true,
     basePath: '/studio',
     assetPrefix: '/studio',
-    trailingSlash: true,
     images: {
         unoptimized: true,
         remotePatterns: [

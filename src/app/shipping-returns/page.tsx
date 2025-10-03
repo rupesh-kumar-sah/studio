@@ -30,7 +30,21 @@ export default function ShippingReturnsPage() {
     )
   }
 
-  const { title, description, content: { shipping, returns } } = content;
+  const { title, description } = content;
+  const shipping = 'shipping' in content.content ? content.content.shipping : {
+    title: '',
+    intro: '',
+    deliveryTimes: { title: '', insideValley: '', outsideValley: '' },
+    costs: { title: '', content: '' },
+    tracking: { title: '', content: '' }
+  };
+  const returns = 'returns' in content.content ? content.content.returns : {
+    title: '',
+    intro: '',
+    policy: { title: '', content: '' },
+    process: { title: '', steps: [] },
+    refunds: { title: '', content: '' }
+  };
 
   return (
     <>

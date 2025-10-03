@@ -30,7 +30,9 @@ export default function TermsOfServicePage() {
     )
   }
 
-  const { title, description, content: { sections, lastUpdated } } = content;
+  const { title, description } = content;
+  const sections = 'sections' in content.content ? content.content.sections : [];
+  const lastUpdated = 'lastUpdated' in content.content ? content.content.lastUpdated : '';
 
   return (
     <>
