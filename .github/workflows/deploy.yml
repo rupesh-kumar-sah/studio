@@ -24,7 +24,9 @@ jobs:
       run: npm ci
 
     - name: Build
-      run: npm run build
+      run: |
+        npm run build
+        npm run export
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
