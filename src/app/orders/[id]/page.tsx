@@ -19,17 +19,6 @@ import { Label } from '@/components/ui/label';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
-export async function generateStaticParams() {
-  // For static export, provide some dummy order IDs
-  // In a real app, this would be generated from your data source
-  return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-    // Add more as needed
-  ];
-}
-
 export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isMounted, setIsMounted] = useState(false);
